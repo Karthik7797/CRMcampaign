@@ -1,0 +1,147 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  password     String
+  role         Role     @default(COUNSELLOR)
+  avatar       String?
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  leads        Lead[]   @relation("AssignedLeads")
+  tasks        Task[]
+  activities   Activity[]
+}
+
+enum Role {
+  ADMIN
+  MANAGER
+  COUNSELLOR
+  MARKETING
+}
+
+model Lead {
+  id            String       @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  course        String?
+  source        LeadSource   @default(WEBSITE)
+  landingPage   String?
+  status        LeadStatus   @default(NEW)
+  priority      Priority     @default(MEDIUM)
+  notes         String?
+  utmSource     String?
+  utmMedium     String?
+  utmCampaign   String?
+  city          String?
+  qualification String?
+  assignedTo    User?        @relation("AssignedLeads", fields: [assignedToId], references: [id])
+  assignedToId  String?
+  pipelineStage PipelineStage @default(ENQUIRY)
+  activities    Activity[]
+  tasks         Task[]
+  communications Communication[]
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+}
+
+enum LeadSource {
+  WEBSITE
+  LANDING_PAGE_MBA
+  LANDING_PAGE_ENGINEERING
+  LANDING_PAGE_EDUCATION
+  LANDING_PAGE_SCHOLARSHIP
+  LANDING_PAGE_ONLINE
+  FACEBOOK
+  GOOGLE
+  INSTAGRAM
+  REFERRAL
+  WALK_IN
+  PHONE
+  EMAIL
+  SELF_LOCAL
+  OTHER
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  NURTURING
+  CONVERTED
+  LOST
+  JUNK
+}
+
+enum Priority {
+  HIGH
+  MEDIUM
+  LOW
+}
+
+enum PipelineStage {
+  ENQUIRY
+  CONTACTED
+  APPLICATION_SENT
+  APPLICATION_RECEIVED
+  UNDER_REVIEW
+  SHORTLISTED
+  ENROLLED
+  DROPPED
+}
+
+model Activity {
+  id        String   @id @default(cuid())
+  type      String
+  content   String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model Task {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  completed   Boolean    @default(false)
+  priority    Priority   @default(MEDIUM)
+  lead        Lead?      @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId      String?
+  assignedTo  User       @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Communication {
+  id        String   @id @default(cuid())
+  type      CommType
+  subject   String?
+  content   String
+  status    String   @default("SENT")
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  createdAt DateTime @default(now())
+}
+
+enum CommType {
+  EMAIL
+  SMS
+  WHATSAPP
+  CALL
+  NOTE
+}

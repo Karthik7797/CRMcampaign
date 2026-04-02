@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --sidebar-width: 260px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: #0f172a;
+  color: #f1f5f9;
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+@layer components {
+  .card {
+    @apply bg-surface-800 border border-surface-700 rounded-xl p-6 shadow-card;
+  }
+  .btn-primary {
+    @apply bg-brand-600 hover:bg-brand-700 text-white font-semibold px-4 py-2 rounded-lg
+           transition-all duration-200 hover:shadow-lg active:scale-95 text-sm;
+  }
+  .btn-secondary {
+    @apply bg-surface-700 hover:bg-surface-600 text-slate-200 font-medium px-4 py-2 rounded-lg
+           transition-all duration-200 border border-surface-600 text-sm;
+  }
+  .input {
+    @apply bg-surface-800 border border-surface-600 text-slate-100 rounded-lg px-3 py-2 w-full
+           focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
+           placeholder:text-slate-500 text-sm transition-all;
+  }
+  .badge-new { @apply bg-blue-500/15 text-blue-400 border border-blue-500/25; }
+  .badge-contacted { @apply bg-yellow-500/15 text-yellow-400 border border-yellow-500/25; }
+  .badge-qualified { @apply bg-purple-500/15 text-purple-400 border border-purple-500/25; }
+  .badge-converted { @apply bg-green-500/15 text-green-400 border border-green-500/25; }
+  .badge-lost { @apply bg-red-500/15 text-red-400 border border-red-500/25; }
+  .badge-nurturing { @apply bg-orange-500/15 text-orange-400 border border-orange-500/25; }
+  .badge-junk { @apply bg-gray-500/15 text-gray-400 border border-gray-500/25; }
+}
