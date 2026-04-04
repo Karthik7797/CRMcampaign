@@ -1,9 +1,11 @@
 import { Menu, Bell, Search, Plus } from 'lucide-react'
 import { useStore } from '../../store/useStore'
+import { usePermissions } from '../../hooks/usePermissions'
 import { useState } from 'react'
 
 export default function TopBar() {
   const toggleSidebar = useStore((s) => s.toggleSidebar)
+  const { canCreateLeads } = usePermissions()
   const [search, setSearch] = useState('')
 
   return (
@@ -29,9 +31,11 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-2">
-        <button className="btn-primary flex items-center gap-1.5 h-9">
-          <Plus size={15} /> New Lead
-        </button>
+        {canCreateLeads && (
+          <button className="btn-primary flex items-center gap-1.5 h-9">
+            <Plus size={15} /> New Lead
+          </button>
+        )}
         <button className="relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-colors">
           <Bell size={18} />
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-red-500 rounded-full" />

@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useStore } from './store/useStore'
+import { hasPermission } from './lib/permissions'
 import Layout from './components/layout/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
@@ -10,10 +11,31 @@ import Tasks from './pages/Tasks'
 import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
 import LeadDetails from './pages/LeadDetails'
+import UserManagement from './pages/UserManagement'
+import Unauthorized from './pages/Unauthorized'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useStore((s) => s.token)
   return token ? <>{children}</> : <Navigate to="/login" replace />
+}
+
+/**
+ * Role-gated route wrapper.
+ * Checks the user's role against the required permission.
+ * Redirects to /unauthorized if the user doesn't have access.
+ */
+function RoleRoute({
+  children,
+  permission,
+}: {
+  children: React.ReactNode
+  permission: string
+}) {
+  const user = useStore((s) => s.user)
+  if (!hasPermission(user?.role, permission)) {
+    return <Navigate to="/unauthorized" replace />
+  }
+  return <>{children}</>
 }
 
 export default function App() {
@@ -28,9 +50,22 @@ export default function App() {
           <Route path="leads/:id" element={<LeadDetails />} />
           <Route path="pipeline" element={<Pipeline />} />
           <Route path="communications" element={<Communications />} />
-          <Route path="tasks" element={<Tasks />} />
-          <Route path="analytics" element={<Analytics />} />
-          <Route path="settings" element={<Settings />} />
+
+          {/* Role-protected routes */}
+          <Route path="tasks" element={
+            <RoleRoute permission="nav:tasks"><Tasks /></RoleRoute>
+          } />
+          <Route path="analytics" element={
+            <RoleRoute permission="nav:analytics"><Analytics /></RoleRoute>
+          } />
+          <Route path="settings" element={
+            <RoleRoute permission="nav:settings"><Settings /></RoleRoute>
+          } />
+          <Route path="users" element={
+            <RoleRoute permission="nav:users"><UserManagement /></RoleRoute>
+          } />
+
+          <Route path="unauthorized" element={<Unauthorized />} />
         </Route>
       </Routes>
     </BrowserRouter>

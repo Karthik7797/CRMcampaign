@@ -60,6 +60,11 @@ export async function getLeads(request, reply) {
     ]
   }
 
+  // COUNSELLOR can only see their own assigned leads
+  if (request.user.role === 'COUNSELLOR') {
+    where.assignedToId = request.user.id
+  }
+
   const [leads, total] = await Promise.all([
     db.lead.findMany({
       where, skip, take: parseInt(limit),
@@ -83,6 +88,12 @@ export async function getLead(request, reply) {
     }
   })
   if (!lead) return reply.status(404).send({ error: 'Lead not found' })
+
+  // COUNSELLOR can only view their own assigned leads
+  if (request.user.role === 'COUNSELLOR' && lead.assignedToId !== request.user.id) {
+    return reply.status(403).send({ error: 'You can only view leads assigned to you' })
+  }
+
   return lead
 }
 
@@ -94,6 +105,15 @@ export async function createLead(request, reply) {
 }
 
 export async function updateLead(request, reply) {
+  // COUNSELLOR can only edit their own assigned leads
+  if (request.user.role === 'COUNSELLOR') {
+    const existing = await db.lead.findUnique({ where: { id: request.params.id } })
+    if (!existing) return reply.status(404).send({ error: 'Lead not found' })
+    if (existing.assignedToId !== request.user.id) {
+      return reply.status(403).send({ error: 'You can only edit leads assigned to you' })
+    }
+  }
+
   const lead = await db.lead.update({
     where: { id: request.params.id },
     data: request.body,

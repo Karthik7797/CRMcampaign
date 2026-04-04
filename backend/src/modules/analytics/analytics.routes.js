@@ -1,8 +1,9 @@
-import { authenticate } from '../../middleware/auth.middleware.js'
+import { authenticate, authorize } from '../../middleware/auth.middleware.js'
 import { db } from '../../config/db.js'
 
 export async function analyticsRoutes(app) {
-  app.get('/overview', { preHandler: [authenticate] }, async (req, reply) => {
+  // Analytics: ADMIN, MANAGER, MARKETING only (COUNSELLOR has no access)
+  app.get('/overview', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'MARKETING')] }, async (req, reply) => {
     const [
       totalLeads, newLeads, converted, bySource, byStatus, byStage, recentLeads
     ] = await Promise.all([

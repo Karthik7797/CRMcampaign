@@ -6,8 +6,8 @@ import { useStore } from '../store/useStore'
 import toast from 'react-hot-toast'
 
 export default function Login() {
-  const [email, setEmail] = useState('admin@demo.com')
-  const [password, setPassword] = useState('demo123')
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [showPass, setShowPass] = useState(false)
   const [loading, setLoading] = useState(false)
   const navigate = useNavigate()
@@ -15,6 +15,10 @@ export default function Login() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    if (!email || !password) {
+      toast.error('Please enter email and password')
+      return
+    }
     setLoading(true)
     try {
       const { data } = await authApi.login({ email, password })
@@ -23,7 +27,7 @@ export default function Login() {
       navigate('/dashboard')
       toast.success(`Welcome back, ${data.user.name}!`)
     } catch {
-      toast.error('Invalid credentials')
+      toast.error('Invalid email or password')
     } finally {
       setLoading(false)
     }
@@ -40,7 +44,8 @@ export default function Login() {
       <div className="relative w-full max-w-sm">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-12 h-12 rounded-xl bg-brand-600 flex items-center justify-center mx-auto mb-3">
+          <div className="w-12 h-12 rounded-xl bg-brand-600 flex items-center justify-center mx-auto mb-3
+                          shadow-lg shadow-brand-600/25">
             <Zap size={22} className="text-white" />
           </div>
           <h1 className="text-2xl font-bold text-white font-display">EduCRM</h1>
@@ -58,6 +63,7 @@ export default function Login() {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@institution.com"
                 required
+                autoFocus
               />
             </div>
             <div>
@@ -88,8 +94,8 @@ export default function Login() {
           </form>
 
           <div className="mt-4 pt-4 border-t border-surface-700">
-            <p className="text-xs text-slate-500 text-center">
-              Demo: <span className="text-slate-400">admin@demo.com / demo123</span>
+            <p className="text-[11px] text-slate-500 text-center leading-relaxed">
+              Don't have an account? Contact your Super Admin to get access.
             </p>
           </div>
         </div>

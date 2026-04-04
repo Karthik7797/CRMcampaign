@@ -9,6 +9,7 @@ import { pipelineRoutes } from './modules/pipeline/pipeline.routes.js'
 import { analyticsRoutes } from './modules/analytics/analytics.routes.js'
 import { tasksRoutes } from './modules/tasks/tasks.routes.js'
 import { commsRoutes } from './modules/communications/comms.routes.js'
+import { usersRoutes } from './modules/users/users.routes.js'
 
 const app = Fastify({ logger: true })
 
@@ -34,6 +35,7 @@ await app.register(pipelineRoutes, { prefix: '/api/pipeline' })
 await app.register(analyticsRoutes, { prefix: '/api/analytics' })
 await app.register(tasksRoutes, { prefix: '/api/tasks' })
 await app.register(commsRoutes, { prefix: '/api/communications' })
+await app.register(usersRoutes, { prefix: '/api/users' })
 
 const start = async () => {
   try {

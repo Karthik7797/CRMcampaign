@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { leadsApi } from '../api/client'
 import { Search, Plus, Phone, Mail, MoreVertical, ChevronLeft, ChevronRight, Globe, Megaphone, X, Loader2 } from 'lucide-react'
 import { formatRelativeTime } from '../lib/utils'
+import { usePermissions } from '../hooks/usePermissions'
 import toast from 'react-hot-toast'
 
 const STATUS_OPTIONS = ['ALL', 'NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK']
@@ -53,6 +54,7 @@ export default function Leads() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [newLeadForm, setNewLeadForm] = useState({ name: '', email: '', phone: '', city: '', course: '' })
   const navigate = useNavigate()
+  const { canCreateLeads, canEditLeads } = usePermissions()
 
   const qc = useQueryClient()
 
@@ -94,12 +96,14 @@ export default function Leads() {
           <h2 className="text-xl font-bold text-white font-display">Leads</h2>
           <p className="text-slate-400 text-sm">{data?.total ?? 0} total leads from all campaigns</p>
         </div>
-        <button 
-          className="btn-primary flex items-center gap-1.5"
-          onClick={() => setIsAddModalOpen(true)}
-        >
-          <Plus size={15} /> Add Lead
-        </button>
+        {canCreateLeads && (
+          <button 
+            className="btn-primary flex items-center gap-1.5"
+            onClick={() => setIsAddModalOpen(true)}
+          >
+            <Plus size={15} /> Add Lead
+          </button>
+        )}
       </div>
 
       {/* Filters */}
@@ -191,16 +195,22 @@ export default function Leads() {
                     </div>
                   </td>
                   <td className="px-4 py-3">
-                    <select
-                      className={`text-xs px-2 py-1 rounded-full border cursor-pointer bg-transparent badge-${lead.status.toLowerCase()}`}
-                      value={lead.status}
-                      onClick={(e) => e.stopPropagation()}
-                      onChange={(e) => updateMutation.mutate({ id: lead.id, data: { status: e.target.value } })}
-                    >
-                      {['NEW','CONTACTED','QUALIFIED','NURTURING','CONVERTED','LOST','JUNK'].map(s => (
-                        <option key={s} value={s} className="bg-surface-800 text-slate-200">{s}</option>
-                      ))}
-                    </select>
+                     {canEditLeads ? (
+                      <select
+                        className={`text-xs px-2 py-1 rounded-full border cursor-pointer bg-transparent badge-${lead.status.toLowerCase()}`}
+                        value={lead.status}
+                        onClick={(e) => e.stopPropagation()}
+                        onChange={(e) => updateMutation.mutate({ id: lead.id, data: { status: e.target.value } })}
+                      >
+                        {['NEW','CONTACTED','QUALIFIED','NURTURING','CONVERTED','LOST','JUNK'].map(s => (
+                          <option key={s} value={s} className="bg-surface-800 text-slate-200">{s}</option>
+                        ))}
+                      </select>
+                     ) : (
+                      <span className={`text-xs px-2 py-1 rounded-full border badge-${lead.status.toLowerCase()}`}>
+                        {lead.status}
+                      </span>
+                     )}
                   </td>
                   <td className="px-4 py-3">
                     {lead.assignedTo ? (

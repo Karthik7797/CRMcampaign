@@ -1,9 +1,9 @@
-import { authenticate } from '../../middleware/auth.middleware.js'
+import { authenticate, authorize } from '../../middleware/auth.middleware.js'
 import { db } from '../../config/db.js'
 
 export async function tasksRoutes(app) {
-  // Get all tasks for current user
-  app.get('/', { preHandler: [authenticate] }, async (req, reply) => {
+  // Get tasks — ADMIN/MANAGER see all, COUNSELLOR sees own. MARKETING has no access.
+  app.get('/', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'COUNSELLOR')] }, async (req, reply) => {
     const { completed, priority, page = 1, limit = 50 } = req.query
     const skip = (parseInt(page) - 1) * parseInt(limit)
 
@@ -31,8 +31,8 @@ export async function tasksRoutes(app) {
     return { tasks, total }
   })
 
-  // Create task
-  app.post('/', { preHandler: [authenticate] }, async (req, reply) => {
+  // Create task — ADMIN, MANAGER, COUNSELLOR
+  app.post('/', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'COUNSELLOR')] }, async (req, reply) => {
     const { title, description, dueDate, priority, leadId } = req.body
     const task = await db.task.create({
       data: {
@@ -51,8 +51,8 @@ export async function tasksRoutes(app) {
     return reply.status(201).send(task)
   })
 
-  // Update task
-  app.put('/:id', { preHandler: [authenticate] }, async (req, reply) => {
+  // Update task — ADMIN, MANAGER, COUNSELLOR
+  app.put('/:id', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'COUNSELLOR')] }, async (req, reply) => {
     const data = { ...req.body }
     if (data.dueDate) data.dueDate = new Date(data.dueDate)
 
@@ -67,8 +67,8 @@ export async function tasksRoutes(app) {
     return task
   })
 
-  // Toggle task complete
-  app.patch('/:id/toggle', { preHandler: [authenticate] }, async (req, reply) => {
+  // Toggle task complete — ADMIN, MANAGER, COUNSELLOR
+  app.patch('/:id/toggle', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'COUNSELLOR')] }, async (req, reply) => {
     const existing = await db.task.findUnique({ where: { id: req.params.id } })
     if (!existing) return reply.status(404).send({ error: 'Task not found' })
 
@@ -79,8 +79,8 @@ export async function tasksRoutes(app) {
     return task
   })
 
-  // Delete task
-  app.delete('/:id', { preHandler: [authenticate] }, async (req, reply) => {
+  // Delete task — ADMIN, MANAGER, COUNSELLOR
+  app.delete('/:id', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'COUNSELLOR')] }, async (req, reply) => {
     await db.task.delete({ where: { id: req.params.id } })
     return { success: true }
   })

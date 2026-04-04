@@ -57,3 +57,12 @@ export const commsApi = {
   create: (data: any) => api.post('/communications', data),
   delete: (id: string) => api.delete(`/communications/${id}`),
 }
+
+export const usersApi = {
+  getAll: (params?: Record<string, any>) => api.get('/users', { params }),
+  getOne: (id: string) => api.get(`/users/${id}`),
+  create: (data: any) => api.post('/users', data),
+  update: (id: string, data: any) => api.put(`/users/${id}`, data),
+  resetPassword: (id: string, data: any) => api.post(`/users/${id}/reset-password`, data),
+  deactivate: (id: string) => api.delete(`/users/${id}`),
+}
