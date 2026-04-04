@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 
 const settingsCards = [
   { label: 'User Management', desc: 'Manage team members and roles', icon: Users, link: '/users' },
-  { label: 'Roles & Permissions', desc: 'Configure access control', icon: Shield },
+  { label: 'Roles & Permissions', desc: 'Configure access control', icon: Shield, link: '/roles' },
   { label: 'Email Templates', desc: 'Manage automated emails', icon: Mail },
   { label: 'Lead Sources', desc: 'Configure lead sources', icon: Database },
   { label: 'Pipeline Stages', desc: 'Customize pipeline workflow', icon: GitBranch },

@@ -12,6 +12,7 @@ import Analytics from './pages/Analytics'
 import Settings from './pages/Settings'
 import LeadDetails from './pages/LeadDetails'
 import UserManagement from './pages/UserManagement'
+import RolesPermissions from './pages/RolesPermissions'
 import Unauthorized from './pages/Unauthorized'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -63,6 +64,9 @@ export default function App() {
           } />
           <Route path="users" element={
             <RoleRoute permission="nav:users"><UserManagement /></RoleRoute>
+          } />
+          <Route path="roles" element={
+            <RoleRoute permission="nav:settings"><RolesPermissions /></RoleRoute>
           } />
 
           <Route path="unauthorized" element={<Unauthorized />} />
