@@ -26,8 +26,12 @@ export default function Login() {
       setUser(data.user)
       navigate('/dashboard')
       toast.success(`Welcome back, ${data.user.name}!`)
-    } catch {
-      toast.error('Invalid email or password')
+    } catch (error: any) {
+      if (error.response?.data?.error) {
+        toast.error(error.response.data.error)
+      } else {
+        toast.error('Unable to connect to the server. Please try again.')
+      }
     } finally {
       setLoading(false)
     }

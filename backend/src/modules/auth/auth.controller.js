@@ -4,10 +4,10 @@ import { db } from '../../config/db.js'
 export async function login(request, reply) {
   const { email, password } = request.body
   const user = await findUserByEmail(email)
-  if (!user) return reply.status(401).send({ error: 'Invalid credentials' })
+  if (!user) return reply.status(404).send({ error: 'User is not registered. Please contact your Super Admin.' })
 
   const valid = await validatePassword(password, user.password)
-  if (!valid) return reply.status(401).send({ error: 'Invalid credentials' })
+  if (!valid) return reply.status(401).send({ error: 'Incorrect password. Please try again.' })
 
   const token = request.server.jwt.sign(
     { id: user.id, email: user.email, role: user.role },
