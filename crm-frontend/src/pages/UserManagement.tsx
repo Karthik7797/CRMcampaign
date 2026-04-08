@@ -19,7 +19,7 @@ interface User {
   _count?: { leads: number; tasks: number }
 }
 
-const ROLES: Role[] = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER']
+const ROLES: Role[] = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR']
 
 export default function UserManagement() {
   const [users, setUsers] = useState<User[]>([])

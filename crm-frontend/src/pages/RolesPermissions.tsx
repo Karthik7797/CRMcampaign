@@ -7,8 +7,8 @@ const modules = [
     name: 'Leads & Pipeline',
     icon: Database,
     permissions: [
-      { name: 'View Own Leads', roles: ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER'] },
-      { name: 'View All Leads', roles: ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'] },
+      { name: 'View Own Leads', roles: ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'] },
+      { name: 'View All Leads', roles: ['ADMIN', 'MANAGER', 'MARKETING'] },
       { name: 'Create Leads', roles: ['ADMIN', 'MANAGER', 'COUNSELLOR'] },
       { name: 'Edit All Leads', roles: ['ADMIN', 'MANAGER'] },
       { name: 'Delete Leads', roles: ['ADMIN'] },
@@ -36,14 +36,14 @@ const modules = [
     name: 'Administration',
     icon: Users,
     permissions: [
-      { name: 'View Analytics', roles: ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'] },
+      { name: 'View Analytics', roles: ['ADMIN', 'MANAGER', 'MARKETING'] },
       { name: 'User Management', roles: ['ADMIN'] },
       { name: 'System Settings', roles: ['ADMIN'] },
     ]
   }
 ]
 
-const ROLES = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER'] as const
+const ROLES = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'] as const
 
 export default function RolesPermissions() {
   return (
@@ -58,7 +58,7 @@ export default function RolesPermissions() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
         {ROLES.map(role => {
           const colors = getRoleColor(role)
           return (
@@ -72,7 +72,6 @@ export default function RolesPermissions() {
                 {role === 'MANAGER' && 'Team & daily operations overview'}
                 {role === 'MARKETING' && 'Campaigns & analytics tracking'}
                 {role === 'COUNSELLOR' && 'Individual lead & task management'}
-                {role === 'INFLUENCER' && 'Readonly dashboard and leads access'}
               </p>
             </div>
           )

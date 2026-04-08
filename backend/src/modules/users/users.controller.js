@@ -69,7 +69,7 @@ export async function createUser(request, reply) {
     return reply.status(400).send({ error: 'Name, email, and password are required' })
   }
 
-  const validRoles = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER']
+  const validRoles = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR']
   if (role && !validRoles.includes(role)) {
     return reply.status(400).send({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` })
   }
@@ -112,7 +112,7 @@ export async function updateUser(request, reply) {
   if (name !== undefined) data.name = name
   if (email !== undefined) data.email = email
   if (role !== undefined) {
-    const validRoles = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER']
+    const validRoles = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR']
     if (!validRoles.includes(role)) {
       return reply.status(400).send({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` })
     }

@@ -28,7 +28,6 @@ enum Role {
   MANAGER
   COUNSELLOR
   MARKETING
-  INFLUENCER
 }
 
 model Lead {
