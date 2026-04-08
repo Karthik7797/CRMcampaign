@@ -15,8 +15,13 @@ const app = Fastify({ logger: true })
 
 // Plugins
 await app.register(cors, {
-  origin: true, // 'true' allows ANY external URL (like your external HTML pages) to submit safely
+  origin: (origin, cb) => {
+    // Allow all origins to bypass restrictive preflights on Render
+    cb(null, true)
+  },
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Origin', 'X-Requested-With', 'Accept', 'Content-Type', 'Authorization'],
 })
 
 await app.register(formbody) // Allows standard <form method="POST"> parsing
