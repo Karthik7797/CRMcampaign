@@ -47,10 +47,18 @@ export default function App() {
         <Route path="/" element={<ProtectedRoute><Layout /></ProtectedRoute>}>
           <Route index element={<Navigate to="/dashboard" replace />} />
           <Route path="dashboard" element={<Dashboard />} />
-          <Route path="leads" element={<Leads />} />
-          <Route path="leads/:id" element={<LeadDetails />} />
-          <Route path="pipeline" element={<Pipeline />} />
-          <Route path="communications" element={<Communications />} />
+          <Route path="leads" element={
+            <RoleRoute permission="nav:leads"><Leads /></RoleRoute>
+          } />
+          <Route path="leads/:id" element={
+            <RoleRoute permission="nav:leads"><LeadDetails /></RoleRoute>
+          } />
+          <Route path="pipeline" element={
+            <RoleRoute permission="nav:pipeline"><Pipeline /></RoleRoute>
+          } />
+          <Route path="communications" element={
+            <RoleRoute permission="nav:communications"><Communications /></RoleRoute>
+          } />
 
           {/* Role-protected routes */}
           <Route path="tasks" element={

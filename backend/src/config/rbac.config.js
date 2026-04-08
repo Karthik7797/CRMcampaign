@@ -11,6 +11,7 @@ export const ROLE_LEVEL = {
   MANAGER: 75,     // Admin — team management
   MARKETING: 50,   // Marketing — campaign analytics, read-only leads
   COUNSELLOR: 25,  // Counsellor — own leads and tasks only
+  INFLUENCER: 10,  // Influencer — readonly dashboard and leads
 }
 
 // Display-friendly names for each role
@@ -19,13 +20,14 @@ export const ROLE_DISPLAY = {
   MANAGER: 'Admin',
   MARKETING: 'Marketing',
   COUNSELLOR: 'Counsellor',
+  INFLUENCER: 'Influencer',
 }
 
 // Granular permission definitions
 export const PERMISSIONS = {
   // Leads
-  'leads:view_all':     ['ADMIN', 'MANAGER', 'MARKETING'],
-  'leads:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'leads:view_all':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'],
+  'leads:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER'],
   'leads:create':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
   'leads:edit_all':     ['ADMIN', 'MANAGER'],
   'leads:edit_own':     ['ADMIN', 'MANAGER', 'COUNSELLOR'],
@@ -50,7 +52,7 @@ export const PERMISSIONS = {
   'comms:delete':       ['ADMIN', 'MANAGER'],
 
   // Analytics
-  'analytics:view':     ['ADMIN', 'MANAGER', 'MARKETING'],
+  'analytics:view':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'],
 
   // Settings
   'settings:view':      ['ADMIN'],

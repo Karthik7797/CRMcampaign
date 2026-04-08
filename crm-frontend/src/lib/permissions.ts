@@ -3,7 +3,7 @@
  * Mirrors backend rbac.config.js for consistent access control
  */
 
-export type Role = 'ADMIN' | 'MANAGER' | 'MARKETING' | 'COUNSELLOR'
+export type Role = 'ADMIN' | 'MANAGER' | 'MARKETING' | 'COUNSELLOR' | 'INFLUENCER'
 
 // ── Role display names ──────────────────────────────────────────────
 
@@ -12,6 +12,7 @@ export const ROLE_DISPLAY: Record<Role, string> = {
   MANAGER: 'Admin',
   MARKETING: 'Marketing',
   COUNSELLOR: 'Counsellor',
+  INFLUENCER: 'Influencer',
 }
 
 export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: string }> = {
@@ -35,14 +36,19 @@ export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: strin
     text: 'text-purple-400',
     border: 'border-purple-500/30',
   },
+  INFLUENCER: {
+    bg: 'bg-gradient-to-r from-pink-500/20 to-rose-500/20',
+    text: 'text-pink-400',
+    border: 'border-pink-500/30',
+  },
 }
 
 // ── Permission definitions ──────────────────────────────────────────
 
 export const PERMISSIONS: Record<string, Role[]> = {
   // Navigation visibility
-  'nav:dashboard':       ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'nav:leads':           ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'nav:dashboard':       ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER'],
+  'nav:leads':           ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR', 'INFLUENCER'],
   'nav:pipeline':        ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
   'nav:communications':  ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
   'nav:tasks':           ['ADMIN', 'MANAGER', 'COUNSELLOR'],
@@ -55,7 +61,7 @@ export const PERMISSIONS: Record<string, Role[]> = {
   'leads:edit':          ['ADMIN', 'MANAGER', 'COUNSELLOR'],
   'leads:delete':        ['ADMIN'],
   'leads:assign':        ['ADMIN', 'MANAGER'],
-  'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING'],
+  'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'],
 
   // Pipeline actions
   'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
