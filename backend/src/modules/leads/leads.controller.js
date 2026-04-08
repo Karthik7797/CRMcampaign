@@ -45,36 +45,44 @@ export async function publicCreateLead(request, reply) {
 }
 
 export async function getLeads(request, reply) {
-  const { status, source, assignedTo, search, page = 1, limit = 20 } = request.query
-  const skip = (parseInt(page) - 1) * parseInt(limit)
+  try {
+    const { status, source, assignedTo, search, page = 1, limit = 20 } = request.query
+    const skip = (parseInt(page) - 1) * parseInt(limit)
 
-  const where = {}
-  if (status) where.status = status
-  if (source) where.source = source
-  if (assignedTo) where.assignedToId = assignedTo
-  if (search) {
-    where.OR = [
-      { name: { contains: search, mode: 'insensitive' } },
-      { email: { contains: search, mode: 'insensitive' } },
-      { phone: { contains: search, mode: 'insensitive' } },
-    ]
+    const where = {}
+    if (status) where.status = status
+    if (source) where.source = source
+    if (assignedTo) where.assignedToId = assignedTo
+    if (search) {
+      where.OR = [
+        { name: { contains: search, mode: 'insensitive' } },
+        { email: { contains: search, mode: 'insensitive' } },
+        { phone: { contains: search, mode: 'insensitive' } },
+      ]
+    }
+
+    // COUNSELLOR can only see their own assigned leads
+    if (request.user.role === 'COUNSELLOR') {
+      where.assignedToId = request.user.id
+    }
+
+    const [leads, total] = await Promise.all([
+      db.lead.findMany({
+        where, skip, take: parseInt(limit),
+        include: { assignedTo: { select: { id: true, name: true, avatar: true } } },
+        orderBy: { createdAt: 'desc' }
+      }),
+      db.lead.count({ where }),
+    ])
+
+    return { leads, total, page: parseInt(page), totalPages: Math.ceil(total / parseInt(limit)) }
+  } catch (error) {
+    request.log.error('Error fetching leads:', error)
+    return reply.status(500).send({ 
+      error: 'Failed to fetch leads',
+      message: error.message 
+    })
   }
-
-  // COUNSELLOR can only see their own assigned leads
-  if (request.user.role === 'COUNSELLOR') {
-    where.assignedToId = request.user.id
-  }
-
-  const [leads, total] = await Promise.all([
-    db.lead.findMany({
-      where, skip, take: parseInt(limit),
-      include: { assignedTo: { select: { id: true, name: true, avatar: true } } },
-      orderBy: { createdAt: 'desc' }
-    }),
-    db.lead.count({ where }),
-  ])
-
-  return { leads, total, page: parseInt(page), totalPages: Math.ceil(total / parseInt(limit)) }
 }
 
 export async function getLead(request, reply) {
@@ -98,10 +106,18 @@ export async function getLead(request, reply) {
 }
 
 export async function createLead(request, reply) {
-  const lead = await db.lead.create({
-    data: { ...request.body, assignedToId: request.user.id }
-  })
-  return reply.status(201).send(lead)
+  try {
+    const lead = await db.lead.create({
+      data: { ...request.body, assignedToId: request.user.id }
+    })
+    return reply.status(201).send(lead)
+  } catch (error) {
+    request.log.error('Error creating lead:', error)
+    return reply.status(500).send({ 
+      error: 'Failed to create lead',
+      message: error.message 
+    })
+  }
 }
 
 export async function updateLead(request, reply) {

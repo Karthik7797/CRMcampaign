@@ -22,7 +22,7 @@ export default function Pipeline() {
 
   const { data, isLoading } = useQuery({
     queryKey: ['pipeline'],
-    queryFn: () => leadsApi.getAll({ limit: 500 }).then(r => r.data),
+    queryFn: () => leadsApi.getAll({ limit: 200 }).then(r => r.data),
   })
 
   const moveStageMutation = useMutation({
