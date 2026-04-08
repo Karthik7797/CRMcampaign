@@ -32,6 +32,7 @@ export const leadsApi = {
   update: (id: string, data: any) => api.put(`/leads/${id}`, data),
   delete: (id: string) => api.delete(`/leads/${id}`),
   assign: (id: string, userId: string) => api.post(`/leads/${id}/assign`, { userId }),
+  moveStage: (id: string, stage: string) => api.put(`/pipeline/${id}/stage`, { stage }),
 }
 
 export const analyticsApi = {

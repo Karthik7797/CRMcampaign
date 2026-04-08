@@ -20,8 +20,8 @@ export async function pipelineRoutes(app) {
     })
 
     const stages = [
-      'ENQUIRY', 'CONTACTED', 'APPLICATION_SENT', 'APPLICATION_RECEIVED',
-      'UNDER_REVIEW', 'SHORTLISTED', 'ENROLLED', 'DROPPED'
+      'ENQUIRY', 'CONTACTED', 'DEMO', 'UNIVERSITY_SELECTION', 
+      'OFFER_LETTER', 'VISA', 'ACCOMMODATION', 'PART_TIME_JOB', 'FULL_TIME'
     ]
 
     const pipeline = stages.map(stage => ({

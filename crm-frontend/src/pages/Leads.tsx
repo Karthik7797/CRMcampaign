@@ -54,7 +54,7 @@ export default function Leads() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [newLeadForm, setNewLeadForm] = useState({ name: '', email: '', phone: '', city: '', course: '' })
   const navigate = useNavigate()
-  const { canCreateLeads, canEditLeads } = usePermissions()
+  const { canCreateLeads, canEditLeads, canDeleteLeads } = usePermissions()
 
   const qc = useQueryClient()
 
@@ -76,6 +76,21 @@ export default function Leads() {
       toast.success('Lead updated')
     },
   })
+
+  const deleteMutation = useMutation({
+    mutationFn: (id: string) => leadsApi.delete(id),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['leads'] })
+      toast.success('Lead deleted successfully')
+    },
+    onError: () => toast.error('Failed to delete lead')
+  })
+
+  const handleDeleteLead = (leadId: string, leadName: string) => {
+    if (window.confirm(`Are you sure you want to delete "${leadName}"? This action cannot be undone.`)) {
+      deleteMutation.mutate(leadId)
+    }
+  }
 
   const createMutation = useMutation({
     mutationFn: (data: any) => leadsApi.create({ ...data, source: 'SELF_LOCAL', status: 'NEW' }),
@@ -229,6 +244,18 @@ export default function Leads() {
                     <button className="text-slate-500 hover:text-slate-300 transition-colors" onClick={(e) => e.stopPropagation()}>
                       <MoreVertical size={16} />
                     </button>
+                    {canDeleteLeads && (
+                      <button 
+                        className="text-red-400 hover:text-red-300 transition-colors ml-2"
+                        onClick={(e) => {
+                          e.stopPropagation()
+                          handleDeleteLead(lead.id, lead.name)
+                        }}
+                        title="Delete lead"
+                      >
+                        <X size={16} />
+                      </button>
+                    )}
                   </td>
                 </tr>
               ))}

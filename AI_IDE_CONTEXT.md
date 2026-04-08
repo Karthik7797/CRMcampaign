@@ -1,0 +1,30 @@
+# AI IDE System Instructions & Project Context
+
+## 🚨 CRITICAL DEPLOYMENT CONTEXT 🚨
+
+**EVERY TIME you open this project to fix issues or write code, you MUST remember the following deployment architecture.**
+
+This is a **DEPLOYED APPLICATION**, not just a local starter project.
+
+### 1. Environments & Hosting
+- **Frontend (CRM Dashboard & Vite Admin)**: Deployed to **VERCEL**
+- **Landing Pages (Next.js)**: Deployed to **VERCEL**
+- **Backend API (Node.js/Fastify)**: Deployed to **RENDER**
+
+### 2. Environment Variables & Network
+If the user complains about "env and server issues", "CORS", or "network errors", check these immediate culprits:
+- **Local vs Prod Cross-Talk**: Is the local frontend accidentally hitting the production Render API? 
+- **Missing Local Vars**: Does the local `.env` file have `PORT=4005` or whatever the backend uses?
+- **Missing Prod Vars**: Are Vercel and Render configured correctly with their respective endpoints? (Frontend needs `VITE_API_URL` pointing to the Render URL; Backend needs `FRONTEND_URL` pointing to the Vercel URL for CORS).
+- **CORS Configuration**: Fastify CORS in `backend/src/server.js` strictly relies on recognizing the Vercel deployed URL.
+
+### 3. Database (Prisma)
+- We use Prisma. When troubleshooting database issues, pay attention to the `DATABASE_URL`. Is it pointing to a local PostgreSQL or the managed production database? 
+- Schema changes meant for production require applying those changes to the production DB.
+
+### 4. Rule for AI Code Generation
+- ALWAYS use environment variables (`import.meta.env.*` for Vite, `process.env.*` for Node/Next) when generating API urls. DO NOT hardcode `http://localhost:4005` or the Render URL directly in the codebase.
+- Whenever proposing a fix for a server, routing, or fetch issue, **explicitly state** how it affects the Vercel/Render deployment.
+
+---
+**As an AI reading this file, you must treat this as a strict set of constraints for all your contextual answers.**
