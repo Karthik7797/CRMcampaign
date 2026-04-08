@@ -33,7 +33,21 @@ await app.register(jwt, {
 })
 
 // Health check
-app.get('/health', async () => ({ status: 'ok', timestamp: new Date() }))
+app.get('/health', async (req, reply) => {
+  try {
+    await db.$queryRaw`SELECT 1`
+    req.log.info('Database connection successful')
+    return { status: 'ok', timestamp: new Date(), database: 'connected' }
+  } catch (error) {
+    req.log.error('Database connection failed:', error)
+    return reply.status(500).send({ 
+      status: 'error', 
+      timestamp: new Date(), 
+      database: 'disconnected', 
+      error: error.message 
+    })
+  }
+})
 
 // Routes
 await app.register(authRoutes, { prefix: '/api/auth' })
