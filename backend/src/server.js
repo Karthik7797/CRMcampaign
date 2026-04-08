@@ -35,11 +35,6 @@ await app.register(jwt, {
 // Health check
 app.get('/health', async () => ({ status: 'ok', timestamp: new Date() }))
 
-// Handle OPTIONS preflight requests explicitly
-app.options('*', async (req, reply) => {
-  reply.send()
-})
-
 // Routes
 await app.register(authRoutes, { prefix: '/api/auth' })
 await app.register(leadsRoutes, { prefix: '/api/leads' })
