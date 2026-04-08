@@ -15,8 +15,15 @@ const app = Fastify({ logger: true })
 
 // Plugins
 await app.register(cors, {
-  origin: true, // 'true' allows ANY external URL (like your external HTML pages) to submit safely
+  origin: [
+    'https://cr-mcampaign-3irx.vercel.app',
+    'http://localhost:5173',
+    'http://localhost:4000',
+    process.env.FRONTEND_URL,
+  ].filter(Boolean),
   credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
 })
 
 await app.register(formbody) // Allows standard <form method="POST"> parsing
@@ -27,6 +34,11 @@ await app.register(jwt, {
 
 // Health check
 app.get('/health', async () => ({ status: 'ok', timestamp: new Date() }))
+
+// Handle OPTIONS preflight requests explicitly
+app.options('*', async (req, reply) => {
+  reply.send()
+})
 
 // Routes
 await app.register(authRoutes, { prefix: '/api/auth' })
