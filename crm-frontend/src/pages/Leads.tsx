@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { leadsApi } from '../api/client'
+import { leadsApi, usersApi } from '../api/client'
 import { Search, Plus, Phone, Mail, MoreVertical, ChevronLeft, ChevronRight, Globe, Megaphone, X, Loader2 } from 'lucide-react'
 import { formatRelativeTime } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
@@ -73,13 +73,9 @@ export default function Leads() {
   })
 
   // Fetch users for assignment dropdown
-  const { data: usersData } = useQuery({
+  const { data: usersData, isLoading: isLoadingUsers } = useQuery({
     queryKey: ['users-for-assignment'],
-    queryFn: () => leadsApi.getAll({ limit: 100 }).then(() => 
-      fetch('/api/users', {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` }
-      }).then(r => r.json())
-    ),
+    queryFn: () => usersApi.getAll({ limit: 100 }).then(r => r.data),
     enabled: canAssignLeads && isAssignModalOpen,
   })
 
@@ -421,9 +417,12 @@ export default function Leads() {
                   className="input w-full"
                   defaultValue=""
                   id="user-select"
+                  aria-label="Select user to assign lead"
                 >
                   <option value="" disabled>Select a user...</option>
-                  {usersData?.users?.filter((u: any) => u.isActive).map((user: any) => (
+                  {isLoadingUsers ? (
+                    <option value="" disabled>Loading users...</option>
+                  ) : usersData?.users?.filter((u: any) => u.isActive).map((user: any) => (
                     <option key={user.id} value={user.id} className="bg-surface-800 text-slate-200">
                       {user.name} ({user.role})
                     </option>

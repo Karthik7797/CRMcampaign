@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { leadsApi } from '../api/client'
-import { Users } from 'lucide-react'
+import { Users, X } from 'lucide-react'
 
 const STAGES = [
   { key: 'ENQUIRY', label: 'Enquiry', color: 'border-blue-500', bg: 'bg-blue-500/10' },
@@ -19,6 +19,7 @@ const STAGES = [
 export default function Pipeline() {
   const qc = useQueryClient()
   const [viewByAssignee, setViewByAssignee] = useState(false)
+  const [selectedUser, setSelectedUser] = useState<any>(null)
 
   const { data, isLoading } = useQuery({
     queryKey: ['pipeline'],
@@ -74,25 +75,36 @@ export default function Pipeline() {
       {/* View by Assignee Section */}
       {viewByAssignee && (
         <div className="space-y-6">
-          {counsellors.map((counsellor: any) => (
-            <div key={counsellor.id} className="card p-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
-                  {counsellor.name[0]}
+          {/* Show selected user's pipeline or all users */}
+          {selectedUser ? (
+            <div key={selectedUser.id} className="card p-4">
+              {/* User Header */}
+              <div className="flex items-center gap-2 mb-4 pb-3 border-b border-slate-700">
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-sm font-bold text-white">
+                  {selectedUser.name[0]}
                 </div>
-                <div>
-                  <h3 className="text-sm font-semibold text-white">{counsellor.name}</h3>
-                  <p className="text-xs text-slate-400">{counsellor.role}</p>
+                <div className="flex-1">
+                  <h3 className="text-base font-semibold text-white">{selectedUser.name}</h3>
+                  <p className="text-xs text-slate-400">{selectedUser.role} • {selectedUser.email}</p>
                 </div>
-                <span className="ml-auto text-xs text-slate-400">
-                  {data?.leads?.filter((l: any) => l.assignedTo?.id === counsellor.id).length} leads
-                </span>
+                <div className="flex items-center gap-3">
+                  <span className="text-xs text-slate-400">
+                    {data?.leads?.filter((l: any) => l.assignedTo?.id === selectedUser.id).length} leads
+                  </span>
+                  <button
+                    onClick={() => setSelectedUser(null)}
+                    className="p-1.5 hover:bg-slate-700 rounded-lg transition-colors"
+                    title="Close user view"
+                  >
+                    <X size={16} className="text-slate-400" />
+                  </button>
+                </div>
               </div>
               <DragDropContext onDragEnd={onDragEnd}>
                 <div className="flex gap-3 overflow-x-auto pb-2">
                   {STAGES.map(({ key, label, color, bg }) => {
                     const leads = data?.leads?.filter(
-                      (l: any) => l.pipelineStage === key && l.assignedTo?.id === counsellor.id
+                      (l: any) => l.pipelineStage === key && l.assignedTo?.id === selectedUser.id
                     ) ?? []
                     
                     return (
@@ -147,7 +159,90 @@ export default function Pipeline() {
                 </div>
               </DragDropContext>
             </div>
-          ))}
+          ) : (
+            // Show all users
+            counsellors.map((counsellor: any) => (
+              <div key={counsellor.id} className="card p-4">
+                <div className="flex items-center gap-2 mb-4">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
+                    {counsellor.name[0]}
+                  </div>
+                  <div className="flex-1">
+                    <h3 className="text-sm font-semibold text-white">{counsellor.name}</h3>
+                    <p className="text-xs text-slate-400">{counsellor.role}</p>
+                  </div>
+                  <span className="text-xs text-slate-400 mr-2">
+                    {data?.leads?.filter((l: any) => l.assignedTo?.id === counsellor.id).length} leads
+                  </span>
+                  <button
+                    onClick={() => setSelectedUser(counsellor)}
+                    className="px-2 py-1 text-xs bg-brand-500/20 text-brand-400 rounded hover:bg-brand-500/30 transition-colors"
+                    title="View only this user's pipeline"
+                  >
+                    View Pipeline
+                  </button>
+                </div>
+                <DragDropContext onDragEnd={onDragEnd}>
+                  <div className="flex gap-3 overflow-x-auto pb-2">
+                    {STAGES.map(({ key, label, color, bg }) => {
+                      const leads = data?.leads?.filter(
+                        (l: any) => l.pipelineStage === key && l.assignedTo?.id === counsellor.id
+                      ) ?? []
+                      
+                      return (
+                        <div key={key} className="flex-shrink-0 w-60">
+                          <div className={`${bg} border ${color} border-t-2 rounded-lg p-2`}>
+                            <div className="flex items-center justify-between mb-2 px-1">
+                              <h4 className="text-xs font-semibold text-white">{label}</h4>
+                              <span className="text-[10px] bg-white/10 text-white/70 px-1.5 py-0.5 rounded-full">
+                                {leads.length}
+                              </span>
+                            </div>
+                            <Droppable droppableId={key}>
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.droppableProps}
+                                  className="min-h-[100px] space-y-2"
+                                >
+                                  {leads.map((lead: any, index: number) => (
+                                    <Draggable key={lead.id} draggableId={lead.id} index={index}>
+                                      {(provided) => (
+                                        <div
+                                          ref={provided.innerRef}
+                                          {...provided.draggableProps}
+                                          {...provided.dragHandleProps}
+                                          className="bg-surface-900 border border-surface-600 rounded p-2 cursor-grab active:cursor-grabbing hover:border-surface-500 transition-colors"
+                                        >
+                                          <div className="flex items-center gap-2">
+                                            <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-[10px] font-bold text-white">
+                                              {lead.name[0]}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                              <p className="text-xs font-medium text-white truncate">{lead.name}</p>
+                                              <p className="text-[10px] text-slate-400 truncate">{lead.course || 'No course'}</p>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      )}
+                                    </Draggable>
+                                  ))}
+                                  {provided.placeholder}
+                                  {leads.length === 0 && (
+                                    <div className="text-center py-4 text-slate-600 text-xs">No leads</div>
+                                  )}
+                                </div>
+                              )}
+                            </Droppable>
+                          </div>
+                        </div>
+                      )
+                    })}
+                  </div>
+                </DragDropContext>
+              </div>
+            ))
+          )}
           {counsellors.length === 0 && (
             <div className="text-center py-8 text-slate-500 text-sm">No assigned leads found</div>
           )}
