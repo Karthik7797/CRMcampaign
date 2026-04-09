@@ -80,28 +80,48 @@ export async function getLeads(request, reply) {
 
     const [leads, total] = await Promise.all([
       db.lead.findMany({
-        where, skip, take: parseInt(limit),
-        include: { assignedTo: { select: { id: true, name: true, avatar: true } } },
+        where, 
+        skip, 
+        take: parseInt(limit),
+        include: { 
+          assignedTo: { 
+            select: { id: true, name: true, avatar: true }
+          } 
+        },
         orderBy: { createdAt: 'desc' }
       }),
       db.lead.count({ where }),
     ])
 
-    return { leads, total, page: parseInt(page), totalPages: Math.ceil(total / parseInt(limit)) }
+    // Transform leads to handle null assignedTo
+    const transformedLeads = leads.map(lead => ({
+      ...lead,
+      assignedTo: lead.assignedTo || null
+    }))
+
+    return { leads: transformedLeads, total, page: parseInt(page), totalPages: Math.ceil(total / parseInt(limit)) }
   } catch (error) {
+    // Detailed error logging
+    console.error('=== LEADS ERROR ===')
+    console.error('Error message:', error.message)
+    console.error('Error code:', error.code)
+    console.error('Error meta:', error.meta)
+    console.error('User role:', request.user?.role)
+    console.error('Stack:', error.stack)
+    console.error('===================')
+    
     request.log.error('Error fetching leads:', {
       error: error.message,
-      stack: error.stack,
       code: error.code,
       meta: error.meta,
       userRole: request.user?.role
     })
+    
     return reply.status(500).send({ 
       error: 'Failed to fetch leads',
       message: error.message,
       code: error.code,
-      userRole: request.user?.role,
-      details: process.env.NODE_ENV === 'development' ? error.stack : 'Check server logs'
+      userRole: request.user?.role
     })
   }
 }
