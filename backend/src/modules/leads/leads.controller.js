@@ -46,6 +46,13 @@ export async function publicCreateLead(request, reply) {
 
 export async function getLeads(request, reply) {
   try {
+    // Log user info for debugging
+    request.log.info('getLeads called', {
+      userId: request.user?.id,
+      userRole: request.user?.role,
+      userEmail: request.user?.email
+    })
+    
     // Validate database connection first
     await db.$connect()
     
@@ -69,6 +76,8 @@ export async function getLeads(request, reply) {
       where.assignedToId = request.user.id
     }
 
+    request.log.info('Executing query with filters', { where, skip, limit: parseInt(limit) })
+
     const [leads, total] = await Promise.all([
       db.lead.findMany({
         where, skip, take: parseInt(limit),
@@ -84,13 +93,15 @@ export async function getLeads(request, reply) {
       error: error.message,
       stack: error.stack,
       code: error.code,
-      meta: error.meta
+      meta: error.meta,
+      userRole: request.user?.role
     })
     return reply.status(500).send({ 
       error: 'Failed to fetch leads',
       message: error.message,
       code: error.code,
-      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+      userRole: request.user?.role,
+      details: process.env.NODE_ENV === 'development' ? error.stack : 'Check server logs'
     })
   }
 }
