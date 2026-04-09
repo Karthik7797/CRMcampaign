@@ -100,6 +100,8 @@ enum PipelineStage {
   ACCOMMODATION
   PART_TIME_JOB
   FULL_TIME
+  SHORTLISTED
+  APPLICATION_SENT
 }
 
 model Activity {

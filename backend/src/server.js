@@ -76,30 +76,15 @@ app.get('/health/db', async (req, reply) => {
   }
 })
 
-// Diagnostic endpoint - check user role validity
-app.get('/debug/roles', async (req, reply) => {
+// Simple test endpoint - no auth required
+app.get('/test', async (req, reply) => {
   try {
-    // Test if we can query users with different roles
-    const users = await db.user.findMany({
-      select: { id: true, email: true, role: true },
-      take: 5
-    })
-    
-    // Get Prisma's known enum values
-    const prismaClient = require('@prisma/client')
-    const roleEnum = prismaClient.Role || 'Role enum not found'
-    
-    return {
-      status: 'ok',
-      users: users,
-      roleEnum: roleEnum,
-      timestamp: new Date().toISOString()
-    }
+    const count = await db.lead.count()
+    return { status: 'ok', leadCount: count, timestamp: new Date().toISOString() }
   } catch (error) {
     return reply.status(500).send({
       status: 'error',
       message: error.message,
-      stack: error.stack,
       code: error.code
     })
   }
