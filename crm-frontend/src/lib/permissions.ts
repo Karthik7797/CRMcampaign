@@ -41,8 +41,9 @@ export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: strin
     text: 'text-purple-400',
     border: 'border-purple-500/30',
   },
-}
-INFLUENCER', 'COUNSELLOR'],
+export const PERMISSIONS: Record<string, Role[]> = {
+  // Navigation visibility
+  'nav:dashboard':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
   'nav:leads':           ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
   'nav:pipeline':        ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
   'nav:communications':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
@@ -66,12 +67,7 @@ INFLUENCER', 'COUNSELLOR'],
   'tasks:delete':        ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
 
   // Communication actions
-  'comms:create':        ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER
-  'tasks:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
-  'tasks:delete':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
-
-  // Communication actions
-  'comms:create':        ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'comms:create':        ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
   'comms:delete':        ['ADMIN', 'MANAGER'],
 
   // Settings & user management
