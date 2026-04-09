@@ -46,6 +46,9 @@ export async function publicCreateLead(request, reply) {
 
 export async function getLeads(request, reply) {
   try {
+    // Validate database connection first
+    await db.$connect()
+    
     const { status, source, assignedTo, search, page = 1, limit = 20 } = request.query
     const skip = (parseInt(page) - 1) * parseInt(limit)
 
@@ -77,10 +80,17 @@ export async function getLeads(request, reply) {
 
     return { leads, total, page: parseInt(page), totalPages: Math.ceil(total / parseInt(limit)) }
   } catch (error) {
-    request.log.error('Error fetching leads:', error)
+    request.log.error('Error fetching leads:', {
+      error: error.message,
+      stack: error.stack,
+      code: error.code,
+      meta: error.meta
+    })
     return reply.status(500).send({ 
       error: 'Failed to fetch leads',
-      message: error.message 
+      message: error.message,
+      code: error.code,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
     })
   }
 }
