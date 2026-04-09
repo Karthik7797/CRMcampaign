@@ -41,6 +41,8 @@ export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: strin
     text: 'text-purple-400',
     border: 'border-purple-500/30',
   },
+}
+
 export const PERMISSIONS: Record<string, Role[]> = {
   // Navigation visibility
   'nav:dashboard':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
