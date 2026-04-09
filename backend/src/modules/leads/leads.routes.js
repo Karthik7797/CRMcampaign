@@ -1,7 +1,8 @@
 import { authenticate, authorize, requirePermission } from '../../middleware/auth.middleware.js'
 import {
   createLead, getLeads, getLead,
-  updateLead, deleteLead, assignLead, publicCreateLead
+  updateLead, deleteLead, assignLead, publicCreateLead,
+  addLeadNote, getLeadNotes
 } from './leads.controller.js'
 
 export async function leadsRoutes(app) {
@@ -23,4 +24,8 @@ export async function leadsRoutes(app) {
 
   // Assign: ADMIN and MANAGER only
   app.post('/:id/assign', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER')] }, assignLead)
+
+  // Lead Notes: All authenticated users can add/view notes
+  app.get('/:id/notes', { preHandler: [authenticate] }, getLeadNotes)
+  app.post('/:id/notes', { preHandler: [authenticate] }, addLeadNote)
 }

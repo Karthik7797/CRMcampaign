@@ -33,6 +33,8 @@ export const leadsApi = {
   delete: (id: string) => api.delete(`/leads/${id}`),
   assign: (id: string, userId: string) => api.post(`/leads/${id}/assign`, { userId }),
   moveStage: (id: string, stage: string) => api.put(`/pipeline/${id}/stage`, { stage }),
+  getNotes: (id: string) => api.get(`/leads/${id}/notes`),
+  addNote: (id: string, content: string) => api.post(`/leads/${id}/notes`, { content }),
 }
 
 export const analyticsApi = {

@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { leadsApi } from '../api/client'
-import { ArrowLeft, User, Mail, Phone, MapPin, Save, Edit2, Calendar, FileText, Tag, Loader2 } from 'lucide-react'
+import { ArrowLeft, User, Mail, Phone, MapPin, Save, Edit2, Calendar, FileText, Tag, Loader2, Send, MessageSquare } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { formatRelativeTime } from '../lib/utils'
+import { formatRelativeTime, formatDateTime } from '../lib/utils'
 
 export default function LeadDetails() {
   const { id } = useParams<{ id: string }>()
@@ -12,6 +12,8 @@ export default function LeadDetails() {
   const qc = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<any>({})
+  const [newNote, setNewNote] = useState('')
+  const notesEndRef = useRef<HTMLDivElement>(null)
 
   const { data: lead, isLoading, error } = useQuery({
     queryKey: ['lead', id],
@@ -28,7 +30,6 @@ export default function LeadDetails() {
         city: lead.city || '',
         course: lead.course || '',
         qualification: lead.qualification || '',
-        notes: lead.notes || '',
         status: lead.status || 'NEW',
         priority: lead.priority || 'MEDIUM',
       })
@@ -48,6 +49,18 @@ export default function LeadDetails() {
     }
   })
 
+  const addNoteMutation = useMutation({
+    mutationFn: (content: string) => leadsApi.addNote(id!, content),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['lead', id] })
+      setNewNote('')
+      toast.success('Note added successfully')
+    },
+    onError: () => {
+      toast.error('Failed to add note')
+    }
+  })
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev: any) => ({ ...prev, [name]: value }))
@@ -55,6 +68,13 @@ export default function LeadDetails() {
 
   const handleSave = () => {
     updateMutation.mutate(formData)
+  }
+
+  const handleAddNote = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (newNote.trim()) {
+      addNoteMutation.mutate(newNote.trim())
+    }
   }
 
   if (isLoading) {
@@ -164,35 +184,72 @@ export default function LeadDetails() {
           </div>
 
           <div className="card">
-            <h3 className="text-lg font-medium text-white mb-4">Academic & Additional Details</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Course of Interest</label>
-                {isEditing ? (
-                  <input name="course" value={formData.course} onChange={handleChange} className="input w-full" />
-                ) : (
-                  <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.course || '—'}</div>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Qualification</label>
-                {isEditing ? (
-                  <input name="qualification" value={formData.qualification} onChange={handleChange} className="input w-full" />
-                ) : (
-                  <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.qualification || '—'}</div>
-                )}
-              </div>
-              <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><FileText size={12}/> Notes & Requirements</label>
-                {isEditing ? (
-                  <textarea name="notes" value={formData.notes} onChange={handleChange} rows={4} className="input w-full block resize-y" placeholder="Add specific requirements or notes..." />
-                ) : (
-                  <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent min-h-[100px] whitespace-pre-wrap">
-                    {lead.notes || <span className="text-slate-500 italic">No notes available.</span>}
-                  </div>
-                )}
-              </div>
+            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+              <MessageSquare size={20} className="text-brand-500" />
+              Notes & Requirements
+            </h3>
+            
+            {/* Chat History */}
+            <div className="space-y-4 max-h-[400px] overflow-y-auto mb-4 pr-2 custom-scrollbar">
+              {lead.leadNotes && lead.leadNotes.length > 0 ? (
+                [...lead.leadNotes].reverse().map((note: any, index: number) => {
+                  const isCurrentUser = note.user?.id === lead.assignedTo?.id
+                  return (
+                    <div key={note.id} className={`flex gap-3 ${isCurrentUser ? 'flex-row-reverse' : ''}`}>
+                      <div className="flex-shrink-0">
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-brand-600 flex items-center justify-center text-white text-xs font-medium">
+                          {note.user?.name?.charAt(0).toUpperCase() || 'U'}
+                        </div>
+                      </div>
+                      <div className={`flex-1 ${isCurrentUser ? 'items-end' : 'items-start'} flex flex-col`}>
+                        <div className={`max-w-[85%] px-4 py-3 rounded-2xl ${
+                          isCurrentUser 
+                            ? 'bg-brand-500 text-white rounded-br-md' 
+                            : 'bg-surface-700 text-slate-200 rounded-bl-md'
+                        }`}>
+                          <p className="text-sm whitespace-pre-wrap">{note.content}</p>
+                        </div>
+                        <div className="flex items-center gap-2 mt-1 px-1">
+                          <span className="text-xs text-slate-500">{note.user?.name || 'Unknown'}</span>
+                          <span className="text-xs text-slate-600">•</span>
+                          <span className="text-xs text-slate-500">{formatDateTime(note.createdAt)}</span>
+                        </div>
+                      </div>
+                    </div>
+                  )
+                })
+              ) : (
+                <div className="text-center py-8 text-slate-500">
+                  <MessageSquare size={32} className="mx-auto mb-2 opacity-50" />
+                  <p className="text-sm">No notes yet. Start the conversation!</p>
+                </div>
+              )}
+              <div ref={notesEndRef} />
             </div>
+            
+            {/* Add Note Input */}
+            <form onSubmit={handleAddNote} className="flex gap-2 pt-4 border-t border-surface-700">
+              <input
+                type="text"
+                value={newNote}
+                onChange={(e) => setNewNote(e.target.value)}
+                placeholder="Type a note..."
+                className="flex-1 input"
+                disabled={addNoteMutation.isPending}
+              />
+              <button
+                type="submit"
+                disabled={!newNote.trim() || addNoteMutation.isPending}
+                className="btn-primary flex items-center gap-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {addNoteMutation.isPending ? (
+                  <Loader2 size={16} className="animate-spin" />
+                ) : (
+                  <Send size={16} />
+                )}
+                Add Note
+              </button>
+            </form>
           </div>
         </div>
 

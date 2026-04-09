@@ -134,6 +134,10 @@ export async function getLead(request, reply) {
       activities: { orderBy: { createdAt: 'desc' }, take: 20 },
       tasks: { orderBy: { dueDate: 'asc' } },
       communications: { orderBy: { createdAt: 'desc' }, take: 10 },
+      leadNotes: { 
+        orderBy: { createdAt: 'desc' },
+        include: { user: { select: { id: true, name: true, avatar: true } } }
+      },
     }
   })
   if (!lead) return reply.status(404).send({ error: 'Lead not found' })
@@ -193,6 +197,42 @@ export async function updateLead(request, reply) {
 export async function deleteLead(request, reply) {
   await db.lead.delete({ where: { id: request.params.id } })
   return { success: true }
+}
+
+export async function addLeadNote(request, reply) {
+  const { content } = request.body
+  const { id } = request.params
+
+  if (!content || content.trim() === '') {
+    return reply.status(400).send({ error: 'Note content is required' })
+  }
+
+  const note = await db.leadNote.create({
+    data: {
+      content: content.trim(),
+      leadId: id,
+      userId: request.user.id,
+    },
+    include: {
+      user: { select: { id: true, name: true, avatar: true } }
+    }
+  })
+
+  return reply.status(201).send(note)
+}
+
+export async function getLeadNotes(request, reply) {
+  const { id } = request.params
+  
+  const notes = await db.leadNote.findMany({
+    where: { leadId: id },
+    orderBy: { createdAt: 'desc' },
+    include: {
+      user: { select: { id: true, name: true, avatar: true } }
+    }
+  })
+
+  return notes
 }
 
 export async function assignLead(request, reply) {

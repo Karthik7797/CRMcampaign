@@ -20,6 +20,7 @@ model User {
   leads        Lead[]   @relation("AssignedLeads")
   tasks        Task[]
   activities   Activity[]
+  leadNotes    LeadNote[]
 }
 
 enum Role {
@@ -52,8 +53,19 @@ model Lead {
   activities    Activity[]
   tasks         Task[]
   communications Communication[]
+  leadNotes     LeadNote[]
   createdAt     DateTime     @default(now())
   updatedAt     DateTime     @updatedAt
+}
+
+model LeadNote {
+  id        String   @id @default(cuid())
+  content   String
+  lead      Lead     @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
 }
 
 enum LeadSource {
