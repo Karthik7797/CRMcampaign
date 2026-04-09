@@ -64,8 +64,8 @@ export async function getLeads(request, reply) {
       ]
     }
 
-    // COUNSELLOR can only see their own assigned leads
-    if (request.user.role === 'COUNSELLOR') {
+    // COUNSELLOR and INFLUENCER can only see their own assigned leads
+    if (request.user.role === 'COUNSELLOR' || request.user.role === 'INFLUENCER') {
       where.assignedToId = request.user.id
     }
 

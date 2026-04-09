@@ -2,8 +2,8 @@ import { authenticate, authorize } from '../../middleware/auth.middleware.js'
 import { db } from '../../config/db.js'
 
 export async function analyticsRoutes(app) {
-  // Analytics: ADMIN, MANAGER, MARKETING only (COUNSELLOR has no access)
-  app.get('/overview', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'MARKETING')] }, async (req, reply) => {
+  // Analytics: ADMIN, MANAGER, MARKETING, INFLUENCER only (COUNSELLOR has no access)
+  app.get('/overview', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER')] }, async (req, reply) => {
     try {
       const [
         totalLeads, newLeads, converted, bySource, byStatus, byStage, recentLeads
