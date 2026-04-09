@@ -74,49 +74,51 @@ export default function Pipeline() {
   const selectedUserDetails = usersData?.users?.find((u: any) => u.id === selectedUserId)
 
   return (
-    <div className="space-y-4 h-screen flex flex-col">
-      {/* Header with User Filter - Fixed at top */}
-      <div className="flex-shrink-0 flex items-center justify-between">
-        <div>
-          <h2 className="text-xl font-bold text-white font-display">Pipeline</h2>
-          <p className="text-slate-400 text-sm">
-            {selectedUserId === 'all' 
-              ? 'Drag leads through enrollment stages' 
-              : `Viewing ${selectedUserDetails?.name}'s leads`}
-          </p>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* User Filter Dropdown */}
+    <div className="h-screen flex flex-col overflow-hidden">
+      {/* Header with User Filter - STICKY at top */}
+      <div className="sticky top-0 z-10 bg-surface-900 border-b border-slate-700 py-4 px-6 flex-shrink-0">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-xl font-bold text-white font-display">Pipeline</h2>
+            <p className="text-slate-400 text-sm">
+              {selectedUserId === 'all' 
+                ? 'Drag leads through enrollment stages' 
+                : `Viewing ${selectedUserDetails?.name}'s leads`}
+            </p>
+          </div>
           <div className="flex items-center gap-2">
-            <label className="text-xs text-slate-400">Filter by User:</label>
-            <select
-              className="input h-9 w-auto min-w-[200px]"
-              value={selectedUserId}
-              onChange={(e) => setSelectedUserId(e.target.value)}
-              aria-label="Filter pipeline by user"
-            >
-              <option value="all">All Users</option>
-              {counsellors.map((counsellor: any) => (
-                <option key={counsellor.id} value={counsellor.id}>
-                  {counsellor.name} ({counsellor.role})
-                </option>
-              ))}
-            </select>
-            {selectedUserId !== 'all' && (
-              <button
-                onClick={() => setSelectedUserId('all')}
-                className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
-                title="Clear filter"
+            {/* User Filter Dropdown */}
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-slate-400">Filter by User:</label>
+              <select
+                className="input h-9 w-auto min-w-[200px]"
+                value={selectedUserId}
+                onChange={(e) => setSelectedUserId(e.target.value)}
+                aria-label="Filter pipeline by user"
               >
-                <X size={16} className="text-slate-400" />
-              </button>
-            )}
+                <option value="all">All Users</option>
+                {counsellors.map((counsellor: any) => (
+                  <option key={counsellor.id} value={counsellor.id}>
+                    {counsellor.name} ({counsellor.role})
+                  </option>
+                ))}
+              </select>
+              {selectedUserId !== 'all' && (
+                <button
+                  onClick={() => setSelectedUserId('all')}
+                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                  title="Clear filter"
+                >
+                  <X size={16} className="text-slate-400" />
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Pipeline Board - Scrollable container */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden">
+      <div className="flex-1 overflow-x-auto">
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex gap-4 pb-4 h-full">
             {STAGES.map(({ key, label, color, bg }) => {
