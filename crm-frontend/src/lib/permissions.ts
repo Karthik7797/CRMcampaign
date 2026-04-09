@@ -59,12 +59,11 @@ export const PERMISSIONS: Record<string, Role[]> = {
   'leads:edit':          ['ADMIN', 'MANAGER', 'COUNSELLOR'],
   'leads:delete':        ['ADMIN'],
   'leads:assign':        ['ADMIN', 'MANAGER'],
-  'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING'];  'leads:view_influencer': ['INFLUENCER'],  // Special view-only for influencers
-  // Pipeline actions
-  'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING'],
+  'leads:view_influencer': ['INFLUENCER'],  // Special view-only for influencers
 
   // Pipeline actions
-  'pipeline:move':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
   // Task actions
   'tasks:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
