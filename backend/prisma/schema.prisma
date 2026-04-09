@@ -102,6 +102,8 @@ enum PipelineStage {
   FULL_TIME
   SHORTLISTED
   APPLICATION_SENT
+  APPLICATION_RECEIVED
+  ENROLLED
 }
 
 model Activity {
