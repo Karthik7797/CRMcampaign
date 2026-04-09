@@ -10,6 +10,7 @@ export const ROLE_LEVEL = {
   ADMIN: 100,      // Super Admin — full access
   MANAGER: 75,     // Admin — team management
   MARKETING: 50,   // Marketing — campaign analytics, read-only leads
+  INFLUENCER: 40,  // Influencer — view own leads and campaign data
   COUNSELLOR: 25,  // Counsellor — own leads and tasks only
 }
 
@@ -18,6 +19,7 @@ export const ROLE_DISPLAY = {
   ADMIN: 'Super Admin',
   MANAGER: 'Admin',
   MARKETING: 'Marketing',
+  INFLUENCER: 'Influencer',
   COUNSELLOR: 'Counsellor',
 }
 
@@ -25,32 +27,32 @@ export const ROLE_DISPLAY = {
 export const PERMISSIONS = {
   // Leads
   'leads:view_all':     ['ADMIN', 'MANAGER', 'MARKETING'],
-  'leads:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'leads:create':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'leads:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'leads:create':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
   'leads:edit_all':     ['ADMIN', 'MANAGER'],
-  'leads:edit_own':     ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'leads:edit_own':     ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
   'leads:delete':       ['ADMIN'],
   'leads:assign':       ['ADMIN', 'MANAGER'],
 
   // Pipeline
-  'pipeline:view':      ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'pipeline:move':      ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'pipeline:view':      ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'pipeline:move':      ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
 
   // Tasks
   'tasks:view_all':     ['ADMIN', 'MANAGER'],
-  'tasks:view_own':     ['ADMIN', 'MANAGER', 'COUNSELLOR'],
-  'tasks:create':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
-  'tasks:edit':         ['ADMIN', 'MANAGER', 'COUNSELLOR'],
-  'tasks:delete':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'tasks:view_own':     ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'tasks:create':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'tasks:edit':         ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'tasks:delete':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
 
   // Communications
   'comms:view_all':     ['ADMIN', 'MANAGER', 'MARKETING'],
-  'comms:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'comms:create':       ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'comms:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'comms:create':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
   'comms:delete':       ['ADMIN', 'MANAGER'],
 
   // Analytics
-  'analytics:view':     ['ADMIN', 'MANAGER', 'MARKETING'],
+  'analytics:view':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'],
 
   // Settings
   'settings:view':      ['ADMIN'],

@@ -3,7 +3,7 @@
  * Mirrors backend rbac.config.js for consistent access control
  */
 
-export type Role = 'ADMIN' | 'MANAGER' | 'MARKETING' | 'COUNSELLOR'
+export type Role = 'ADMIN' | 'MANAGER' | 'MARKETING' | 'INFLUENCER' | 'COUNSELLOR'
 
 // ── Role display names ──────────────────────────────────────────────
 
@@ -11,6 +11,7 @@ export const ROLE_DISPLAY: Record<Role, string> = {
   ADMIN: 'Super Admin',
   MANAGER: 'Admin',
   MARKETING: 'Marketing',
+  INFLUENCER: 'Influencer',
   COUNSELLOR: 'Counsellor',
 }
 
@@ -30,37 +31,42 @@ export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: strin
     text: 'text-green-400',
     border: 'border-green-500/30',
   },
+  INFLUENCER: {
+    bg: 'bg-gradient-to-r from-pink-500/20 to-rose-500/20',
+    text: 'text-pink-400',
+    border: 'border-pink-500/30',
+  },
   COUNSELLOR: {
     bg: 'bg-gradient-to-r from-purple-500/20 to-violet-500/20',
     text: 'text-purple-400',
     border: 'border-purple-500/30',
   },
 }
-
-// ── Permission definitions ──────────────────────────────────────────
-
-export const PERMISSIONS: Record<string, Role[]> = {
-  // Navigation visibility
-  'nav:dashboard':       ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'nav:leads':           ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'nav:pipeline':        ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'nav:communications':  ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
-  'nav:tasks':           ['ADMIN', 'MANAGER', 'COUNSELLOR'],
-  'nav:analytics':       ['ADMIN', 'MANAGER', 'MARKETING'],
+INFLUENCER', 'COUNSELLOR'],
+  'nav:leads':           ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:pipeline':        ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:communications':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:tasks':           ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:analytics':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'],
   'nav:settings':        ['ADMIN'],
   'nav:users':           ['ADMIN'],
 
   // Lead actions
-  'leads:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
-  'leads:edit':          ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'leads:create':        ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'leads:edit':          ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
   'leads:delete':        ['ADMIN'],
   'leads:assign':        ['ADMIN', 'MANAGER'],
   'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING'],
 
   // Pipeline actions
-  'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'pipeline:move':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
 
   // Task actions
+  'tasks:create':        ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'tasks:delete':        ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+
+  // Communication actions
+  'comms:create':        ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER
   'tasks:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
   'tasks:delete':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
