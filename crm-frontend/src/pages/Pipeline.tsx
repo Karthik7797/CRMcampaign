@@ -57,16 +57,26 @@ export default function Pipeline() {
     ? pipelineData?.leads
     : pipelineData?.leads?.filter((lead: any) => lead.assignedTo?.id === selectedUserId)
 
-  // Get unique users from leads for the dropdown
-  const counsellors = Array.from(new Set(pipelineData?.leads?.map((l: any) => l.assignedTo).filter(Boolean)))
+  // Get unique users from leads for the dropdown (remove duplicates)
+  const uniqueUserIds = Array.from(
+    new Set(
+      pipelineData?.leads
+        ?.map((l: any) => l.assignedTo?.id)
+        .filter(Boolean)
+    )
+  )
+  
+  const counsellors = uniqueUserIds.map((userId) => 
+    pipelineData?.leads?.find((l: any) => l.assignedTo?.id === userId)?.assignedTo
+  ).filter(Boolean)
 
   // Get selected user details
   const selectedUserDetails = usersData?.users?.find((u: any) => u.id === selectedUserId)
 
   return (
-    <div className="space-y-4">
-      {/* Header with User Filter */}
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 h-screen flex flex-col">
+      {/* Header with User Filter - Fixed at top */}
+      <div className="flex-shrink-0 flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-white font-display">Pipeline</h2>
           <p className="text-slate-400 text-sm">
@@ -105,71 +115,73 @@ export default function Pipeline() {
         </div>
       </div>
 
-      {/* Unified Board View with User Filter */}
-      <DragDropContext onDragEnd={onDragEnd}>
-        <div className="flex gap-4 overflow-x-auto pb-4">
-          {STAGES.map(({ key, label, color, bg }) => {
-            const leads = filteredLeads?.filter((l: any) => l.pipelineStage === key) ?? []
-            
-            return (
-              <div key={key} className="flex-shrink-0 w-64">
-                <div className={`${bg} border ${color} border-t-2 rounded-lg p-2`}>
-                  <div className="flex items-center justify-between mb-2 px-1">
-                    <h3 className="text-xs font-semibold text-white">{label}</h3>
-                    <span className="text-[10px] bg-white/10 text-white/70 px-1.5 py-0.5 rounded-full">
-                      {leads.length}
-                    </span>
-                  </div>
-                  <Droppable droppableId={key}>
-                    {(provided) => (
-                      <div
-                        ref={provided.innerRef}
-                        {...provided.droppableProps}
-                        className="min-h-[100px] space-y-2 max-h-[65vh] overflow-y-auto"
-                      >
-                        {leads.map((lead: any, index: number) => (
-                          <Draggable key={lead.id} draggableId={lead.id} index={index}>
-                            {(provided) => (
-                              <div
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                                className="bg-surface-900 border border-surface-600 rounded p-3 cursor-grab active:cursor-grabbing hover:border-surface-500 transition-colors"
-                              >
-                                <div className="flex items-center gap-2 mb-2">
-                                  <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
-                                    {lead.name[0]}
-                                  </div>
-                                  <div className="flex-1 min-w-0">
-                                    <p className="text-xs font-medium text-white truncate">{lead.name}</p>
-                                    <p className="text-[10px] text-slate-400 truncate">{lead.course || 'No course'}</p>
-                                  </div>
-                                </div>
-                                {lead.assignedTo && (
-                                  <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                                    <div className="w-4 h-4 rounded-full bg-surface-700 flex items-center justify-center text-[8px] font-bold text-white">
-                                      {lead.assignedTo.name[0]}
+      {/* Pipeline Board - Scrollable container */}
+      <div className="flex-1 overflow-x-auto overflow-y-hidden">
+        <DragDropContext onDragEnd={onDragEnd}>
+          <div className="flex gap-4 pb-4 h-full">
+            {STAGES.map(({ key, label, color, bg }) => {
+              const leads = filteredLeads?.filter((l: any) => l.pipelineStage === key) ?? []
+              
+              return (
+                <div key={key} className="flex-shrink-0 w-64">
+                  <div className={`${bg} border ${color} border-t-2 rounded-lg p-2 h-full flex flex-col`}>
+                    <div className="flex items-center justify-between mb-2 px-1 flex-shrink-0">
+                      <h3 className="text-xs font-semibold text-white">{label}</h3>
+                      <span className="text-[10px] bg-white/10 text-white/70 px-1.5 py-0.5 rounded-full">
+                        {leads.length}
+                      </span>
+                    </div>
+                    <Droppable droppableId={key}>
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.droppableProps}
+                          className="flex-1 space-y-2 overflow-y-auto pr-2"
+                        >
+                          {leads.map((lead: any, index: number) => (
+                            <Draggable key={lead.id} draggableId={lead.id} index={index}>
+                              {(provided) => (
+                                <div
+                                  ref={provided.innerRef}
+                                  {...provided.draggableProps}
+                                  {...provided.dragHandleProps}
+                                  className="bg-surface-900 border border-surface-600 rounded p-3 cursor-grab active:cursor-grabbing hover:border-surface-500 transition-colors"
+                                >
+                                  <div className="flex items-center gap-2 mb-2">
+                                    <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
+                                      {lead.name[0]}
                                     </div>
-                                    <span className="truncate">{lead.assignedTo.name}</span>
+                                    <div className="flex-1 min-w-0">
+                                      <p className="text-xs font-medium text-white truncate">{lead.name}</p>
+                                      <p className="text-[10px] text-slate-400 truncate">{lead.course || 'No course'}</p>
+                                    </div>
                                   </div>
-                                )}
-                              </div>
-                            )}
-                          </Draggable>
-                        ))}
-                        {provided.placeholder}
-                        {leads.length === 0 && (
-                          <div className="text-center py-6 text-slate-600 text-xs">No leads here</div>
-                        )}
-                      </div>
-                    )}
-                  </Droppable>
+                                  {lead.assignedTo && (
+                                    <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
+                                      <div className="w-4 h-4 rounded-full bg-surface-700 flex items-center justify-center text-[8px] font-bold text-white">
+                                        {lead.assignedTo.name[0]}
+                                      </div>
+                                      <span className="truncate">{lead.assignedTo.name}</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
+                            </Draggable>
+                          ))}
+                          {provided.placeholder}
+                          {leads.length === 0 && (
+                            <div className="text-center py-6 text-slate-600 text-xs">No leads here</div>
+                          )}
+                        </div>
+                      )}
+                    </Droppable>
+                  </div>
                 </div>
-              </div>
-            )
-          })}
-        </div>
-      </DragDropContext>
+              )
+            })}
+          </div>
+        </DragDropContext>
+      </div>
     </div>
   )
 }
