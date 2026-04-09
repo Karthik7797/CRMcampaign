@@ -46,27 +46,29 @@ export const ROLE_COLORS: Record<Role, { bg: string; text: string; border: strin
 export const PERMISSIONS: Record<string, Role[]> = {
   // Navigation visibility
   'nav:dashboard':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
-  'nav:leads':           ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
-  'nav:pipeline':        ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
-  'nav:communications':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
-  'nav:tasks':           ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
-  'nav:analytics':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER'],
+  'nav:leads':           ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'nav:pipeline':        ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'nav:communications':  ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'nav:tasks':           ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'nav:analytics':       ['ADMIN', 'MANAGER', 'MARKETING'],
   'nav:settings':        ['ADMIN'],
   'nav:users':           ['ADMIN'],
 
   // Lead actions
-  'leads:create':        ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
-  'leads:edit':          ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'leads:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'leads:edit':          ['ADMIN', 'MANAGER', 'COUNSELLOR'],
   'leads:delete':        ['ADMIN'],
   'leads:assign':        ['ADMIN', 'MANAGER'],
-  'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING'],
+  'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING'];  'leads:view_influencer': ['INFLUENCER'],  // Special view-only for influencers
+  // Pipeline actions
+  'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
   // Pipeline actions
   'pipeline:move':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
 
   // Task actions
-  'tasks:create':        ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
-  'tasks:delete':        ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'tasks:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'tasks:delete':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
   // Communication actions
   'comms:create':        ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],

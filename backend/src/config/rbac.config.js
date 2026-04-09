@@ -27,23 +27,24 @@ export const ROLE_DISPLAY = {
 export const PERMISSIONS = {
   // Leads
   'leads:view_all':     ['ADMIN', 'MANAGER', 'MARKETING'],
-  'leads:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
-  'leads:create':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'leads:view_own':     ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'leads:view_influencer': ['INFLUENCER'],  // Special view-only for influencers
+  'leads:create':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
   'leads:edit_all':     ['ADMIN', 'MANAGER'],
-  'leads:edit_own':     ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'leads:edit_own':     ['ADMIN', 'MANAGER', 'COUNSELLOR'],
   'leads:delete':       ['ADMIN'],
   'leads:assign':       ['ADMIN', 'MANAGER'],
 
   // Pipeline
-  'pipeline:view':      ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
-  'pipeline:move':      ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'pipeline:view':      ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
+  'pipeline:move':      ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
   // Tasks
   'tasks:view_all':     ['ADMIN', 'MANAGER'],
   'tasks:view_own':     ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
-  'tasks:create':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
-  'tasks:edit':         ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
-  'tasks:delete':       ['ADMIN', 'MANAGER', 'INFLUENCER', 'COUNSELLOR'],
+  'tasks:create':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'tasks:edit':         ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'tasks:delete':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
   // Communications
   'comms:view_all':     ['ADMIN', 'MANAGER', 'MARKETING'],

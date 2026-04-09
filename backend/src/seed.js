@@ -57,6 +57,19 @@ async function seed() {
   })
   console.log('✅ Counsellor created:', counsellor.email)
 
+  // ── Create Influencer user ────────────────────────────────────────
+  const influencer = await db.user.upsert({
+    where: { email: 'influencer@demo.com' },
+    update: {},
+    create: {
+      name: 'Rohit Verma',
+      email: 'influencer@demo.com',
+      password,
+      role: 'INFLUENCER',
+    },
+  })
+  console.log('✅ Influencer created:', influencer.email)
+
   // ── Create sample leads ───────────────────────────────────────────
   const sampleLeads = [
     { name: 'Rahul Verma', email: 'rahul@example.com', phone: '+91-9876543210', course: 'MBA Finance', source: 'LANDING_PAGE_MBA', city: 'Mumbai', qualification: 'Graduate', landingPage: 'mba', status: 'NEW', pipelineStage: 'ENQUIRY' },
