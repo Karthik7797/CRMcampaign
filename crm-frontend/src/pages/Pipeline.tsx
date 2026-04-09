@@ -74,8 +74,8 @@ export default function Pipeline() {
   const selectedUserDetails = usersData?.users?.find((u: any) => u.id === selectedUserId)
 
   return (
-    <div className="h-full flex flex-col">
-      {/* Header with User Filter */}
+    <div className="h-full flex flex-col overflow-hidden">
+      {/* Header with User Filter - FIXED */}
       <div className="bg-surface-900 border-b border-slate-700 py-4 px-6 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
@@ -118,7 +118,7 @@ export default function Pipeline() {
       </div>
 
       {/* Pipeline Board - Horizontal scroll only */}
-      <div className="flex-1 overflow-x-auto overflow-y-hidden">
+      <div className="flex-1 overflow-x-auto overflow-y-hidden min-h-0">
         <DragDropContext onDragEnd={onDragEnd}>
           <div className="flex gap-4 pb-4 h-full">
             {STAGES.map(({ key, label, color, bg }) => {
