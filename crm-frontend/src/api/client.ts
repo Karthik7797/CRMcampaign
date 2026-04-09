@@ -37,6 +37,8 @@ export const leadsApi = {
 
 export const analyticsApi = {
   overview: () => api.get('/analytics/overview'),
+  getUserProgression: () => api.get('/analytics/user-progression'),
+  getUserProgressionDetail: (userId: string) => api.get(`/analytics/user-progression/${userId}`),
 }
 
 export const authApi = {

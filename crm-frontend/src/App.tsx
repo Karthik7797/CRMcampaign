@@ -9,6 +9,7 @@ import Pipeline from './pages/Pipeline'
 import Communications from './pages/Communications'
 import Tasks from './pages/Tasks'
 import Analytics from './pages/Analytics'
+import UserProgression from './pages/UserProgression'
 import Settings from './pages/Settings'
 import LeadDetails from './pages/LeadDetails'
 import UserManagement from './pages/UserManagement'
@@ -58,6 +59,9 @@ export default function App() {
           } />
           <Route path="analytics" element={
             <RoleRoute permission="nav:analytics"><Analytics /></RoleRoute>
+          } />
+          <Route path="user-progression" element={
+            <RoleRoute permission="nav:analytics"><UserProgression /></RoleRoute>
           } />
           <Route path="settings" element={
             <RoleRoute permission="nav:settings"><Settings /></RoleRoute>

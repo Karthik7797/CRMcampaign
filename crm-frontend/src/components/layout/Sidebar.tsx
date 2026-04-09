@@ -17,6 +17,7 @@ const iconMap: Record<string, any> = {
   '/communications': MessageSquare,
   '/tasks': CheckSquare,
   '/analytics': BarChart3,
+  '/user-progression': BarChart3,
   '/users': UserCog,
   '/settings': Settings,
 }

@@ -111,6 +111,7 @@ export const ALL_NAV_ITEMS: NavItem[] = [
   { to: '/communications',  label: 'Communications',  permission: 'nav:communications' },
   { to: '/tasks',           label: 'Tasks',           permission: 'nav:tasks' },
   { to: '/analytics',       label: 'Analytics',       permission: 'nav:analytics' },
+  { to: '/user-progression', label: 'User Progression', permission: 'nav:analytics' },
   { to: '/users',           label: 'Users',           permission: 'nav:users' },
   { to: '/settings',        label: 'Settings',        permission: 'nav:settings' },
 ]

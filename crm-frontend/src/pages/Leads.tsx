@@ -6,6 +6,7 @@ import { Search, Plus, Phone, Mail, MoreVertical, ChevronLeft, ChevronRight, Glo
 import { formatRelativeTime } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
 import toast from 'react-hot-toast'
+import { Users } from 'lucide-react'
 
 const STATUS_OPTIONS = ['ALL', 'NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK']
 const SOURCE_OPTIONS = [
@@ -52,9 +53,11 @@ export default function Leads() {
   const [source, setSource] = useState('ALL')
   const [page, setPage] = useState(1)
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
+  const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
+  const [selectedLead, setSelectedLead] = useState<any>(null)
   const [newLeadForm, setNewLeadForm] = useState({ name: '', email: '', phone: '', city: '', course: '' })
   const navigate = useNavigate()
-  const { canCreateLeads, canEditLeads, canDeleteLeads } = usePermissions()
+  const { canCreateLeads, canEditLeads, canDeleteLeads, canAssignLeads } = usePermissions()
 
   const qc = useQueryClient()
 
@@ -67,6 +70,17 @@ export default function Leads() {
       page,
       limit: 20,
     }).then(r => r.data),
+  })
+
+  // Fetch users for assignment dropdown
+  const { data: usersData } = useQuery({
+    queryKey: ['users-for-assignment'],
+    queryFn: () => leadsApi.getAll({ limit: 100 }).then(() => 
+      fetch('/api/users', {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('crm_token')}` }
+      }).then(r => r.json())
+    ),
+    enabled: canAssignLeads && isAssignModalOpen,
   })
 
   const updateMutation = useMutation({
@@ -102,6 +116,22 @@ export default function Leads() {
     },
     onError: () => toast.error('Failed to create lead')
   })
+
+  const assignMutation = useMutation({
+    mutationFn: ({ leadId, userId }: { leadId: string; userId: string }) => leadsApi.assign(leadId, userId),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ['leads'] })
+      toast.success('Lead assigned successfully')
+      setIsAssignModalOpen(false)
+      setSelectedLead(null)
+    },
+    onError: () => toast.error('Failed to assign lead')
+  })
+
+  const handleAssignLead = (lead: any) => {
+    setSelectedLead(lead)
+    setIsAssignModalOpen(true)
+  }
 
   return (
     <div className="space-y-4">
@@ -234,9 +264,33 @@ export default function Leads() {
                           {lead.assignedTo.name[0]}
                         </div>
                         <span className="text-xs text-slate-300">{lead.assignedTo.name.split(' ')[0]}</span>
+                        {canAssignLeads && (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation()
+                              handleAssignLead(lead)
+                            }}
+                            className="ml-1 text-[10px] text-slate-400 hover:text-brand-400 transition-colors"
+                            title="Reassign lead"
+                          >
+                            ✕
+                          </button>
+                        )}
                       </div>
                     ) : (
-                      <span className="text-xs text-slate-500">Unassigned</span>
+                      canAssignLeads ? (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation()
+                            handleAssignLead(lead)
+                          }}
+                          className="text-xs px-2 py-1 bg-brand-500/20 text-brand-400 rounded hover:bg-brand-500/30 transition-colors flex items-center gap-1"
+                        >
+                          <Users size={12} /> Assign
+                        </button>
+                      ) : (
+                        <span className="text-xs text-slate-500">Unassigned</span>
+                      )
                     )}
                   </td>
                   <td className="px-4 py-3 text-xs text-slate-400 whitespace-nowrap">{formatRelativeTime(lead.createdAt)}</td>
@@ -340,6 +394,59 @@ export default function Leads() {
               >
                 {createMutation.isPending && <Loader2 size={16} className="animate-spin" />}
                 Save Lead
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Assign Lead Modal */}
+      {isAssignModalOpen && selectedLead && canAssignLeads && (
+        <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+          <div className="bg-surface-800 rounded-xl max-w-md w-full border border-surface-700 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
+            <div className="flex items-center justify-between p-4 border-b border-surface-700 bg-surface-800/50">
+              <h3 className="font-semibold text-white">Assign Lead</h3>
+              <button className="text-slate-400 hover:text-white transition-colors" onClick={() => setIsAssignModalOpen(false)}>
+                <X size={18} />
+              </button>
+            </div>
+            <div className="p-4 space-y-4">
+              <div>
+                <p className="text-sm text-slate-300 font-medium">{selectedLead.name}</p>
+                <p className="text-xs text-slate-500">{selectedLead.email} • {selectedLead.phone}</p>
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1">Assign To</label>
+                <select 
+                  className="input w-full"
+                  defaultValue=""
+                  id="user-select"
+                >
+                  <option value="" disabled>Select a user...</option>
+                  {usersData?.users?.filter((u: any) => u.isActive).map((user: any) => (
+                    <option key={user.id} value={user.id} className="bg-surface-800 text-slate-200">
+                      {user.name} ({user.role})
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+            <div className="p-4 border-t border-surface-700 bg-surface-800/50 flex justify-end gap-2">
+              <button className="btn-secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
+              <button 
+                className="btn-primary flex items-center gap-2" 
+                onClick={() => {
+                  const select = document.getElementById('user-select') as HTMLSelectElement
+                  if (!select?.value) {
+                    toast.error('Please select a user')
+                    return
+                  }
+                  assignMutation.mutate({ leadId: selectedLead.id, userId: select.value })
+                }}
+                disabled={assignMutation.isPending}
+              >
+                {assignMutation.isPending && <Loader2 size={16} className="animate-spin" />}
+                Assign Lead
               </button>
             </div>
           </div>

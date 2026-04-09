@@ -1,5 +1,6 @@
 import { authenticate, authorize } from '../../middleware/auth.middleware.js'
 import { db } from '../../config/db.js'
+import { getUserProgression, getUserProgressionDetail } from './analytics.controller.js'
 
 export async function analyticsRoutes(app) {
   // Analytics: ADMIN, MANAGER, MARKETING, INFLUENCER only (COUNSELLOR has no access)
@@ -31,4 +32,10 @@ export async function analyticsRoutes(app) {
       })
     }
   })
+
+  // User Progression: ADMIN, MANAGER only
+  app.get('/user-progression', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER')] }, getUserProgression)
+  
+  // Single User Progression Detail: ADMIN, MANAGER only
+  app.get('/user-progression/:userId', { preHandler: [authenticate, authorize('ADMIN', 'MANAGER')] }, getUserProgressionDetail)
 }
