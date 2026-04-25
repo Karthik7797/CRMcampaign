@@ -37,6 +37,14 @@ export function usePermissions() {
     canAssignLeads: can('leads:assign'),
     canViewAllLeads: can('leads:view_all'),
 
+    // Influencer Leads
+    canViewInfluencerLeads: can('influencer_leads:view'),
+    canCreateInfluencerLeads: can('influencer_leads:create'),
+    canEditInfluencerLeads: can('influencer_leads:edit'),
+    canDeleteInfluencerLeads: can('influencer_leads:delete'),
+    canAssignInfluencerLeads: can('influencer_leads:assign'),
+    canMoveInfluencerLeadStage: can('influencer_leads:move_stage'),
+
     // Pipeline
     canMovePipeline: can('pipeline:move'),
 

@@ -53,6 +53,7 @@ export const PERMISSIONS: Record<string, Role[]> = {
   'nav:analytics':       ['ADMIN', 'MANAGER', 'MARKETING'],
   'nav:settings':        ['ADMIN'],
   'nav:users':           ['ADMIN'],
+  'nav:influencer_leads': ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
 
   // Lead actions
   'leads:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
@@ -61,6 +62,14 @@ export const PERMISSIONS: Record<string, Role[]> = {
   'leads:assign':        ['ADMIN', 'MANAGER'],
   'leads:view_all':      ['ADMIN', 'MANAGER', 'MARKETING'],
   'leads:view_influencer': ['INFLUENCER'],  // Special view-only for influencers
+
+  // Influencer Lead actions
+  'influencer_leads:view':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'influencer_leads:create':   ['ADMIN', 'MANAGER'],
+  'influencer_leads:edit':   ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'influencer_leads:delete':  ['ADMIN'],
+  'influencer_leads:assign': ['ADMIN', 'MANAGER'],
+  'influencer_leads:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
   // Pipeline actions
   'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
@@ -108,6 +117,7 @@ export interface NavItem {
 export const ALL_NAV_ITEMS: NavItem[] = [
   { to: '/dashboard',      label: 'Dashboard',       permission: 'nav:dashboard' },
   { to: '/leads',           label: 'Leads',           permission: 'nav:leads' },
+  { to: '/influencer-leads', label: 'Influencer Leads', permission: 'nav:influencer_leads' },
   { to: '/pipeline',        label: 'Pipeline',        permission: 'nav:pipeline' },
   { to: '/communications',  label: 'Communications',  permission: 'nav:communications' },
   { to: '/tasks',           label: 'Tasks',           permission: 'nav:tasks' },

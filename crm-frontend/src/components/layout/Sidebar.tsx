@@ -2,7 +2,7 @@ import { NavLink } from 'react-router-dom'
 import {
   LayoutDashboard, Users, GitBranch, MessageSquare,
   CheckSquare, BarChart3, Settings, LogOut, Zap, X,
-  UserCog, Shield
+  UserCog, Shield, Megaphone
 } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import { usePermissions } from '../../hooks/usePermissions'
@@ -13,6 +13,7 @@ import { roleDisplayName, getRoleColor } from '../../lib/permissions'
 const iconMap: Record<string, any> = {
   '/dashboard': LayoutDashboard,
   '/leads': Users,
+  '/influencer-leads': Megaphone,
   '/pipeline': GitBranch,
   '/communications': MessageSquare,
   '/tasks': CheckSquare,

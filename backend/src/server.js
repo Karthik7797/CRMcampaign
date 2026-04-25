@@ -6,6 +6,7 @@ import formbody from '@fastify/formbody'
 import { db, testDatabaseConnection } from './config/db.js'
 import { authRoutes } from './modules/auth/auth.routes.js'
 import { leadsRoutes } from './modules/leads/leads.routes.js'
+import { influencerLeadsRoutes } from './modules/influencer-leads/influencer-leads.routes.js'
 import { pipelineRoutes } from './modules/pipeline/pipeline.routes.js'
 import { analyticsRoutes } from './modules/analytics/analytics.routes.js'
 import { tasksRoutes } from './modules/tasks/tasks.routes.js'
@@ -93,6 +94,7 @@ app.get('/test', async (req, reply) => {
 // Routes
 await app.register(authRoutes, { prefix: '/api/auth' })
 await app.register(leadsRoutes, { prefix: '/api/leads' })
+await app.register(influencerLeadsRoutes, { prefix: '/api/influencer-leads' })
 await app.register(pipelineRoutes, { prefix: '/api/pipeline' })
 await app.register(analyticsRoutes, { prefix: '/api/analytics' })
 await app.register(tasksRoutes, { prefix: '/api/tasks' })

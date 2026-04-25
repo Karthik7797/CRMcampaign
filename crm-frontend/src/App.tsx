@@ -5,6 +5,7 @@ import Layout from './components/layout/Layout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Leads from './pages/Leads'
+import InfluencerLeads from './pages/InfluencerLeads'
 import Pipeline from './pages/Pipeline'
 import Communications from './pages/Communications'
 import Tasks from './pages/Tasks'
@@ -12,6 +13,7 @@ import Analytics from './pages/Analytics'
 import UserProgression from './pages/UserProgression'
 import Settings from './pages/Settings'
 import LeadDetails from './pages/LeadDetails'
+import InfluencerLeadDetails from './pages/InfluencerLeadDetails'
 import UserManagement from './pages/UserManagement'
 import RolesPermissions from './pages/RolesPermissions'
 import Unauthorized from './pages/Unauthorized'
@@ -50,6 +52,12 @@ export default function App() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="leads" element={<Leads />} />
           <Route path="leads/:id" element={<LeadDetails />} />
+          <Route path="influencer-leads" element={
+            <RoleRoute permission="nav:influencer_leads"><InfluencerLeads /></RoleRoute>
+          } />
+          <Route path="influencer-leads/:id" element={
+            <RoleRoute permission="nav:influencer_leads"><InfluencerLeadDetails /></RoleRoute>
+          } />
           <Route path="pipeline" element={<Pipeline />} />
           <Route path="communications" element={<Communications />} />
 

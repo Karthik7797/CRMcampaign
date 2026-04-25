@@ -37,6 +37,22 @@ export const leadsApi = {
   addNote: (id: string, content: string) => api.post(`/leads/${id}/notes`, { content }),
 }
 
+export const influencerLeadsApi = {
+  getAll: (params?: Record<string, any>) => api.get('/influencer-leads', { params }),
+  getOne: (id: string) => api.get(`/influencer-leads/${id}`),
+  create: (data: any) => api.post('/influencer-leads', data),
+  update: (id: string, data: any) => api.put(`/influencer-leads/${id}`, data),
+  delete: (id: string) => api.delete(`/influencer-leads/${id}`),
+  assign: (id: string, userId: string) => api.post(`/influencer-leads/${id}/assign`, { userId }),
+  moveStage: (id: string, stage: string) => api.put(`/influencer-leads/${id}/stage`, { stage }),
+  getNotes: (id: string) => api.get(`/influencer-leads/${id}/notes`),
+  addNote: (id: string, content: string) => api.post(`/influencer-leads/${id}/notes`, { content }),
+  getTasks: (id: string) => api.get(`/influencer-leads/${id}/tasks`),
+  createTask: (id: string, data: any) => api.post(`/influencer-leads/${id}/tasks`, data),
+  getComms: (id: string) => api.get(`/influencer-leads/${id}/comms`),
+  createComm: (id: string, data: any) => api.post(`/influencer-leads/${id}/comms`, data),
+}
+
 export const analyticsApi = {
   overview: () => api.get('/analytics/overview'),
   getUserProgression: () => api.get('/analytics/user-progression'),

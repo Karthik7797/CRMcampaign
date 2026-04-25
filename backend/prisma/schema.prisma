@@ -21,6 +21,10 @@ model User {
   tasks        Task[]
   activities   Activity[]
   leadNotes    LeadNote[]
+  influencerLeads        InfluencerLead[]   @relation("InfluencerAssignedLeads")
+  influencerTasks        InfluencerLeadTask[]
+  influencerActivities InfluencerLeadActivity[]
+  influencerLeadNotes  InfluencerLeadNote[]
 }
 
 enum Role {
@@ -83,6 +87,7 @@ enum LeadSource {
   PHONE
   EMAIL
   SELF_LOCAL
+  GOOGLE_FORM
   OTHER
 }
 
@@ -161,4 +166,80 @@ enum CommType {
   WHATSAPP
   CALL
   NOTE
+}
+
+// ── Influencer Leads (Google Form submissions) ─────────────────────
+
+model InfluencerLead {
+  id                String       @id @default(cuid())
+  studentName       String
+  studentEmail      String
+  studentMobile     String
+  collegeName       String?
+  parentName        String?
+  parentMobile      String?
+  parentOccupation  String?
+  intake            String?
+  interestedCountry String?
+  mode              String?      // e.g. "Office Visit", "Online"
+  remarks           String?
+  source            LeadSource   @default(GOOGLE_FORM)
+  status            LeadStatus   @default(NEW)
+  priority          Priority     @default(MEDIUM)
+  pipelineStage     PipelineStage @default(ENQUIRY)
+  assignedTo        User?        @relation("InfluencerAssignedLeads", fields: [assignedToId], references: [id])
+  assignedToId      String?
+  activities        InfluencerLeadActivity[]
+  tasks             InfluencerLeadTask[]
+  communications    InfluencerLeadCommunication[]
+  leadNotes         InfluencerLeadNote[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model InfluencerLeadActivity {
+  id        String   @id @default(cuid())
+  type      String
+  content   String
+  lead      InfluencerLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model InfluencerLeadTask {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  completed   Boolean    @default(false)
+  priority    Priority   @default(MEDIUM)
+  lead        InfluencerLead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId      String?
+  assignedTo  User       @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model InfluencerLeadCommunication {
+  id        String   @id @default(cuid())
+  type      CommType
+  subject   String?
+  content   String
+  status    String   @default("SENT")
+  lead      InfluencerLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  createdAt DateTime @default(now())
+}
+
+model InfluencerLeadNote {
+  id        String   @id @default(cuid())
+  content   String
+  lead      InfluencerLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
 }

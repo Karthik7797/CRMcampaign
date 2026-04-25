@@ -35,6 +35,14 @@ export const PERMISSIONS = {
   'leads:delete':       ['ADMIN'],
   'leads:assign':       ['ADMIN', 'MANAGER'],
 
+  // Influencer Leads
+  'influencer_leads:view':     ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'influencer_leads:create':   ['ADMIN', 'MANAGER'],
+  'influencer_leads:edit':     ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'influencer_leads:delete':   ['ADMIN'],
+  'influencer_leads:assign':  ['ADMIN', 'MANAGER'],
+  'influencer_leads:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+
   // Pipeline
   'pipeline:view':      ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
   'pipeline:move':      ['ADMIN', 'MANAGER', 'COUNSELLOR'],
