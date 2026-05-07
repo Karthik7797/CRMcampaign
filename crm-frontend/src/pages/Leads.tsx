@@ -130,9 +130,9 @@ export default function Leads() {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="h-full flex flex-col gap-4">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between shrink-0">
         <div>
           <h2 className="text-xl font-bold text-white font-display">Leads</h2>
           <p className="text-slate-400 text-sm">{data?.total ?? 0} total leads from all campaigns</p>
@@ -148,7 +148,7 @@ export default function Leads() {
       </div>
 
       {/* Filters */}
-      <div className="card py-4 flex flex-wrap items-center gap-3">
+      <div className="card py-4 flex flex-wrap items-center gap-3 shrink-0">
         <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
           <input
@@ -176,13 +176,13 @@ export default function Leads() {
       </div>
 
       {/* Table */}
-      <div className="card p-0 overflow-hidden">
-        <div className="overflow-x-auto">
+      <div className="card p-0 overflow-hidden flex-1 min-h-0 flex flex-col">
+        <div className="overflow-auto flex-1 min-h-0">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-surface-700">
                 {['Lead', 'Contact', 'Course', 'Campaign Source', 'Status', 'Assigned', 'Created', ''].map(h => (
-                  <th key={h} className="text-left px-4 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider whitespace-nowrap">
+                  <th key={h} className="text-left px-4 py-3 text-xs font-medium text-slate-400 uppercase tracking-wider whitespace-nowrap sticky top-0 bg-surface-800 z-10">
                     {h}
                   </th>
                 ))}
@@ -224,13 +224,15 @@ export default function Leads() {
                     <div className="space-y-1">
                       <SourceBadge source={lead.source} />
                       {lead.landingPage && (
-                        <p className="text-[10px] text-slate-500 flex items-center gap-1">
-                          <Globe size={9} /> /{lead.landingPage}
+                        <p className="text-[10px] text-slate-500 flex items-center gap-1 min-w-0">
+                          <Globe size={9} className="shrink-0" /> 
+                          <span className="truncate">/{lead.landingPage}</span>
                         </p>
                       )}
                       {lead.utmCampaign && (
-                        <p className="text-[10px] text-slate-500 flex items-center gap-1">
-                          <Megaphone size={9} /> {lead.utmCampaign}
+                        <p className="text-[10px] text-slate-500 flex items-center gap-1 min-w-0">
+                          <Megaphone size={9} className="shrink-0" /> 
+                          <span className="truncate">{lead.utmCampaign}</span>
                         </p>
                       )}
                     </div>
@@ -318,7 +320,7 @@ export default function Leads() {
 
         {/* Pagination */}
         {data?.totalPages > 1 && (
-          <div className="flex items-center justify-between px-4 py-3 border-t border-surface-700">
+          <div className="flex items-center justify-between px-4 py-3 border-t border-surface-700 shrink-0">
             <p className="text-xs text-slate-400">
               Page {data.page} of {data.totalPages} · {data.total} leads
             </p>
