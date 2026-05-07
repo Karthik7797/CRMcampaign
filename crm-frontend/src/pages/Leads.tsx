@@ -224,13 +224,13 @@ export default function Leads() {
                     <div className="space-y-1">
                       <SourceBadge source={lead.source} />
                       {lead.landingPage && (
-                        <p className="text-[10px] text-slate-500 flex items-center gap-1 min-w-0">
+                        <p className="text-[10px] text-slate-500 flex items-center gap-1 min-w-0 max-w-[200px]">
                           <Globe size={9} className="shrink-0" /> 
                           <span className="truncate">/{lead.landingPage}</span>
                         </p>
                       )}
                       {lead.utmCampaign && (
-                        <p className="text-[10px] text-slate-500 flex items-center gap-1 min-w-0">
+                        <p className="text-[10px] text-slate-500 flex items-center gap-1 min-w-0 max-w-[200px]">
                           <Megaphone size={9} className="shrink-0" /> 
                           <span className="truncate">{lead.utmCampaign}</span>
                         </p>
