@@ -1,5 +1,8 @@
 import { db } from '../../config/db.js'
 import bcrypt from 'bcryptjs'
+import { ROLE_LEVEL } from '../../config/rbac.config.js'
+
+const VALID_ROLES = Object.keys(ROLE_LEVEL)
 
 /**
  * List all users (ADMIN only)
@@ -69,9 +72,8 @@ export async function createUser(request, reply) {
     return reply.status(400).send({ error: 'Name, email, and password are required' })
   }
 
-  const validRoles = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR']
-  if (role && !validRoles.includes(role)) {
-    return reply.status(400).send({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` })
+  if (role && !VALID_ROLES.includes(role)) {
+    return reply.status(400).send({ error: `Invalid role. Must be one of: ${VALID_ROLES.join(', ')}` })
   }
 
   try {
@@ -112,9 +114,8 @@ export async function updateUser(request, reply) {
   if (name !== undefined) data.name = name
   if (email !== undefined) data.email = email
   if (role !== undefined) {
-    const validRoles = ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR']
-    if (!validRoles.includes(role)) {
-      return reply.status(400).send({ error: `Invalid role. Must be one of: ${validRoles.join(', ')}` })
+    if (!VALID_ROLES.includes(role)) {
+      return reply.status(400).send({ error: `Invalid role. Must be one of: ${VALID_ROLES.join(', ')}` })
     }
     data.role = role
   }
