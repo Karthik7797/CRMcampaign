@@ -43,6 +43,22 @@ export const PERMISSIONS = {
   'influencer_leads:assign':  ['ADMIN', 'MANAGER'],
   'influencer_leads:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
+  // Campaign 1 (mirrors influencer_leads)
+  'campaign_1:view':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'campaign_1:create':     ['ADMIN', 'MANAGER'],
+  'campaign_1:edit':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'campaign_1:delete':     ['ADMIN'],
+  'campaign_1:assign':     ['ADMIN', 'MANAGER'],
+  'campaign_1:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+
+  // Campaign 2 (mirrors influencer_leads)
+  'campaign_2:view':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'campaign_2:create':     ['ADMIN', 'MANAGER'],
+  'campaign_2:edit':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'campaign_2:delete':     ['ADMIN'],
+  'campaign_2:assign':     ['ADMIN', 'MANAGER'],
+  'campaign_2:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+
   // Pipeline
   'pipeline:view':      ['ADMIN', 'MANAGER', 'MARKETING', 'COUNSELLOR'],
   'pipeline:move':      ['ADMIN', 'MANAGER', 'COUNSELLOR'],

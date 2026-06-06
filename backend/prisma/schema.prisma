@@ -25,6 +25,16 @@ model User {
   influencerTasks        InfluencerLeadTask[]
   influencerActivities InfluencerLeadActivity[]
   influencerLeadNotes  InfluencerLeadNote[]
+  // ── Campaign 1 ──
+  campaign1Leads       Campaign1Lead[]   @relation("Campaign1AssignedLeads")
+  campaign1Tasks       Campaign1LeadTask[]
+  campaign1Activities  Campaign1LeadActivity[]
+  campaign1LeadNotes   Campaign1LeadNote[]
+  // ── Campaign 2 ──
+  campaign2Leads       Campaign2Lead[]   @relation("Campaign2AssignedLeads")
+  campaign2Tasks       Campaign2LeadTask[]
+  campaign2Activities  Campaign2LeadActivity[]
+  campaign2LeadNotes   Campaign2LeadNote[]
 }
 
 enum Role {
@@ -238,6 +248,163 @@ model InfluencerLeadNote {
   id        String   @id @default(cuid())
   content   String
   lead      InfluencerLead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+// ── Campaign 1 (Google Form submissions) ───────────────────────────
+// Fields mirror the original influencer campaign.
+
+model Campaign1Lead {
+  id                String       @id @default(cuid())
+  studentName       String
+  studentEmail      String
+  studentMobile     String
+  collegeName       String?
+  parentName        String?
+  parentMobile      String?
+  parentOccupation  String?
+  intake            String?
+  interestedCountry String?
+  mode              String?      // e.g. "Office Visit", "Online"
+  remarks           String?
+  source            LeadSource   @default(GOOGLE_FORM)
+  status            LeadStatus   @default(NEW)
+  priority          Priority     @default(MEDIUM)
+  pipelineStage     PipelineStage @default(ENQUIRY)
+  assignedTo        User?        @relation("Campaign1AssignedLeads", fields: [assignedToId], references: [id])
+  assignedToId      String?
+  activities        Campaign1LeadActivity[]
+  tasks             Campaign1LeadTask[]
+  communications    Campaign1LeadCommunication[]
+  leadNotes         Campaign1LeadNote[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model Campaign1LeadActivity {
+  id        String   @id @default(cuid())
+  type      String
+  content   String
+  lead      Campaign1Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model Campaign1LeadTask {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  completed   Boolean    @default(false)
+  priority    Priority   @default(MEDIUM)
+  lead        Campaign1Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId      String?
+  assignedTo  User       @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Campaign1LeadCommunication {
+  id        String   @id @default(cuid())
+  type      CommType
+  subject   String?
+  content   String
+  status    String   @default("SENT")
+  lead      Campaign1Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  createdAt DateTime @default(now())
+}
+
+model Campaign1LeadNote {
+  id        String   @id @default(cuid())
+  content   String
+  lead      Campaign1Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+// ── Campaign 2 (Google Form submissions) ───────────────────────────
+// TODO: Replace these placeholder intake fields with Campaign 2's
+// actual Google Form fields once finalized. The lifecycle fields
+// (source/status/priority/pipelineStage/assignedTo/relations) stay as-is.
+
+model Campaign2Lead {
+  id                String       @id @default(cuid())
+  // ── intake fields (PLACEHOLDER — swap for real Campaign 2 fields) ──
+  studentName       String
+  studentEmail      String
+  studentMobile     String
+  city              String?
+  currentQualification String?
+  course            String?       // course / program of interest
+  budget            String?
+  preferredIntake   String?
+  socialHandle      String?       // influencer / referral handle
+  remarks           String?
+  // ── lifecycle (shared) ──
+  source            LeadSource   @default(GOOGLE_FORM)
+  status            LeadStatus   @default(NEW)
+  priority          Priority     @default(MEDIUM)
+  pipelineStage     PipelineStage @default(ENQUIRY)
+  assignedTo        User?        @relation("Campaign2AssignedLeads", fields: [assignedToId], references: [id])
+  assignedToId      String?
+  activities        Campaign2LeadActivity[]
+  tasks             Campaign2LeadTask[]
+  communications    Campaign2LeadCommunication[]
+  leadNotes         Campaign2LeadNote[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model Campaign2LeadActivity {
+  id        String   @id @default(cuid())
+  type      String
+  content   String
+  lead      Campaign2Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model Campaign2LeadTask {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  completed   Boolean    @default(false)
+  priority    Priority   @default(MEDIUM)
+  lead        Campaign2Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId      String?
+  assignedTo  User       @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Campaign2LeadCommunication {
+  id        String   @id @default(cuid())
+  type      CommType
+  subject   String?
+  content   String
+  status    String   @default("SENT")
+  lead      Campaign2Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  createdAt DateTime @default(now())
+}
+
+model Campaign2LeadNote {
+  id        String   @id @default(cuid())
+  content   String
+  lead      Campaign2Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
   leadId    String
   user      User     @relation(fields: [userId], references: [id])
   userId    String

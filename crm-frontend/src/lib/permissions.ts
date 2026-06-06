@@ -54,6 +54,20 @@ export const PERMISSIONS: Record<string, Role[]> = {
   'nav:settings':        ['ADMIN'],
   'nav:users':           ['ADMIN'],
   'nav:influencer_leads': ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  // Influencer Marketing parent + campaign sub-pages (1–12)
+  'nav:influencer_marketing': ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_1':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_2':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_3':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_4':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_5':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_6':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_7':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_8':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_9':  ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_10': ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_11': ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'nav:campaign_12': ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
 
   // Lead actions
   'leads:create':        ['ADMIN', 'MANAGER', 'COUNSELLOR'],
@@ -70,6 +84,22 @@ export const PERMISSIONS: Record<string, Role[]> = {
   'influencer_leads:delete':  ['ADMIN'],
   'influencer_leads:assign': ['ADMIN', 'MANAGER'],
   'influencer_leads:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+
+  // Campaign 1 actions (mirror influencer_leads)
+  'campaign_1:view':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'campaign_1:create':     ['ADMIN', 'MANAGER'],
+  'campaign_1:edit':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'campaign_1:delete':     ['ADMIN'],
+  'campaign_1:assign':     ['ADMIN', 'MANAGER'],
+  'campaign_1:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+
+  // Campaign 2 actions (mirror influencer_leads)
+  'campaign_2:view':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'campaign_2:create':     ['ADMIN', 'MANAGER'],
+  'campaign_2:edit':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'campaign_2:delete':     ['ADMIN'],
+  'campaign_2:assign':     ['ADMIN', 'MANAGER'],
+  'campaign_2:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
   // Pipeline actions
   'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
@@ -112,12 +142,34 @@ export interface NavItem {
   to: string
   label: string
   permission: string
+  /** Optional nested items — renders as a collapsible submenu */
+  children?: NavItem[]
+  /** Marks a not-yet-built campaign page (renders a "Coming soon" page) */
+  comingSoon?: boolean
 }
+
+// Influencer Marketing → Campaign 1–12 submenu.
+// Campaigns 1 & 2 are live; 3–12 route to a shared "Coming soon" page.
+const CAMPAIGN_CHILDREN: NavItem[] = Array.from({ length: 12 }, (_, i) => {
+  const n = i + 1
+  return {
+    to: `/campaigns/${n}`,
+    label: `Campaign ${n}`,
+    permission: `nav:campaign_${n}`,
+    comingSoon: n > 2,
+  }
+})
 
 export const ALL_NAV_ITEMS: NavItem[] = [
   { to: '/dashboard',      label: 'Dashboard',       permission: 'nav:dashboard' },
   { to: '/leads',           label: 'Leads',           permission: 'nav:leads' },
   { to: '/influencer-leads', label: 'Influencer Leads', permission: 'nav:influencer_leads' },
+  {
+    to: '/influencer-marketing',
+    label: 'Influencer Marketing',
+    permission: 'nav:influencer_marketing',
+    children: CAMPAIGN_CHILDREN,
+  },
   { to: '/pipeline',        label: 'Pipeline',        permission: 'nav:pipeline' },
   { to: '/communications',  label: 'Communications',  permission: 'nav:communications' },
   { to: '/tasks',           label: 'Tasks',           permission: 'nav:tasks' },
@@ -128,5 +180,10 @@ export const ALL_NAV_ITEMS: NavItem[] = [
 ]
 
 export function getNavItemsForRole(role: string | undefined): NavItem[] {
-  return ALL_NAV_ITEMS.filter(item => hasPermission(role, item.permission))
+  return ALL_NAV_ITEMS
+    .filter(item => hasPermission(role, item.permission))
+    .map(item => item.children
+      ? { ...item, children: item.children.filter(c => hasPermission(role, c.permission)) }
+      : item
+    )
 }

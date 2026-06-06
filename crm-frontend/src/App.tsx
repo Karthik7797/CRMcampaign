@@ -17,6 +17,11 @@ import InfluencerLeadDetails from './pages/InfluencerLeadDetails'
 import UserManagement from './pages/UserManagement'
 import RolesPermissions from './pages/RolesPermissions'
 import Unauthorized from './pages/Unauthorized'
+import Campaign1Leads from './pages/Campaign1Leads'
+import Campaign1LeadDetails from './pages/Campaign1LeadDetails'
+import Campaign2Leads from './pages/Campaign2Leads'
+import Campaign2LeadDetails from './pages/Campaign2LeadDetails'
+import CampaignComingSoon from './pages/CampaignComingSoon'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const token = useStore((s) => s.token)
@@ -58,6 +63,22 @@ export default function App() {
           <Route path="influencer-leads/:id" element={
             <RoleRoute permission="nav:influencer_leads"><InfluencerLeadDetails /></RoleRoute>
           } />
+          {/* Influencer Marketing — Campaign sub-pages */}
+          <Route path="campaigns/1" element={
+            <RoleRoute permission="nav:campaign_1"><Campaign1Leads /></RoleRoute>
+          } />
+          <Route path="campaigns/1/:id" element={
+            <RoleRoute permission="nav:campaign_1"><Campaign1LeadDetails /></RoleRoute>
+          } />
+          <Route path="campaigns/2" element={
+            <RoleRoute permission="nav:campaign_2"><Campaign2Leads /></RoleRoute>
+          } />
+          <Route path="campaigns/2/:id" element={
+            <RoleRoute permission="nav:campaign_2"><Campaign2LeadDetails /></RoleRoute>
+          } />
+          {/* Campaigns 3–12: Coming Soon — :n must come after specific numbers above */}
+          <Route path="campaigns/:n" element={<CampaignComingSoon />} />
+
           <Route path="pipeline" element={<Pipeline />} />
           <Route path="communications" element={<Communications />} />
 

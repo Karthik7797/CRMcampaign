@@ -7,6 +7,8 @@ import { db, testDatabaseConnection } from './config/db.js'
 import { authRoutes } from './modules/auth/auth.routes.js'
 import { leadsRoutes } from './modules/leads/leads.routes.js'
 import { influencerLeadsRoutes } from './modules/influencer-leads/influencer-leads.routes.js'
+import { campaign1Routes } from './modules/campaign-1/campaign-1.routes.js'
+import { campaign2Routes } from './modules/campaign-2/campaign-2.routes.js'
 import { pipelineRoutes } from './modules/pipeline/pipeline.routes.js'
 import { analyticsRoutes } from './modules/analytics/analytics.routes.js'
 import { tasksRoutes } from './modules/tasks/tasks.routes.js'
@@ -95,6 +97,8 @@ app.get('/test', async (req, reply) => {
 await app.register(authRoutes, { prefix: '/api/auth' })
 await app.register(leadsRoutes, { prefix: '/api/leads' })
 await app.register(influencerLeadsRoutes, { prefix: '/api/influencer-leads' })
+await app.register(campaign1Routes, { prefix: '/api/campaign-1' })
+await app.register(campaign2Routes, { prefix: '/api/campaign-2' })
 await app.register(pipelineRoutes, { prefix: '/api/pipeline' })
 await app.register(analyticsRoutes, { prefix: '/api/analytics' })
 await app.register(tasksRoutes, { prefix: '/api/tasks' })

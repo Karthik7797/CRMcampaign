@@ -53,6 +53,38 @@ export const influencerLeadsApi = {
   createComm: (id: string, data: any) => api.post(`/influencer-leads/${id}/comms`, data),
 }
 
+export const campaign1Api = {
+  getAll: (params?: Record<string, any>) => api.get('/campaign-1', { params }),
+  getOne: (id: string) => api.get(`/campaign-1/${id}`),
+  create: (data: any) => api.post('/campaign-1', data),
+  update: (id: string, data: any) => api.put(`/campaign-1/${id}`, data),
+  delete: (id: string) => api.delete(`/campaign-1/${id}`),
+  assign: (id: string, userId: string) => api.post(`/campaign-1/${id}/assign`, { userId }),
+  moveStage: (id: string, stage: string) => api.put(`/campaign-1/${id}/stage`, { stage }),
+  getNotes: (id: string) => api.get(`/campaign-1/${id}/notes`),
+  addNote: (id: string, content: string) => api.post(`/campaign-1/${id}/notes`, { content }),
+  getTasks: (id: string) => api.get(`/campaign-1/${id}/tasks`),
+  createTask: (id: string, data: any) => api.post(`/campaign-1/${id}/tasks`, data),
+  getComms: (id: string) => api.get(`/campaign-1/${id}/comms`),
+  createComm: (id: string, data: any) => api.post(`/campaign-1/${id}/comms`, data),
+}
+
+export const campaign2Api = {
+  getAll: (params?: Record<string, any>) => api.get('/campaign-2', { params }),
+  getOne: (id: string) => api.get(`/campaign-2/${id}`),
+  create: (data: any) => api.post('/campaign-2', data),
+  update: (id: string, data: any) => api.put(`/campaign-2/${id}`, data),
+  delete: (id: string) => api.delete(`/campaign-2/${id}`),
+  assign: (id: string, userId: string) => api.post(`/campaign-2/${id}/assign`, { userId }),
+  moveStage: (id: string, stage: string) => api.put(`/campaign-2/${id}/stage`, { stage }),
+  getNotes: (id: string) => api.get(`/campaign-2/${id}/notes`),
+  addNote: (id: string, content: string) => api.post(`/campaign-2/${id}/notes`, { content }),
+  getTasks: (id: string) => api.get(`/campaign-2/${id}/tasks`),
+  createTask: (id: string, data: any) => api.post(`/campaign-2/${id}/tasks`, data),
+  getComms: (id: string) => api.get(`/campaign-2/${id}/comms`),
+  createComm: (id: string, data: any) => api.post(`/campaign-2/${id}/comms`, data),
+}
+
 export const analyticsApi = {
   overview: () => api.get('/analytics/overview'),
   getUserProgression: () => api.get('/analytics/user-progression'),
