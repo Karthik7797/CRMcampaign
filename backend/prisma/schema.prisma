@@ -338,16 +338,23 @@ model Campaign1LeadNote {
 
 model Campaign2Lead {
   id                String       @id @default(cuid())
-  // ── intake fields (PLACEHOLDER — swap for real Campaign 2 fields) ──
+  // ── Campaign 2 Google Form intake fields ──
   studentName       String
   studentEmail      String
   studentMobile     String
-  city              String?
-  currentQualification String?
-  course            String?       // course / program of interest
-  budget            String?
+  parentName        String?
+  parentMobile      String?
+  parentOccupation  String?
+  preferredCountry  String?
   preferredIntake   String?
-  socialHandle      String?       // influencer / referral handle
+  currentQualification String?   // Highest Qualification
+  completionYear    String?      // Education completion year
+  percentage        String?
+  course            String?      // Degree Name / course of interest
+  mode              String?      // Office Visit / Google Meet
+  city              String?
+  budget            String?
+  socialHandle      String?      // influencer / referral handle
   remarks           String?
   // ── lifecycle (shared) ──
   source            LeadSource   @default(GOOGLE_FORM)

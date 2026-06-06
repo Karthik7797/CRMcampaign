@@ -33,11 +33,18 @@ export default function Campaign2LeadDetails() {
         studentName: lead.studentName || '',
         studentEmail: lead.studentEmail || '',
         studentMobile: lead.studentMobile || '',
-        city: lead.city || '',
-        currentQualification: lead.currentQualification || '',
-        course: lead.course || '',
-        budget: lead.budget || '',
+        parentName: lead.parentName || '',
+        parentMobile: lead.parentMobile || '',
+        parentOccupation: lead.parentOccupation || '',
+        preferredCountry: lead.preferredCountry || '',
         preferredIntake: lead.preferredIntake || '',
+        currentQualification: lead.currentQualification || '',
+        completionYear: lead.completionYear || '',
+        percentage: lead.percentage || '',
+        course: lead.course || '',
+        mode: lead.mode || '',
+        city: lead.city || '',
+        budget: lead.budget || '',
         socialHandle: lead.socialHandle || '',
         remarks: lead.remarks || '',
         status: lead.status || 'NEW',
@@ -156,6 +163,33 @@ export default function Campaign2LeadDetails() {
             </div>
           </div>
 
+          {/* Parent Information */}
+          <div className="card">
+            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+              <User size={20} className="text-brand-500" /> Parent Information
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><User size={12}/> Parent Name</label>
+                {isEditing ? <input name="parentName" value={formData.parentName} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.parentName || '—'}</div>}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Phone size={12}/> Parent Mobile</label>
+                {isEditing ? <input name="parentMobile" value={formData.parentMobile} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent flex items-center gap-2">
+                    {lead.parentMobile || '—'}
+                    {lead.parentMobile && <a href={`tel:${lead.parentMobile}`} aria-label="Call parent" className="text-green-500 hover:text-green-400"><Phone size={14}/></a>}
+                  </div>}
+              </div>
+              <div className="space-y-1.5 md:col-span-2">
+                <label className="text-xs text-slate-400 font-medium ml-1">Parent Occupation</label>
+                {isEditing ? <input name="parentOccupation" value={formData.parentOccupation} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.parentOccupation || '—'}</div>}
+              </div>
+            </div>
+          </div>
+
           {/* Campaign 2 Specific Details */}
           <div className="card">
             <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
@@ -163,24 +197,44 @@ export default function Campaign2LeadDetails() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Current Qualification</label>
-                {isEditing ? <input name="currentQualification" value={formData.currentQualification} onChange={handleChange} className="input w-full" />
-                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.currentQualification || '—'}</div>}
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Course of Interest</label>
-                {isEditing ? <input name="course" value={formData.course} onChange={handleChange} className="input w-full" />
-                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.course || '—'}</div>}
-              </div>
-              <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Budget</label>
-                {isEditing ? <input name="budget" value={formData.budget} onChange={handleChange} className="input w-full" />
-                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.budget || '—'}</div>}
+                <label className="text-xs text-slate-400 font-medium ml-1">Preferred Country</label>
+                {isEditing ? <input name="preferredCountry" value={formData.preferredCountry} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.preferredCountry || '—'}</div>}
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs text-slate-400 font-medium ml-1">Preferred Intake</label>
                 {isEditing ? <input name="preferredIntake" value={formData.preferredIntake} onChange={handleChange} className="input w-full" />
                   : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.preferredIntake || '—'}</div>}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1">Highest Qualification</label>
+                {isEditing ? <input name="currentQualification" value={formData.currentQualification} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.currentQualification || '—'}</div>}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1">Degree Name</label>
+                {isEditing ? <input name="course" value={formData.course} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.course || '—'}</div>}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1">Completion Year</label>
+                {isEditing ? <input name="completionYear" value={formData.completionYear} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.completionYear || '—'}</div>}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1">Percentage</label>
+                {isEditing ? <input name="percentage" value={formData.percentage} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.percentage || '—'}</div>}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1">Mode</label>
+                {isEditing ? <input name="mode" value={formData.mode} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.mode || '—'}</div>}
+              </div>
+              <div className="space-y-1.5">
+                <label className="text-xs text-slate-400 font-medium ml-1">Budget</label>
+                {isEditing ? <input name="budget" value={formData.budget} onChange={handleChange} className="input w-full" />
+                  : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.budget || '—'}</div>}
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs text-slate-400 font-medium ml-1">Social Handle</label>

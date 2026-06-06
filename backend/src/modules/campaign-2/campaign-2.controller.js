@@ -1,14 +1,13 @@
 import { db } from '../../config/db.js'
 
 // PUBLIC endpoint — called from Campaign 2 Google Form (no auth needed)
-// TODO: Replace the destructured fields below with Campaign 2's real
-// Google Form fields once finalized. Keep studentName/Email/Mobile as the
-// required core (or adjust the required check to match the real form).
 export async function publicCreateCampaign2Lead(request, reply) {
   const {
     studentName, studentEmail, studentMobile,
-    city, currentQualification, course, budget,
-    preferredIntake, socialHandle, remarks,
+    parentName, parentMobile, parentOccupation,
+    preferredCountry, preferredIntake,
+    currentQualification, completionYear, percentage,
+    course, mode, city, budget, socialHandle, remarks,
     redirect_to
   } = request.body
 
@@ -22,11 +21,18 @@ export async function publicCreateCampaign2Lead(request, reply) {
       studentName,
       studentEmail,
       studentMobile,
-      city: city || null,
-      currentQualification: currentQualification || null,
-      course: course || null,
-      budget: budget || null,
+      parentName: parentName || null,
+      parentMobile: parentMobile || null,
+      parentOccupation: parentOccupation || null,
+      preferredCountry: preferredCountry || null,
       preferredIntake: preferredIntake || null,
+      currentQualification: currentQualification || null,
+      completionYear: completionYear || null,
+      percentage: percentage || null,
+      course: course || null,
+      mode: mode || null,
+      city: city || null,
+      budget: budget || null,
       socialHandle: socialHandle || null,
       remarks: remarks || null,
       source: 'GOOGLE_FORM',
