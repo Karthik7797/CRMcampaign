@@ -8,18 +8,21 @@ export async function publicCreateCampaign2Lead(request, reply) {
     preferredCountry, preferredIntake,
     currentQualification, completionYear, percentage,
     course, mode, city, budget, socialHandle, remarks,
-    redirect_to
+    email, redirect_to
   } = request.body
 
-  if (!studentName || !studentEmail || !studentMobile) {
+  // Campaign 2 form does not collect a student email — only name and mobile are required.
+  if (!studentName || !studentMobile) {
     if (redirect_to) return reply.redirect(`${redirect_to}?error=missing_fields`)
-    return reply.status(400).send({ error: 'studentName, studentEmail and studentMobile are required' })
+    return reply.status(400).send({ error: 'studentName and studentMobile are required' })
   }
 
   const lead = await db.campaign2Lead.create({
     data: {
       studentName,
-      studentEmail,
+      // studentEmail is a required (non-null) column but the form omits it — fall back to the
+      // respondent email if present, otherwise an empty string.
+      studentEmail: studentEmail || email || '',
       studentMobile,
       parentName: parentName || null,
       parentMobile: parentMobile || null,
