@@ -1,15 +1,17 @@
 import { useState, useEffect, useRef } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { campaign1Api } from '../api/client'
-import { ArrowLeft, User, Mail, Phone, GraduationCap, Calendar, MapPin, Save, Edit2, Loader2, Send, MessageSquare, Users, FileText } from 'lucide-react'
+import { ArrowLeft, User, Mail, Phone, GraduationCap, Calendar, MapPin, Save, Edit2, Loader2, Send, MessageSquare, Users, FileText, ChevronLeft, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { formatRelativeTime, formatDateTime } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
+import { useLeadNavigator } from '../hooks/useLeadNavigator'
 
 export default function Campaign1LeadDetails() {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
+  const location = useLocation()
   const qc = useQueryClient()
   const [isEditing, setIsEditing] = useState(false)
   const [formData, setFormData] = useState<any>({})
@@ -18,6 +20,27 @@ export default function Campaign1LeadDetails() {
 
   const { can } = usePermissions()
   const canEdit = can('campaign_1:edit')
+
+  const listContext = (location.state as any)?.listContext
+  const { prevId, nextId, goPrev, goNext, position, total, hasContext } = useLeadNavigator(id, listContext, {
+    api: campaign1Api,
+    listKey: 'campaign-1-leads',
+    detailKey: 'campaign-1-lead',
+    routeBase: '/campaigns/1',
+  })
+
+  // Keyboard navigation: ← / → step between leads, but not while typing in a field.
+  useEffect(() => {
+    if (!hasContext) return
+    const handler = (e: KeyboardEvent) => {
+      const tag = document.activeElement?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT') return
+      if (e.key === 'ArrowLeft' && prevId) { e.preventDefault(); goPrev() }
+      else if (e.key === 'ArrowRight' && nextId) { e.preventDefault(); goNext() }
+    }
+    window.addEventListener('keydown', handler)
+    return () => window.removeEventListener('keydown', handler)
+  }, [hasContext, prevId, nextId, goPrev, goNext])
 
   const { data: lead, isLoading, error } = useQuery({
     queryKey: ['campaign-1-lead', id],
@@ -99,6 +122,31 @@ export default function Campaign1LeadDetails() {
             </h2>
             <p className="text-slate-400 text-sm">Campaign 1 · Added {formatRelativeTime(lead.createdAt)}</p>
           </div>
+          {hasContext && (
+            <div className="flex items-center gap-1 ml-2 border-l border-surface-700 pl-3">
+              <button
+                type="button"
+                disabled={!prevId}
+                onClick={goPrev}
+                title="Previous lead (←)"
+                aria-label="Previous lead"
+                className="p-2 rounded-full hover:bg-surface-700 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronLeft size={18} />
+              </button>
+              {position && <span className="text-xs text-slate-500 tabular-nums px-1">{position} / {total}</span>}
+              <button
+                type="button"
+                disabled={!nextId}
+                onClick={goNext}
+                title="Next lead (→)"
+                aria-label="Next lead"
+                className="p-2 rounded-full hover:bg-surface-700 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+              >
+                <ChevronRight size={18} />
+              </button>
+            </div>
+          )}
         </div>
         <div>
           {canEdit && (

@@ -138,7 +138,7 @@ export default function Campaign1Leads() {
                   ))
                 : data?.leads?.map((lead: any) => (
                   <tr key={lead.id} className="hover:bg-surface-700/50 transition-colors cursor-pointer"
-                      onClick={() => navigate(`/campaigns/1/${lead.id}`)}>
+                      onClick={() => navigate(`/campaigns/1/${lead.id}`, { state: { listContext: { search, status, page } } })}>
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-2.5">
                         <div className="w-8 h-8 rounded-full bg-gradient-to-br from-pink-500 to-rose-600 flex items-center justify-center text-xs font-bold text-white shrink-0">

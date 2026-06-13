@@ -18,7 +18,13 @@ export default function LeadDetails() {
   const notesEndRef = useRef<HTMLDivElement>(null)
 
   const listContext = (location.state as any)?.listContext
-  const { prevId, nextId, goPrev, goNext, position, total, hasContext } = useLeadNavigator(id, listContext)
+  const { prevId, nextId, goPrev, goNext, position, total, hasContext } = useLeadNavigator(id, listContext, {
+    api: leadsApi,
+    listKey: 'leads',
+    detailKey: 'lead',
+    routeBase: '/leads',
+    hasSource: true,
+  })
 
   // Keyboard navigation: ← / → step between leads, but not while typing in a field.
   useEffect(() => {
