@@ -201,7 +201,7 @@ export default function Leads() {
                 ))
               ) : data?.leads?.map((lead: any) => (
                 <tr key={lead.id} className="hover:bg-surface-700/50 transition-colors cursor-pointer"
-                  onClick={() => navigate(`/leads/${lead.id}`)}>
+                  onClick={() => navigate(`/leads/${lead.id}`, { state: { listContext: { search, status, source, page } } })}>
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-2.5">
                       <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white shrink-0">
