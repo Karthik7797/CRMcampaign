@@ -56,7 +56,7 @@ export async function getLeads(request, reply) {
     // Validate database connection first
     await db.$connect()
     
-    const { status, source, assignedTo, search, page = 1, limit = 20 } = request.query
+    const { status, source, assignedTo, search, page = 1, limit = 10 } = request.query
     const skip = (parseInt(page) - 1) * parseInt(limit)
 
     const where = {}

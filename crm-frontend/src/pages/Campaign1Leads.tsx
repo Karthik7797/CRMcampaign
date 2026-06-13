@@ -40,7 +40,7 @@ export default function Campaign1Leads() {
       search: search || undefined,
       status: status === 'ALL' ? undefined : status,
       page,
-      limit: 20,
+      limit: 10,
     }).then(r => r.data),
   })
 

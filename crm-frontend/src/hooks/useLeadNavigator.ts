@@ -2,7 +2,7 @@ import { useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 
-const LIMIT = 20
+const LIMIT = 10
 
 /**
  * Browsing context passed from a list page via router state. Holds the active

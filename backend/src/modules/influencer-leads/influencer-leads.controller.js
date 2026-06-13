@@ -43,7 +43,7 @@ export async function publicCreateInfluencerLead(request, reply) {
 
 export async function getInfluencerLeads(request, reply) {
   try {
-    const { status, source, assignedTo, search, page = 1, limit = 20 } = request.query
+    const { status, source, assignedTo, search, page = 1, limit = 10 } = request.query
     const skip = (parseInt(page) - 1) * parseInt(limit)
 
     const where = {}
