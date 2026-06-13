@@ -1,6 +1,6 @@
 import { useMemo, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 
 const LIMIT = 20
 
@@ -37,6 +37,11 @@ export interface LeadNavigatorConfig {
   hasSource?: boolean
 }
 
+/** A sensible default context for direct links / refreshes (unfiltered, page 1). */
+function defaultContext(cfg: LeadNavigatorConfig): LeadListContext {
+  return { search: '', status: 'ALL', source: cfg.hasSource ? 'ALL' : undefined, page: 1 }
+}
+
 /** Build the exact query key the list page used, so the cache is shared. */
 function listQueryKey(cfg: LeadNavigatorConfig, ctx: LeadListContext, page: number) {
   const filters: Record<string, any> = { search: ctx.search, status: ctx.status, page }
@@ -62,8 +67,9 @@ function listQueryParams(cfg: LeadNavigatorConfig, ctx: LeadListContext, page: n
  * config, it resolves the previous/next lead — crossing page boundaries
  * seamlessly — and exposes navigation handlers that carry the context forward.
  *
- * Returns hasContext=false when no list context is available (direct link /
- * refresh), in which case the caller should hide the controls.
+ * The current page's list is fetched via useQuery (reusing the list page's warm
+ * cache when present), so neighbors resolve even on a cold cache or direct link.
+ * `hasContext` is true whenever we have an id, so the controls always render.
  */
 export function useLeadNavigator(
   id: string | undefined,
@@ -73,68 +79,62 @@ export function useLeadNavigator(
   const navigate = useNavigate()
   const qc = useQueryClient()
 
-  const hasContext = !!listContext && !!id
+  // Fall back to a default (unfiltered, page 1) context when none was passed,
+  // so the controls work on direct links / refreshes too.
+  const ctx = listContext ?? defaultContext(cfg)
 
-  // Current page's leads from cache (populated by the list page). We read rather
-  // than subscribe — the data is effectively static for the duration of browsing.
-  const pageData = hasContext
-    ? qc.getQueryData<any>(listQueryKey(cfg, listContext!, listContext!.page))
-    : undefined
+  // Fetch (or reuse cached) the current page's leads. Subscribing via useQuery
+  // means a cold cache fills in and the controls light up once data arrives.
+  const { data: pageData } = useQuery({
+    queryKey: listQueryKey(cfg, ctx, ctx.page),
+    queryFn: () => cfg.api.getAll(listQueryParams(cfg, ctx, ctx.page)).then((r) => r.data),
+    enabled: !!id,
+  })
+
+  // Subscribe to adjacent pages so page-edge neighbors resolve. enabled only
+  // when the current lead actually sits at an edge.
+  const idx = pageData?.leads?.findIndex((l: any) => l.id === id) ?? -1
+  const lastIdx = (pageData?.leads?.length ?? 0) - 1
+  const totalPages: number = pageData?.totalPages ?? 1
+  const needPrevPage = idx === 0 && ctx.page > 1
+  const needNextPage = idx >= 0 && idx === lastIdx && ctx.page < totalPages
+
+  const { data: prevPageData } = useQuery({
+    queryKey: listQueryKey(cfg, ctx, ctx.page - 1),
+    queryFn: () => cfg.api.getAll(listQueryParams(cfg, ctx, ctx.page - 1)).then((r) => r.data),
+    enabled: !!id && needPrevPage,
+  })
+  const { data: nextPageData } = useQuery({
+    queryKey: listQueryKey(cfg, ctx, ctx.page + 1),
+    queryFn: () => cfg.api.getAll(listQueryParams(cfg, ctx, ctx.page + 1)).then((r) => r.data),
+    enabled: !!id && needNextPage,
+  })
 
   const resolved = useMemo(() => {
-    if (!hasContext || !pageData?.leads) {
+    if (!pageData?.leads) {
       return { prevId: undefined, nextId: undefined, position: undefined, total: undefined }
     }
-    const { page } = listContext!
-    const totalPages: number = pageData.totalPages ?? 1
-    const total: number = pageData.total ?? pageData.leads.length
     const leads: any[] = pageData.leads
+    const total: number = pageData.total ?? leads.length
     const index = leads.findIndex((l) => l.id === id)
-
     if (index === -1) {
       return { prevId: undefined, nextId: undefined, position: undefined, total }
     }
 
-    // Within-page neighbors.
     let prevId: string | undefined = index > 0 ? leads[index - 1].id : undefined
     let nextId: string | undefined = index < leads.length - 1 ? leads[index + 1].id : undefined
 
-    // Page-edge crossing: look into the adjacent page's cached data if present.
-    if (prevId === undefined && page > 1) {
-      const prevPage = qc.getQueryData<any>(listQueryKey(cfg, listContext!, page - 1))
-      const prevLeads: any[] | undefined = prevPage?.leads
-      if (prevLeads?.length) prevId = prevLeads[prevLeads.length - 1].id
+    // Page-edge crossing.
+    if (prevId === undefined && prevPageData?.leads?.length) {
+      prevId = prevPageData.leads[prevPageData.leads.length - 1].id
     }
-    if (nextId === undefined && page < totalPages) {
-      const nextPage = qc.getQueryData<any>(listQueryKey(cfg, listContext!, page + 1))
-      const nextLeads: any[] | undefined = nextPage?.leads
-      if (nextLeads?.length) nextId = nextLeads[0].id
+    if (nextId === undefined && nextPageData?.leads?.length) {
+      nextId = nextPageData.leads[0].id
     }
 
-    const position = (page - 1) * LIMIT + index + 1
+    const position = (ctx.page - 1) * LIMIT + index + 1
     return { prevId, nextId, position, total }
-  }, [hasContext, pageData, id, listContext, qc, cfg])
-
-  // Best-effort prefetch of adjacent pages so that crossing a page boundary resolves
-  // an id instantly and the next detail view loads without a spinner.
-  useEffect(() => {
-    if (!hasContext || !pageData?.leads) return
-    const { page } = listContext!
-    const totalPages: number = pageData.totalPages ?? 1
-    const index = pageData.leads.findIndex((l: any) => l.id === id)
-    if (index <= 0 && page > 1) {
-      qc.prefetchQuery({
-        queryKey: listQueryKey(cfg, listContext!, page - 1),
-        queryFn: () => cfg.api.getAll(listQueryParams(cfg, listContext!, page - 1)).then((r) => r.data),
-      })
-    }
-    if (index >= pageData.leads.length - 1 && page < totalPages) {
-      qc.prefetchQuery({
-        queryKey: listQueryKey(cfg, listContext!, page + 1),
-        queryFn: () => cfg.api.getAll(listQueryParams(cfg, listContext!, page + 1)).then((r) => r.data),
-      })
-    }
-  }, [hasContext, pageData, id, listContext, qc, cfg])
+  }, [pageData, prevPageData, nextPageData, id, ctx.page])
 
   // Prefetch the resolved neighbors' detail data so navigation is instant.
   useEffect(() => {
@@ -151,7 +151,7 @@ export function useLeadNavigator(
 
   const goTo = (targetId?: string) => {
     if (!targetId) return
-    navigate(`${cfg.routeBase}/${targetId}`, { state: { listContext }, replace: true })
+    navigate(`${cfg.routeBase}/${targetId}`, { state: { listContext: ctx }, replace: true })
   }
 
   return {
@@ -161,6 +161,7 @@ export function useLeadNavigator(
     goNext: () => goTo(resolved.nextId),
     position: resolved.position,
     total: resolved.total,
-    hasContext,
+    // Controls always render when we have a lead id; they simply disable at edges.
+    hasContext: !!id,
   }
 }
