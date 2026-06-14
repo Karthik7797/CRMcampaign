@@ -1,8 +1,67 @@
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
 import { analyticsApi } from '../api/client'
-import { Users, TrendingUp, UserCheck, AlertCircle, ArrowUp, Clock } from 'lucide-react'
+import { Users, TrendingUp, UserCheck, AlertCircle, ArrowUp, Clock, CalendarClock } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
-import { formatRelativeTime } from '../lib/utils'
+import { formatRelativeTime, formatDate, leadDetailsPath, type LeadType } from '../lib/utils'
+
+type FollowUpRow = {
+  id: string
+  name: string
+  leadType: LeadType
+  followUpDate: string
+  status: string
+  assignedTo?: { name: string } | null
+}
+
+function FollowUpCard({
+  title, icon, accent, items, emptyText,
+}: {
+  title: string
+  icon: React.ReactNode
+  accent: string
+  items: FollowUpRow[]
+  emptyText: string
+}) {
+  return (
+    <div className="card">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+          <span className={accent}>{icon}</span> {title}
+        </h3>
+        <span className="text-xs text-slate-500 tabular-nums">{items.length}</span>
+      </div>
+      {items.length === 0 ? (
+        <p className="text-sm text-slate-500 text-center py-8">{emptyText}</p>
+      ) : (
+        <div className="space-y-2 max-h-[260px] overflow-y-auto custom-scrollbar pr-1">
+          {items.map((row) => (
+            <Link
+              key={`${row.leadType}-${row.id}`}
+              to={leadDetailsPath(row.leadType, row.id)}
+              className="flex items-center justify-between py-2.5 px-2 -mx-2 rounded-lg border-b border-surface-700
+                         last:border-0 hover:bg-surface-700/40 transition-colors"
+            >
+              <div className="flex items-center gap-3 min-w-0">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600
+                                flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                  {row.name[0]?.toUpperCase() || 'U'}
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-medium text-slate-200 truncate">{row.name}</p>
+                  <p className="text-xs text-slate-500">{formatDate(row.followUpDate)}</p>
+                </div>
+              </div>
+              <span className={`text-xs px-2 py-0.5 rounded-full border badge-${row.status.toLowerCase()} flex-shrink-0`}>
+                {row.status}
+              </span>
+            </Link>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
 
 const statCards = (data: any) => [
   { label: 'Total Leads', value: data?.totalLeads ?? 0, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/10', trend: '+12%' },
@@ -53,6 +112,24 @@ export default function Dashboard() {
             <p className="text-xs text-slate-400 mt-0.5">{stat.label}</p>
           </div>
         ))}
+      </div>
+
+      {/* Follow-ups: Overdue & Due Today */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <FollowUpCard
+          title="Overdue Follow-ups"
+          icon={<AlertCircle size={16} />}
+          accent="text-red-400"
+          items={data?.followUpsOverdue ?? []}
+          emptyText="Nothing overdue 🎉"
+        />
+        <FollowUpCard
+          title="Due Today"
+          icon={<CalendarClock size={16} />}
+          accent="text-amber-400"
+          items={data?.followUpsDueToday ?? []}
+          emptyText="No follow-ups due today."
+        />
       </div>
 
       {/* Charts */}

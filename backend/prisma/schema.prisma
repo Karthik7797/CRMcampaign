@@ -61,6 +61,7 @@ model Lead {
   utmCampaign   String?
   city          String?
   qualification String?
+  followUpDate  DateTime?
   assignedTo    User?        @relation("AssignedLeads", fields: [assignedToId], references: [id])
   assignedToId  String?
   pipelineStage PipelineStage @default(ENQUIRY)
@@ -197,6 +198,7 @@ model InfluencerLead {
   source            LeadSource   @default(GOOGLE_FORM)
   status            LeadStatus   @default(NEW)
   priority          Priority     @default(MEDIUM)
+  followUpDate      DateTime?
   pipelineStage     PipelineStage @default(ENQUIRY)
   assignedTo        User?        @relation("InfluencerAssignedLeads", fields: [assignedToId], references: [id])
   assignedToId      String?
@@ -274,6 +276,7 @@ model Campaign1Lead {
   source            LeadSource   @default(GOOGLE_FORM)
   status            LeadStatus   @default(NEW)
   priority          Priority     @default(MEDIUM)
+  followUpDate      DateTime?
   pipelineStage     PipelineStage @default(ENQUIRY)
   assignedTo        User?        @relation("Campaign1AssignedLeads", fields: [assignedToId], references: [id])
   assignedToId      String?
@@ -361,6 +364,7 @@ model Campaign2Lead {
   source            LeadSource   @default(GOOGLE_FORM)
   status            LeadStatus   @default(NEW)
   priority          Priority     @default(MEDIUM)
+  followUpDate      DateTime?
   pipelineStage     PipelineStage @default(ENQUIRY)
   assignedTo        User?        @relation("Campaign2AssignedLeads", fields: [assignedToId], references: [id])
   assignedToId      String?

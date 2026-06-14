@@ -4,7 +4,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { campaign1Api } from '../api/client'
 import { ArrowLeft, User, Mail, Phone, GraduationCap, Calendar, MapPin, Save, Edit2, Loader2, Send, MessageSquare, Users, FileText, ChevronLeft, ChevronRight } from 'lucide-react'
 import toast from 'react-hot-toast'
-import { formatRelativeTime, formatDateTime } from '../lib/utils'
+import { formatRelativeTime, formatDateTime, formatDate, followUpBucket, followUpPillClass, followUpPillLabel } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
 import { useLeadNavigator } from '../hooks/useLeadNavigator'
 
@@ -64,6 +64,7 @@ export default function Campaign1LeadDetails() {
         remarks: lead.remarks || '',
         status: lead.status || 'NEW',
         priority: lead.priority || 'MEDIUM',
+        followUpDate: lead.followUpDate ? String(lead.followUpDate).slice(0, 10) : '',
       })
     }
   }, [lead])
@@ -92,6 +93,14 @@ export default function Campaign1LeadDetails() {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target
     setFormData((prev: any) => ({ ...prev, [name]: value }))
+  }
+
+  const handleSave = () => {
+    const payload = {
+      ...formData,
+      followUpDate: formData.followUpDate ? new Date(formData.followUpDate).toISOString() : null,
+    }
+    updateMutation.mutate(payload)
   }
 
   if (isLoading) {
@@ -153,7 +162,7 @@ export default function Campaign1LeadDetails() {
             isEditing ? (
               <div className="flex gap-2">
                 <button type="button" className="btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
-                <button type="button" className="btn-primary flex items-center gap-2" onClick={() => updateMutation.mutate(formData)} disabled={updateMutation.isPending}>
+                <button type="button" className="btn-primary flex items-center gap-2" onClick={handleSave} disabled={updateMutation.isPending}>
                   {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} Save Changes
                 </button>
               </div>
@@ -263,6 +272,45 @@ export default function Campaign1LeadDetails() {
                 {isEditing ? <textarea name="remarks" value={formData.remarks} onChange={handleChange} className="input w-full h-20 resize-none" />
                   : <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent min-h-[60px]">{lead.remarks || '—'}</div>}
               </div>
+            </div>
+          </div>
+
+          {/* Follow-up */}
+          <div className="card">
+            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+              <Calendar size={20} className="text-brand-500" /> Follow-up
+            </h3>
+            <div className="space-y-1.5">
+              <label className="text-xs text-slate-400 font-medium ml-1">Follow-up Date</label>
+              {isEditing ? (
+                <input
+                  type="date"
+                  name="followUpDate"
+                  title="Follow-up Date"
+                  value={formData.followUpDate || ''}
+                  onChange={handleChange}
+                  className="input w-full"
+                />
+              ) : (
+                <div className="flex items-center gap-3 px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">
+                  {lead.followUpDate ? (
+                    <>
+                      <span>{formatDate(lead.followUpDate)}</span>
+                      {(() => {
+                        const bucket = followUpBucket(lead.followUpDate)
+                        if (bucket === 'none') return null
+                        return (
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${followUpPillClass[bucket]}`}>
+                            {followUpPillLabel[bucket]}
+                          </span>
+                        )
+                      })()}
+                    </>
+                  ) : (
+                    <span className="text-slate-500">— not set —</span>
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
