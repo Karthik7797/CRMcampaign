@@ -7,7 +7,7 @@ import { formatRelativeTime } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
 import toast from 'react-hot-toast'
 
-const STATUS_OPTIONS = ['ALL', 'NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK']
+const STATUS_OPTIONS = ['ALL', 'NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP']
 
 // Color-coded status badges
 const STATUS_BADGES: Record<string, { bg: string; text: string }> = {
@@ -222,7 +222,7 @@ export default function InfluencerLeads() {
                         onClick={(e) => e.stopPropagation()}
                         onChange={(e) => updateMutation.mutate({ id: lead.id, data: { status: e.target.value } })}
                       >
-                        {['NEW','CONTACTED','QUALIFIED','NURTURING','CONVERTED','LOST','JUNK'].map(s => (
+                        {['NEW','CONTACTED','QUALIFIED','NURTURING','CONVERTED','LOST','JUNK','DNP'].map(s => (
                           <option key={s} value={s} className="bg-surface-800 text-slate-200">{s}</option>
                         ))}
                       </select>

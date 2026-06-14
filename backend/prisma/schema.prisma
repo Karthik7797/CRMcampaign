@@ -109,6 +109,7 @@ enum LeadStatus {
   CONVERTED
   LOST
   JUNK
+  DNP
 }
 
 enum Priority {

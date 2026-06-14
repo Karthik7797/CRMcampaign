@@ -312,7 +312,7 @@ export default function LeadDetails() {
                 <label className="text-xs text-slate-400 font-medium">Status</label>
                 {isEditing ? (
                   <select name="status" value={formData.status} onChange={handleChange} className="input w-full mt-1">
-                    {['NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK'].map(s => (
+                    {['NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP'].map(s => (
                       <option key={s} value={s}>{s}</option>
                     ))}
                   </select>

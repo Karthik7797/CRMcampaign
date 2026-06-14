@@ -355,7 +355,7 @@ export default function Campaign2LeadDetails() {
                 <label className="text-xs text-slate-400 font-medium">Status</label>
                 {isEditing ? (
                   <select name="status" value={formData.status} onChange={handleChange} className="input w-full mt-1">
-                    {['NEW','CONTACTED','QUALIFIED','NURTURING','CONVERTED','LOST','JUNK'].map(s => <option key={s} value={s}>{s}</option>)}
+                    {['NEW','CONTACTED','QUALIFIED','NURTURING','CONVERTED','LOST','JUNK','DNP'].map(s => <option key={s} value={s}>{s}</option>)}
                   </select>
                 ) : <div className="mt-1 font-medium text-slate-200">{lead.status}</div>}
               </div>
