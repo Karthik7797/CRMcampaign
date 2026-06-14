@@ -1,13 +1,14 @@
-import { Menu, Bell, Search, Plus, Calendar, X } from 'lucide-react'
+import { Menu, Bell, Search, Plus, Calendar, X, UserPlus } from 'lucide-react'
 import { useStore } from '../../store/useStore'
 import { usePermissions } from '../../hooks/usePermissions'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useQueries } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
+import toast from 'react-hot-toast'
 import { leadsApi, influencerLeadsApi, campaign1Api, campaign2Api } from '../../api/client'
 import {
-  followUpBucket, followUpPillClass, followUpPillLabel, formatDate, leadDetailsPath,
-  type LeadType,
+  followUpBucket, followUpPillClass, followUpPillLabel, formatDate, formatRelativeTime,
+  leadDetailsPath, type LeadType,
 } from '../../lib/utils'
 
 // A large page so the dropdown sees most follow-ups in one request.
@@ -15,6 +16,12 @@ import {
 // leads, follow-ups beyond the first page won't appear in the bell. A future
 // dedicated /follow-ups endpoint would remove this limit.
 const FOLLOWUP_PAGE_LIMIT = 200
+
+// New-lead detection is purely client-side: we remember the newest lead
+// createdAt we've shown per table in localStorage, and treat anything newer
+// as "new". This covers both Google-Form leads and ones added manually in the
+// CRM, since both land in the same tables this bell already polls.
+const SEEN_STORAGE_KEY = 'crm_new_leads_seen'
 
 type FollowUpItem = {
   id: string
@@ -24,13 +31,52 @@ type FollowUpItem = {
   bucket: 'overdue' | 'today'
 }
 
+type NewLeadItem = {
+  id: string
+  name: string
+  leadType: LeadType
+  createdAt: string
+}
+
+// Human label for each lead table, shown on new-lead rows.
+const leadTypeLabel: Record<LeadType, string> = {
+  lead: 'Lead',
+  influencer: 'Influencer',
+  campaign1: 'Campaign 1',
+  campaign2: 'Campaign 2',
+}
+
+// localStorage helpers: map of leadType -> ISO timestamp of newest seen lead.
+function readSeen(): Partial<Record<LeadType, string>> {
+  try {
+    return JSON.parse(localStorage.getItem(SEEN_STORAGE_KEY) || '{}')
+  } catch {
+    return {}
+  }
+}
+function writeSeen(seen: Partial<Record<LeadType, string>>) {
+  try {
+    localStorage.setItem(SEEN_STORAGE_KEY, JSON.stringify(seen))
+  } catch {
+    /* ignore quota / disabled storage */
+  }
+}
+
 export default function TopBar() {
   const toggleSidebar = useStore((s) => s.toggleSidebar)
   const { canCreateLeads, can } = usePermissions()
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(false)
+  const [tab, setTab] = useState<'newleads' | 'followups'>('newleads')
   const panelRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
+
+  // Per-table "newest createdAt already seen by this user". Initialised from
+  // localStorage so a page reload doesn't re-flag leads as new.
+  const [seen, setSeen] = useState<Partial<Record<LeadType, string>>>(() => readSeen())
+  // Tracks whether we've completed the first fetch, so leads that already
+  // existed before the user opened the app aren't announced as "new".
+  const baselined = useRef<Partial<Record<LeadType, boolean>>>({})
 
   // Which lead lists this role is allowed to read — avoid firing requests that 403.
   const sources = useMemo(() => ([
@@ -75,7 +121,79 @@ export default function TopBar() {
     })
   }, [results, sources])
 
-  const count = items.length
+  // New leads: any row whose createdAt is after the per-table "seen" mark.
+  const newLeads: NewLeadItem[] = useMemo(() => {
+    const out: NewLeadItem[] = []
+    results.forEach((res, i) => {
+      const src = sources[i]
+      const rows: any[] = Array.isArray(res.data) ? res.data : []
+      const mark = seen[src.leadType]
+      rows.forEach((row) => {
+        if (!row.createdAt) return
+        if (mark && new Date(row.createdAt).getTime() <= new Date(mark).getTime()) return
+        out.push({
+          id: row.id,
+          name: row[src.nameField] ?? 'Unknown',
+          leadType: src.leadType,
+          createdAt: row.createdAt,
+        })
+      })
+    })
+    // Newest first.
+    return out.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+  }, [results, sources, seen])
+
+  // On the first successful fetch of each table, set the "seen" mark to its
+  // newest lead so pre-existing leads aren't announced. After that, newly
+  // arrived leads (Google Form or manual) surface as new and pop a toast.
+  useEffect(() => {
+    results.forEach((res, i) => {
+      const src = sources[i]
+      if (!res.isSuccess) return
+      const rows: any[] = Array.isArray(res.data) ? res.data : []
+      const newest = rows.reduce<string | null>((max, r) => {
+        if (!r.createdAt) return max
+        return !max || new Date(r.createdAt).getTime() > new Date(max).getTime() ? r.createdAt : max
+      }, null)
+
+      if (!baselined.current[src.leadType]) {
+        // First load for this table: baseline silently.
+        baselined.current[src.leadType] = true
+        if (newest && !readSeen()[src.leadType]) {
+          setSeen((prev) => {
+            const next = { ...prev, [src.leadType]: newest }
+            writeSeen(next)
+            return next
+          })
+        }
+        return
+      }
+
+      // Subsequent polls: announce leads newer than the current mark.
+      const mark = seen[src.leadType]
+      const fresh = rows.filter(
+        (r) => r.createdAt && (!mark || new Date(r.createdAt).getTime() > new Date(mark).getTime())
+      )
+      if (fresh.length > 0) {
+        const label = fresh.length === 1
+          ? `New lead: ${fresh[0][src.nameField] ?? 'Unknown'}`
+          : `${fresh.length} new ${leadTypeLabel[src.leadType]} leads`
+        toast.success(label, { icon: '🎉' })
+      }
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [results.map((r) => r.dataUpdatedAt).join(',')])
+
+  const followUpCount = items.length
+  const newLeadCount = newLeads.length
+  const totalCount = followUpCount + newLeadCount
+
+  // Default the open dropdown to whichever tab actually has items.
+  useEffect(() => {
+    if (!open) return
+    if (newLeadCount === 0 && followUpCount > 0) setTab('followups')
+    else if (newLeadCount > 0) setTab('newleads')
+  }, [open, newLeadCount, followUpCount])
 
   // Close the dropdown when clicking outside it.
   useEffect(() => {
@@ -87,9 +205,30 @@ export default function TopBar() {
     return () => window.removeEventListener('mousedown', onMouseDown)
   }, [open])
 
-  const goTo = (item: FollowUpItem) => {
+  const goToFollowUp = (item: FollowUpItem) => {
     setOpen(false)
     navigate(leadDetailsPath(item.leadType, item.id))
+  }
+
+  const goToNewLead = (item: NewLeadItem) => {
+    setOpen(false)
+    navigate(leadDetailsPath(item.leadType, item.id))
+  }
+
+  // Mark every currently-shown new lead as seen (per table = its newest createdAt).
+  const markNewLeadsSeen = () => {
+    if (newLeads.length === 0) return
+    setSeen((prev) => {
+      const next = { ...prev }
+      newLeads.forEach((l) => {
+        const cur = next[l.leadType]
+        if (!cur || new Date(l.createdAt).getTime() > new Date(cur).getTime()) {
+          next[l.leadType] = l.createdAt
+        }
+      })
+      writeSeen(next)
+      return next
+    })
   }
 
   return (
@@ -128,15 +267,15 @@ export default function TopBar() {
           <button
             type="button"
             onClick={() => setOpen((o) => !o)}
-            title="Follow-up reminders"
-            aria-label="Follow-up reminders"
+            title="Notifications"
+            aria-label="Notifications"
             className="relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-colors"
           >
             <Bell size={18} />
-            {count > 0 && (
+            {totalCount > 0 && (
               <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 px-1 flex items-center justify-center
                                text-[10px] font-bold text-white bg-red-500 rounded-full">
-                {count > 9 ? '9+' : count}
+                {totalCount > 9 ? '9+' : totalCount}
               </span>
             )}
           </button>
@@ -145,9 +284,7 @@ export default function TopBar() {
             <div className="absolute right-0 mt-2 w-80 max-h-[70vh] overflow-hidden flex flex-col
                             bg-surface-800 border border-surface-700 rounded-xl shadow-card z-20">
               <div className="flex items-center justify-between px-4 py-3 border-b border-surface-700">
-                <h4 className="text-sm font-semibold text-white flex items-center gap-2">
-                  <Calendar size={15} className="text-brand-500" /> Follow-ups
-                </h4>
+                <h4 className="text-sm font-semibold text-white">Notifications</h4>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
@@ -158,34 +295,116 @@ export default function TopBar() {
                 </button>
               </div>
 
+              {/* Tabs */}
+              <div className="flex border-b border-surface-700">
+                <button
+                  type="button"
+                  onClick={() => setTab('newleads')}
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors
+                    ${tab === 'newleads'
+                      ? 'text-brand-400 border-b-2 border-brand-500'
+                      : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  <UserPlus size={14} /> New Leads
+                  {newLeadCount > 0 && (
+                    <span className="ml-0.5 min-w-[16px] h-4 px-1 flex items-center justify-center
+                                     text-[10px] font-bold text-white bg-red-500 rounded-full">
+                      {newLeadCount > 9 ? '9+' : newLeadCount}
+                    </span>
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setTab('followups')}
+                  className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 text-xs font-medium transition-colors
+                    ${tab === 'followups'
+                      ? 'text-brand-400 border-b-2 border-brand-500'
+                      : 'text-slate-400 hover:text-slate-200'}`}
+                >
+                  <Calendar size={14} /> Follow-ups
+                  {followUpCount > 0 && (
+                    <span className="ml-0.5 min-w-[16px] h-4 px-1 flex items-center justify-center
+                                     text-[10px] font-bold text-white bg-red-500 rounded-full">
+                      {followUpCount > 9 ? '9+' : followUpCount}
+                    </span>
+                  )}
+                </button>
+              </div>
+
               <div className="overflow-y-auto custom-scrollbar">
-                {count === 0 ? (
-                  <div className="px-4 py-8 text-center text-slate-500">
-                    <Calendar size={28} className="mx-auto mb-2 opacity-50" />
-                    <p className="text-sm">No follow-ups due.</p>
-                  </div>
+                {tab === 'newleads' ? (
+                  newLeadCount === 0 ? (
+                    <div className="px-4 py-8 text-center text-slate-500">
+                      <UserPlus size={28} className="mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No new leads.</p>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between px-4 py-2 border-b border-surface-700">
+                        <span className="text-xs text-slate-500">
+                          {newLeadCount} new lead{newLeadCount > 1 ? 's' : ''}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={markNewLeadsSeen}
+                          className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
+                        >
+                          Mark all read
+                        </button>
+                      </div>
+                      {newLeads.map((item) => (
+                        <button
+                          key={`${item.leadType}-${item.id}`}
+                          type="button"
+                          onClick={() => goToNewLead(item)}
+                          className="w-full flex items-center gap-3 px-4 py-3 text-left border-b border-surface-700
+                                     last:border-0 hover:bg-surface-700/50 transition-colors"
+                        >
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500 to-brand-600
+                                          flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                            {item.name[0]?.toUpperCase() || 'U'}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-slate-200 truncate">{item.name}</p>
+                            <p className="text-xs text-slate-500">{formatRelativeTime(item.createdAt)}</p>
+                          </div>
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border flex-shrink-0
+                                           bg-emerald-500/10 text-emerald-400 border-emerald-500/20">
+                            {leadTypeLabel[item.leadType]}
+                          </span>
+                        </button>
+                      ))}
+                    </>
+                  )
                 ) : (
-                  items.map((item) => (
-                    <button
-                      key={`${item.leadType}-${item.id}`}
-                      type="button"
-                      onClick={() => goTo(item)}
-                      className="w-full flex items-center gap-3 px-4 py-3 text-left border-b border-surface-700
-                                 last:border-0 hover:bg-surface-700/50 transition-colors"
-                    >
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600
-                                      flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
-                        {item.name[0]?.toUpperCase() || 'U'}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-medium text-slate-200 truncate">{item.name}</p>
-                        <p className="text-xs text-slate-500">{formatDate(item.followUpDate)}</p>
-                      </div>
-                      <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border flex-shrink-0 ${followUpPillClass[item.bucket]}`}>
-                        {followUpPillLabel[item.bucket]}
-                      </span>
-                    </button>
-                  ))
+                  followUpCount === 0 ? (
+                    <div className="px-4 py-8 text-center text-slate-500">
+                      <Calendar size={28} className="mx-auto mb-2 opacity-50" />
+                      <p className="text-sm">No follow-ups due.</p>
+                    </div>
+                  ) : (
+                    items.map((item) => (
+                      <button
+                        key={`${item.leadType}-${item.id}`}
+                        type="button"
+                        onClick={() => goToFollowUp(item)}
+                        className="w-full flex items-center gap-3 px-4 py-3 text-left border-b border-surface-700
+                                   last:border-0 hover:bg-surface-700/50 transition-colors"
+                      >
+                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-brand-500 to-purple-600
+                                        flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                          {item.name[0]?.toUpperCase() || 'U'}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium text-slate-200 truncate">{item.name}</p>
+                          <p className="text-xs text-slate-500">{formatDate(item.followUpDate)}</p>
+                        </div>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium border flex-shrink-0 ${followUpPillClass[item.bucket]}`}>
+                          {followUpPillLabel[item.bucket]}
+                        </span>
+                      </button>
+                    ))
+                  )
                 )}
               </div>
             </div>
