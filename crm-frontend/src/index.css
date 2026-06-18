@@ -80,22 +80,23 @@
 .dark {
   color-scheme: dark;
 
-  --surface-DEFAULT: 15 23 42;  /* #0f172a */
-  --surface-50: 248 250 252;
-  --surface-100: 241 245 249;
-  --surface-200: 226 232 240;
-  --surface-600: 71 85 105;     /* #475569 */
-  --surface-700: 51 65 85;      /* #334155 borders/hover */
-  --surface-800: 30 41 59;      /* #1e293b card bg */
-  --surface-900: 15 23 42;      /* #0f172a app bg */
+  /* surface scale — shadcn "zinc" dark palette (neutral near-black, no blue cast) */
+  --surface-DEFAULT: 9 9 11;    /* #09090b zinc-950 */
+  --surface-50: 250 250 250;
+  --surface-100: 244 244 245;
+  --surface-200: 228 228 231;
+  --surface-600: 82 82 91;      /* #52525b zinc-600 */
+  --surface-700: 39 39 42;      /* #27272a zinc-800 borders/hover */
+  --surface-800: 24 24 27;      /* #18181b zinc-900 card bg */
+  --surface-900: 9 9 11;        /* #09090b zinc-950 app bg */
 
-  /* slate text — light on dark (original values) */
-  --slate-50: 248 250 252;   /* #f8fafc */
-  --slate-100: 241 245 249;  /* #f1f5f9 */
-  --slate-200: 226 232 240;  /* #e2e8f0 */
-  --slate-300: 203 213 225;  /* #cbd5e1 */
-  --slate-400: 148 163 184;  /* #94a3b8 */
-  --slate-500: 100 116 139;  /* #64748b */
+  /* slate text — light on near-black (neutral zinc, no blue cast) */
+  --slate-50: 250 250 250;   /* #fafafa */
+  --slate-100: 244 244 245;  /* #f4f4f5 zinc-100 */
+  --slate-200: 228 228 231;  /* #e4e4e7 zinc-200 */
+  --slate-300: 212 212 216;  /* #d4d4d8 zinc-300 */
+  --slate-400: 161 161 170;  /* #a1a1aa zinc-400 */
+  --slate-500: 113 113 122;  /* #71717a zinc-500 */
 
   --brand-50: 239 246 255;
   --brand-100: 219 234 254;
@@ -105,30 +106,30 @@
   --brand-700: 29 78 216;
   --brand-900: 30 58 138;
 
-  --scrim: 2 6 23;           /* near-black overlay */
+  --scrim: 0 0 0;            /* pure black overlay */
   --ring: 96 165 250;
   --shadow-color: 0 0 0;
-  --shadow-strength: 0.4;
+  --shadow-strength: 0.5;
 
-  /* shadcn/ui semantic tokens (HSL triplets) — DARK. */
-  --background: 222 47% 11%;       /* surface-900 dark   #0f172a */
-  --foreground: 210 40% 98%;       /* slate-100 dark     #f8fafc */
-  --card: 217 33% 17%;             /* surface-800 dark   #1e293b */
-  --card-foreground: 210 40% 98%;
-  --popover: 217 33% 17%;
-  --popover-foreground: 210 40% 98%;
+  /* shadcn/ui semantic tokens (HSL triplets) — DARK (zinc). */
+  --background: 240 10% 4%;        /* surface-900 dark   #09090b */
+  --foreground: 0 0% 98%;          /* slate-100 dark     #fafafa */
+  --card: 240 6% 10%;              /* surface-800 dark   #18181b */
+  --card-foreground: 0 0% 98%;
+  --popover: 240 6% 10%;
+  --popover-foreground: 0 0% 98%;
   --primary: 217 91% 60%;          /* brand-500          #3b82f6 */
-  --primary-foreground: 222 47% 11%;
-  --secondary: 215 25% 27%;        /* surface-700 dark   #334155 */
-  --secondary-foreground: 210 40% 98%;
-  --muted: 215 25% 27%;
-  --muted-foreground: 215 20% 65%; /* slate-400 dark     #94a3b8 */
-  --accent: 215 25% 27%;
-  --accent-foreground: 210 40% 98%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4% 16%;         /* surface-700 dark   #27272a */
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 4% 16%;
+  --muted-foreground: 240 5% 65%;  /* slate-400 dark     #a1a1aa */
+  --accent: 240 4% 16%;
+  --accent-foreground: 0 0% 98%;
   --destructive: 0 63% 31%;
-  --destructive-foreground: 210 40% 98%;
-  --border: 215 25% 27%;           /* surface-700 dark   #334155 */
-  --input: 215 25% 27%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 4% 16%;            /* surface-700 dark   #27272a */
+  --input: 240 4% 16%;
   --ring: 213 94% 68%;             /* #60a5fa */
   --radius: 0.5rem;
 }
