@@ -5,6 +5,11 @@ import { campaign1Api, usersApi } from '../api/client'
 import { Search, Plus, Phone, Mail, MoreVertical, ChevronLeft, ChevronRight, X, Loader2, Users, GraduationCap, User } from 'lucide-react'
 import { formatRelativeTime } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import toast from 'react-hot-toast'
 
 const STATUS_OPTIONS = ['ALL', 'NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP']
@@ -23,6 +28,7 @@ export default function Campaign1Leads() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [selectedLead, setSelectedLead] = useState<any>(null)
+  const [assignUserId, setAssignUserId] = useState('')
   const [form, setForm] = useState(emptyForm)
   const navigate = useNavigate()
   const { can } = usePermissions()
@@ -82,6 +88,7 @@ export default function Campaign1Leads() {
       toast.success('Lead assigned')
       setIsAssignModalOpen(false)
       setSelectedLead(null)
+      setAssignUserId('')
     },
     onError: () => toast.error('Failed to assign lead'),
   })
@@ -95,9 +102,9 @@ export default function Campaign1Leads() {
           <p className="text-slate-400 text-sm">{data?.total ?? 0} total leads from Google Form</p>
         </div>
         {canCreate && (
-          <button type="button" className="btn-primary flex items-center gap-1.5" onClick={() => setIsAddModalOpen(true)}>
+          <Button type="button" className="flex items-center gap-1.5" onClick={() => setIsAddModalOpen(true)}>
             <Plus size={15} /> Add Lead
-          </button>
+          </Button>
         )}
       </div>
 
@@ -105,17 +112,20 @@ export default function Campaign1Leads() {
       <div className="card py-4 flex flex-wrap items-center gap-3">
         <div className="relative flex-1 min-w-[200px]">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
+          <Input
             type="text"
             placeholder="Search by name, email, phone, college..."
-            className="input pl-9 h-9"
+            className="pl-9 h-9"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           />
         </div>
-        <select className="input h-9 w-auto min-w-[140px]" value={status} onChange={(e) => { setStatus(e.target.value); setPage(1) }}>
-          {STATUS_OPTIONS.map(s => <option key={s}>{s}</option>)}
-        </select>
+        <Select value={status} onValueChange={(v) => { setStatus(v); setPage(1) }}>
+          <SelectTrigger className="h-9 w-auto min-w-[140px]"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
@@ -168,6 +178,7 @@ export default function Campaign1Leads() {
                     <td className="px-4 py-3">
                       {canEdit ? (
                         <select
+                          aria-label="Lead status"
                           className={`text-xs px-2 py-1 rounded-full border cursor-pointer bg-transparent badge-${lead.status.toLowerCase()}`}
                           value={lead.status}
                           onClick={(e) => e.stopPropagation()}
@@ -189,12 +200,12 @@ export default function Campaign1Leads() {
                           </div>
                           <span className="text-xs text-slate-300">{lead.assignedTo.name.split(' ')[0]}</span>
                           {canAssign && (
-                            <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setIsAssignModalOpen(true) }}
+                            <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setAssignUserId(''); setIsAssignModalOpen(true) }}
                               className="ml-1 text-[10px] text-slate-400 hover:text-brand-400 transition-colors" title="Reassign lead">✕</button>
                           )}
                         </div>
                       ) : canAssign ? (
-                        <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setIsAssignModalOpen(true) }}
+                        <button type="button" onClick={(e) => { e.stopPropagation(); setSelectedLead(lead); setAssignUserId(''); setIsAssignModalOpen(true) }}
                           className="text-xs px-2 py-1 bg-brand-500/20 text-brand-400 rounded hover:bg-brand-500/30 transition-colors flex items-center gap-1">
                           <Users size={12} /> Assign
                         </button>
@@ -232,12 +243,12 @@ export default function Campaign1Leads() {
           <div className="flex items-center justify-between px-4 py-3 border-t border-surface-700">
             <p className="text-xs text-slate-400">Page {data.page} of {data.totalPages} · {data.total} leads</p>
             <div className="flex gap-2">
-              <button type="button" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="btn-secondary h-8 px-3 disabled:opacity-40">
+              <Button type="button" variant="secondary" onClick={() => setPage(p => Math.max(1, p - 1))} disabled={page === 1} className="h-8 px-3">
                 <ChevronLeft size={14} />
-              </button>
-              <button type="button" onClick={() => setPage(p => Math.min(data.totalPages, p + 1))} disabled={page === data.totalPages} className="btn-secondary h-8 px-3 disabled:opacity-40">
+              </Button>
+              <Button type="button" variant="secondary" onClick={() => setPage(p => Math.min(data.totalPages, p + 1))} disabled={page === data.totalPages} className="h-8 px-3">
                 <ChevronRight size={14} />
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -253,64 +264,67 @@ export default function Campaign1Leads() {
             </div>
             <div className="p-4 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Student Name *</label>
-                <input required className="input w-full" value={form.studentName} onChange={e => setForm(p => ({...p, studentName: e.target.value}))} placeholder="John Doe" />
+                <Label htmlFor="c1-studentName" className="text-xs text-slate-400 font-medium ml-1">Student Name *</Label>
+                <Input id="c1-studentName" required className="w-full" value={form.studentName} onChange={e => setForm(p => ({...p, studentName: e.target.value}))} placeholder="John Doe" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">Student Email *</label>
-                  <input required type="email" className="input w-full" value={form.studentEmail} onChange={e => setForm(p => ({...p, studentEmail: e.target.value}))} placeholder="john@example.com" />
+                  <Label htmlFor="c1-studentEmail" className="text-xs text-slate-400 font-medium ml-1">Student Email *</Label>
+                  <Input id="c1-studentEmail" required type="email" className="w-full" value={form.studentEmail} onChange={e => setForm(p => ({...p, studentEmail: e.target.value}))} placeholder="john@example.com" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">Student Mobile *</label>
-                  <input required className="input w-full" value={form.studentMobile} onChange={e => setForm(p => ({...p, studentMobile: e.target.value}))} placeholder="9876543210" />
+                  <Label htmlFor="c1-studentMobile" className="text-xs text-slate-400 font-medium ml-1">Student Mobile *</Label>
+                  <Input id="c1-studentMobile" required className="w-full" value={form.studentMobile} onChange={e => setForm(p => ({...p, studentMobile: e.target.value}))} placeholder="9876543210" />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">College Name</label>
-                <input className="input w-full" value={form.collegeName} onChange={e => setForm(p => ({...p, collegeName: e.target.value}))} placeholder="Example University" />
+                <Label htmlFor="c1-collegeName" className="text-xs text-slate-400 font-medium ml-1">College Name</Label>
+                <Input id="c1-collegeName" className="w-full" value={form.collegeName} onChange={e => setForm(p => ({...p, collegeName: e.target.value}))} placeholder="Example University" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">Parent Name</label>
-                  <input className="input w-full" value={form.parentName} onChange={e => setForm(p => ({...p, parentName: e.target.value}))} placeholder="Jane Doe" />
+                  <Label htmlFor="c1-parentName" className="text-xs text-slate-400 font-medium ml-1">Parent Name</Label>
+                  <Input id="c1-parentName" className="w-full" value={form.parentName} onChange={e => setForm(p => ({...p, parentName: e.target.value}))} placeholder="Jane Doe" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">Parent Mobile</label>
-                  <input className="input w-full" value={form.parentMobile} onChange={e => setForm(p => ({...p, parentMobile: e.target.value}))} placeholder="0123456789" />
+                  <Label htmlFor="c1-parentMobile" className="text-xs text-slate-400 font-medium ml-1">Parent Mobile</Label>
+                  <Input id="c1-parentMobile" className="w-full" value={form.parentMobile} onChange={e => setForm(p => ({...p, parentMobile: e.target.value}))} placeholder="0123456789" />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Parent Occupation</label>
-                <input className="input w-full" value={form.parentOccupation} onChange={e => setForm(p => ({...p, parentOccupation: e.target.value}))} placeholder="Software Engineer" />
+                <Label htmlFor="c1-parentOccupation" className="text-xs text-slate-400 font-medium ml-1">Parent Occupation</Label>
+                <Input id="c1-parentOccupation" className="w-full" value={form.parentOccupation} onChange={e => setForm(p => ({...p, parentOccupation: e.target.value}))} placeholder="Software Engineer" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">Intake</label>
-                  <input className="input w-full" value={form.intake} onChange={e => setForm(p => ({...p, intake: e.target.value}))} placeholder="May 2026" />
+                  <Label htmlFor="c1-intake" className="text-xs text-slate-400 font-medium ml-1">Intake</Label>
+                  <Input id="c1-intake" className="w-full" value={form.intake} onChange={e => setForm(p => ({...p, intake: e.target.value}))} placeholder="May 2026" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">Interested Country</label>
-                  <input className="input w-full" value={form.interestedCountry} onChange={e => setForm(p => ({...p, interestedCountry: e.target.value}))} placeholder="UK" />
+                  <Label htmlFor="c1-interestedCountry" className="text-xs text-slate-400 font-medium ml-1">Interested Country</Label>
+                  <Input id="c1-interestedCountry" className="w-full" value={form.interestedCountry} onChange={e => setForm(p => ({...p, interestedCountry: e.target.value}))} placeholder="UK" />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Mode</label>
-                <select className="input w-full" value={form.mode} onChange={e => setForm(p => ({...p, mode: e.target.value}))}>
-                  <option value="">Select mode...</option>
-                  <option value="Office Visit">Office Visit</option>
-                  <option value="Online">Online</option>
-                  <option value="Phone">Phone</option>
-                </select>
+                <Label className="text-xs text-slate-400 font-medium ml-1">Mode</Label>
+                <Select value={form.mode || 'none'} onValueChange={(v) => setForm(p => ({...p, mode: v === 'none' ? '' : v}))}>
+                  <SelectTrigger className="w-full" aria-label="Mode"><SelectValue placeholder="Select mode..." /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="none">Select mode...</SelectItem>
+                    <SelectItem value="Office Visit">Office Visit</SelectItem>
+                    <SelectItem value="Online">Online</SelectItem>
+                    <SelectItem value="Phone">Phone</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Remarks</label>
-                <textarea className="input w-full h-20 resize-none" value={form.remarks} onChange={e => setForm(p => ({...p, remarks: e.target.value}))} placeholder="Any notes..." />
+                <Label htmlFor="c1-remarks" className="text-xs text-slate-400 font-medium ml-1">Remarks</Label>
+                <Textarea id="c1-remarks" className="w-full h-20 resize-none" value={form.remarks} onChange={e => setForm(p => ({...p, remarks: e.target.value}))} placeholder="Any notes..." />
               </div>
             </div>
             <div className="p-4 border-t border-surface-700 bg-surface-800/50 flex justify-end gap-2">
-              <button type="button" className="btn-secondary" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
-              <button type="button" className="btn-primary flex items-center gap-2"
+              <Button type="button" variant="secondary" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+              <Button type="button" className="flex items-center gap-2"
                 onClick={() => {
                   if (!form.studentName || !form.studentEmail || !form.studentMobile) {
                     toast.error('Student Name, Email, and Mobile are required')
@@ -322,7 +336,7 @@ export default function Campaign1Leads() {
               >
                 {createMutation.isPending && <Loader2 size={16} className="animate-spin" />}
                 Save Lead
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -342,29 +356,30 @@ export default function Campaign1Leads() {
                 <p className="text-xs text-slate-500">{selectedLead.studentEmail} • {selectedLead.studentMobile}</p>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Assign To</label>
-                <select className="input w-full" defaultValue="" id="c1-user-select" aria-label="Select user">
-                  <option value="" disabled>Select a user...</option>
-                  {isLoadingUsers ? <option disabled>Loading...</option>
-                    : usersData?.users?.filter((u: any) => u.isActive).map((u: any) => (
-                      <option key={u.id} value={u.id} className="bg-surface-800 text-slate-200">{u.name} ({u.role})</option>
-                    ))}
-                </select>
+                <Label className="text-xs text-slate-400 font-medium ml-1">Assign To</Label>
+                <Select value={assignUserId} onValueChange={setAssignUserId}>
+                  <SelectTrigger className="w-full" aria-label="Select user"><SelectValue placeholder="Select a user..." /></SelectTrigger>
+                  <SelectContent>
+                    {isLoadingUsers ? <SelectItem value="loading" disabled>Loading...</SelectItem>
+                      : usersData?.users?.filter((u: any) => u.isActive).map((u: any) => (
+                        <SelectItem key={u.id} value={u.id}>{u.name} ({u.role})</SelectItem>
+                      ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="p-4 border-t border-surface-700 bg-surface-800/50 flex justify-end gap-2">
-              <button type="button" className="btn-secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
-              <button type="button" className="btn-primary flex items-center gap-2"
+              <Button type="button" variant="secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</Button>
+              <Button type="button" className="flex items-center gap-2"
                 onClick={() => {
-                  const sel = document.getElementById('c1-user-select') as HTMLSelectElement
-                  if (!sel?.value) { toast.error('Please select a user'); return }
-                  assignMutation.mutate({ leadId: selectedLead.id, userId: sel.value })
+                  if (!assignUserId) { toast.error('Please select a user'); return }
+                  assignMutation.mutate({ leadId: selectedLead.id, userId: assignUserId })
                 }}
                 disabled={assignMutation.isPending}
               >
                 {assignMutation.isPending && <Loader2 size={16} className="animate-spin" />}
                 Assign Lead
-              </button>
+              </Button>
             </div>
           </div>
         </div>

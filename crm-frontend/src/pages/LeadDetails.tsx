@@ -6,6 +6,10 @@ import { ArrowLeft, User, Mail, Phone, MapPin, Save, Edit2, Calendar, FileText, 
 import toast from 'react-hot-toast'
 import { formatRelativeTime, formatDateTime, formatDate, followUpBucket, followUpPillClass, followUpPillLabel } from '../lib/utils'
 import { useLeadNavigator } from '../hooks/useLeadNavigator'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function LeadDetails() {
   const { id } = useParams<{ id: string }>()
@@ -120,7 +124,7 @@ export default function LeadDetails() {
     return (
       <div className="text-center mt-10">
         <h2 className="text-xl text-red-400">Error loading lead details</h2>
-        <button className="btn-secondary mt-4" onClick={() => navigate('/leads')}>Go Back</button>
+        <Button variant="secondary" className="mt-4" onClick={() => navigate('/leads')}>Go Back</Button>
       </div>
     )
   }
@@ -174,20 +178,20 @@ export default function LeadDetails() {
         <div>
           {isEditing ? (
             <div className="flex gap-2">
-              <button className="btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
-              <button 
-                className="btn-primary flex items-center gap-2" 
+              <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
+              <Button
+                className="flex items-center gap-2"
                 onClick={handleSave}
                 disabled={updateMutation.isPending}
               >
-                {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} 
+                {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                 Save Changes
-              </button>
+              </Button>
             </div>
           ) : (
-            <button className="btn-secondary flex items-center gap-2" onClick={() => setIsEditing(true)}>
+            <Button variant="secondary" className="flex items-center gap-2" onClick={() => setIsEditing(true)}>
               <Edit2 size={16} /> Edit Details
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -199,17 +203,17 @@ export default function LeadDetails() {
             <h3 className="text-lg font-medium text-slate-100 mb-4">Contact Information</h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><User size={12}/> Name</label>
+                <Label htmlFor="name" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><User size={12}/> Name</Label>
                 {isEditing ? (
-                  <input name="name" value={formData.name} onChange={handleChange} className="input w-full" />
+                  <Input id="name" name="name" value={formData.name} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.name}</div>
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Mail size={12}/> Email</label>
+                <Label htmlFor="email" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Mail size={12}/> Email</Label>
                 {isEditing ? (
-                  <input type="email" name="email" value={formData.email} onChange={handleChange} className="input w-full" />
+                  <Input id="email" type="email" name="email" value={formData.email} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent flex items-center gap-2">
                     {lead.email}
@@ -218,9 +222,9 @@ export default function LeadDetails() {
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Phone size={12}/> Phone</label>
+                <Label htmlFor="phone" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Phone size={12}/> Phone</Label>
                 {isEditing ? (
-                  <input name="phone" value={formData.phone} onChange={handleChange} className="input w-full" />
+                  <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent flex items-center gap-2">
                     {lead.phone}
@@ -229,9 +233,9 @@ export default function LeadDetails() {
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><MapPin size={12}/> City</label>
+                <Label htmlFor="city" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><MapPin size={12}/> City</Label>
                 {isEditing ? (
-                  <input name="city" value={formData.city} onChange={handleChange} className="input w-full" />
+                  <Input id="city" name="city" value={formData.city} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.city || '—'}</div>
                 )}
@@ -245,15 +249,16 @@ export default function LeadDetails() {
               Follow-up
             </h3>
             <div className="space-y-1.5">
-              <label className="text-xs text-slate-400 font-medium ml-1">Follow-up Date</label>
+              <Label htmlFor="followUpDate" className="text-xs text-slate-400 font-medium ml-1">Follow-up Date</Label>
               {isEditing ? (
-                <input
+                <Input
+                  id="followUpDate"
                   type="date"
                   name="followUpDate"
                   title="Follow-up Date"
                   value={formData.followUpDate || ''}
                   onChange={handleChange}
-                  className="input w-full"
+                  className="w-full"
                 />
               ) : (
                 <div className="flex items-center gap-3 px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">
@@ -324,18 +329,18 @@ export default function LeadDetails() {
             
             {/* Add Note Input */}
             <form onSubmit={handleAddNote} className="flex gap-2 pt-4 border-t border-surface-700">
-              <input
+              <Input
                 type="text"
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Type a note..."
-                className="flex-1 input"
+                className="flex-1"
                 disabled={addNoteMutation.isPending}
               />
-              <button
+              <Button
                 type="submit"
                 disabled={!newNote.trim() || addNoteMutation.isPending}
-                className="btn-primary flex items-center gap-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4"
               >
                 {addNoteMutation.isPending ? (
                   <Loader2 size={16} className="animate-spin" />
@@ -343,7 +348,7 @@ export default function LeadDetails() {
                   <Send size={16} />
                 )}
                 Add Note
-              </button>
+              </Button>
             </form>
           </div>
         </div>
@@ -354,25 +359,31 @@ export default function LeadDetails() {
             <h3 className="text-sm font-semibold mb-4 tracking-wide uppercase text-slate-300">Lead Metadata</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-slate-400 font-medium">Status</label>
+                <Label className="text-xs text-slate-400 font-medium">Status</Label>
                 {isEditing ? (
-                  <select name="status" value={formData.status} onChange={handleChange} className="input w-full mt-1">
-                    {['NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP'].map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                  <Select value={formData.status} onValueChange={(v) => setFormData((prev: any) => ({ ...prev, status: v }))}>
+                    <SelectTrigger className="w-full mt-1"><SelectValue placeholder="Select status" /></SelectTrigger>
+                    <SelectContent>
+                      {['NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP'].map(s => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <div className="mt-1 font-medium text-slate-200">{lead.status}</div>
                 )}
               </div>
               <div>
-                <label className="text-xs text-slate-400 font-medium">Priority</label>
+                <Label className="text-xs text-slate-400 font-medium">Priority</Label>
                 {isEditing ? (
-                  <select name="priority" value={formData.priority} onChange={handleChange} className="input w-full mt-1">
-                    {['HIGH', 'MEDIUM', 'LOW'].map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                  <Select value={formData.priority} onValueChange={(v) => setFormData((prev: any) => ({ ...prev, priority: v }))}>
+                    <SelectTrigger className="w-full mt-1"><SelectValue placeholder="Select priority" /></SelectTrigger>
+                    <SelectContent>
+                      {['HIGH', 'MEDIUM', 'LOW'].map(s => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <div className="mt-1">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
@@ -387,20 +398,20 @@ export default function LeadDetails() {
               </div>
               
               <div className="pt-4 border-t border-surface-700">
-                <label className="text-xs text-slate-400 font-medium block mb-1">Source</label>
+                <Label className="text-xs text-slate-400 font-medium block mb-1">Source</Label>
                 <div className="text-sm font-medium text-slate-200">{lead.source}</div>
               </div>
-              
+
               {lead.landingPage && (
                 <div>
-                  <label className="text-xs text-slate-400 font-medium block mb-1">Landing Page</label>
+                  <Label className="text-xs text-slate-400 font-medium block mb-1">Landing Page</Label>
                   <div className="text-sm text-slate-300">/{lead.landingPage}</div>
                 </div>
               )}
-              
+
               {(lead.utmSource || lead.utmCampaign) && (
                 <div className="pt-4 border-t border-surface-700">
-                  <label className="text-xs text-brand-400 font-medium flex items-center gap-1.5 mb-2"><Tag size={12}/> Marketing Attribution</label>
+                  <Label className="text-xs text-brand-400 font-medium flex items-center gap-1.5 mb-2"><Tag size={12}/> Marketing Attribution</Label>
                   <div className="space-y-1.5 mt-2 bg-surface-800/50 p-2.5 rounded-lg border border-surface-700">
                     {lead.utmSource && <div className="text-xs flex justify-between"><span className="text-slate-500">Source:</span> <span className="text-slate-300 font-medium">{lead.utmSource}</span></div>}
                     {lead.utmMedium && <div className="text-xs flex justify-between"><span className="text-slate-500">Medium:</span> <span className="text-slate-300 font-medium">{lead.utmMedium}</span></div>}

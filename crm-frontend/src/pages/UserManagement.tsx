@@ -7,6 +7,9 @@ import { usersApi } from '../api/client'
 import { ROLE_DISPLAY, getRoleColor, type Role } from '../lib/permissions'
 import { cn } from '../lib/utils'
 import toast from 'react-hot-toast'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 interface User {
   id: string
@@ -76,12 +79,12 @@ export default function UserManagement() {
           </h2>
           <p className="text-sm text-slate-400 mt-1">Manage team members and their roles</p>
         </div>
-        <button
+        <Button
           onClick={() => setShowCreateModal(true)}
-          className="btn-primary flex items-center gap-2 h-10"
+          className="flex items-center gap-2 h-10"
         >
           <UserPlus size={16} /> Add User
-        </button>
+        </Button>
       </div>
 
       {/* Role Stats */}
@@ -117,12 +120,12 @@ export default function UserManagement() {
       {/* Search */}
       <div className="relative">
         <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-        <input
+        <Input
           type="text"
           placeholder="Search users by name or email..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="input pl-9 w-full h-10 text-sm"
+          className="pl-9 w-full h-10 text-sm"
         />
       </div>
 
@@ -318,21 +321,21 @@ function CreateUserModal({ onClose, onSuccess }: { onClose: () => void; onSucces
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Full Name</label>
-            <input type="text" className="input" required
+            <Label htmlFor="create-name" className="block text-xs font-medium text-slate-300 mb-1.5">Full Name</Label>
+            <Input id="create-name" type="text" required
               value={form.name} onChange={e => setForm({ ...form, name: e.target.value })}
               placeholder="Enter full name" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Email</label>
-            <input type="email" className="input" required
+            <Label htmlFor="create-email" className="block text-xs font-medium text-slate-300 mb-1.5">Email</Label>
+            <Input id="create-email" type="email" required
               value={form.email} onChange={e => setForm({ ...form, email: e.target.value })}
               placeholder="user@institution.com" />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
+            <Label htmlFor="create-password" className="block text-xs font-medium text-slate-300 mb-1.5">Password</Label>
             <div className="relative">
-              <input type={showPass ? 'text' : 'password'} className="input pr-10" required minLength={6}
+              <Input id="create-password" type={showPass ? 'text' : 'password'} className="pr-10" required minLength={6}
                 value={form.password} onChange={e => setForm({ ...form, password: e.target.value })}
                 placeholder="Minimum 6 characters" />
               <button type="button" onClick={() => setShowPass(!showPass)}
@@ -342,7 +345,7 @@ function CreateUserModal({ onClose, onSuccess }: { onClose: () => void; onSucces
             </div>
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Role</label>
+            <Label className="block text-xs font-medium text-slate-300 mb-1.5">Role</Label>
             <div className="grid grid-cols-2 gap-2">
               {ROLES.map(role => {
                 const colors = getRoleColor(role)
@@ -364,10 +367,10 @@ function CreateUserModal({ onClose, onSuccess }: { onClose: () => void; onSucces
               })}
             </div>
           </div>
-          <button type="submit" disabled={loading}
-            className="btn-primary w-full h-10 mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <Button type="submit" disabled={loading}
+            className="w-full h-10 mt-2">
             {loading ? 'Creating...' : 'Create User'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
@@ -408,17 +411,17 @@ function EditUserModal({ user, onClose, onSuccess }: { user: User; onClose: () =
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Full Name</label>
-            <input type="text" className="input" required
+            <Label htmlFor="edit-name" className="block text-xs font-medium text-slate-300 mb-1.5">Full Name</Label>
+            <Input id="edit-name" type="text" required
               value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Email</label>
-            <input type="email" className="input" required
+            <Label htmlFor="edit-email" className="block text-xs font-medium text-slate-300 mb-1.5">Email</Label>
+            <Input id="edit-email" type="email" required
               value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} />
           </div>
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">Role</label>
+            <Label className="block text-xs font-medium text-slate-300 mb-1.5">Role</Label>
             <div className="grid grid-cols-2 gap-2">
               {ROLES.map(role => {
                 const colors = getRoleColor(role)
@@ -454,10 +457,10 @@ function EditUserModal({ user, onClose, onSuccess }: { user: User; onClose: () =
               )} style={{ left: form.isActive ? '22px' : '2px' }} />
             </button>
           </div>
-          <button type="submit" disabled={loading}
-            className="btn-primary w-full h-10 mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+          <Button type="submit" disabled={loading}
+            className="w-full h-10 mt-2">
             {loading ? 'Saving...' : 'Save Changes'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>
@@ -502,9 +505,9 @@ function ResetPasswordModal({ user, onClose }: { user: User; onClose: () => void
             Set a new password for <span className="text-slate-200 font-medium">{user.name}</span>
           </p>
           <div>
-            <label className="block text-xs font-medium text-slate-300 mb-1.5">New Password</label>
+            <Label htmlFor="reset-password" className="block text-xs font-medium text-slate-300 mb-1.5">New Password</Label>
             <div className="relative">
-              <input type={showPass ? 'text' : 'password'} className="input pr-10" required minLength={6}
+              <Input id="reset-password" type={showPass ? 'text' : 'password'} className="pr-10" required minLength={6}
                 value={password} onChange={e => setPassword(e.target.value)}
                 placeholder="Minimum 6 characters" />
               <button type="button" onClick={() => setShowPass(!showPass)}
@@ -513,10 +516,10 @@ function ResetPasswordModal({ user, onClose }: { user: User; onClose: () => void
               </button>
             </div>
           </div>
-          <button type="submit" disabled={loading}
-            className="btn-primary w-full h-10 disabled:opacity-50 disabled:cursor-not-allowed">
+          <Button type="submit" disabled={loading}
+            className="w-full h-10">
             {loading ? 'Resetting...' : 'Reset Password'}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

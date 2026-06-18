@@ -3,6 +3,8 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd'
 import { leadsApi, usersApi } from '../api/client'
 import { Users, X } from 'lucide-react'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const STAGES = [
   { key: 'ENQUIRY', label: 'Enquiry', color: 'border-blue-500', bg: 'bg-blue-500/10' },
@@ -89,20 +91,20 @@ export default function Pipeline() {
           <div className="flex items-center gap-2">
             {/* User Filter Dropdown */}
             <div className="flex items-center gap-2">
-              <label className="text-xs text-slate-400">Filter by User:</label>
-              <select
-                className="input h-9 w-auto min-w-[200px]"
-                value={selectedUserId}
-                onChange={(e) => setSelectedUserId(e.target.value)}
-                aria-label="Filter pipeline by user"
-              >
-                <option value="all">All Users</option>
-                {counsellors.map((counsellor: any) => (
-                  <option key={counsellor.id} value={counsellor.id}>
-                    {counsellor.name} ({counsellor.role})
-                  </option>
-                ))}
-              </select>
+              <Label className="text-xs text-slate-400">Filter by User:</Label>
+              <Select value={selectedUserId} onValueChange={setSelectedUserId}>
+                <SelectTrigger className="h-9 w-auto min-w-[200px]" aria-label="Filter pipeline by user">
+                  <SelectValue placeholder="All Users" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Users</SelectItem>
+                  {counsellors.map((counsellor: any) => (
+                    <SelectItem key={counsellor.id} value={counsellor.id}>
+                      {counsellor.name} ({counsellor.role})
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               {selectedUserId !== 'all' && (
                 <button
                   onClick={() => setSelectedUserId('all')}

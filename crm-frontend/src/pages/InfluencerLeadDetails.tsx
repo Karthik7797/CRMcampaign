@@ -7,6 +7,11 @@ import toast from 'react-hot-toast'
 import { formatRelativeTime, formatDateTime, formatDate, followUpBucket, followUpPillClass, followUpPillLabel } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
 import { useLeadNavigator } from '../hooks/useLeadNavigator'
+import { Input } from '@/components/ui/input'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 export default function InfluencerLeadDetails() {
   const { id } = useParams<{ id: string }>()
@@ -125,7 +130,7 @@ export default function InfluencerLeadDetails() {
     return (
       <div className="text-center mt-10">
         <h2 className="text-xl text-red-400">Error loading influencer lead details</h2>
-        <button className="btn-secondary mt-4" onClick={() => navigate('/influencer-leads')}>Go Back</button>
+        <Button variant="secondary" className="mt-4" onClick={() => navigate('/influencer-leads')}>Go Back</Button>
       </div>
     )
   }
@@ -180,20 +185,20 @@ export default function InfluencerLeadDetails() {
           {canEditInfluencerLeads && (
             isEditing ? (
               <div className="flex gap-2">
-                <button className="btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
-                <button 
-                  className="btn-primary flex items-center gap-2" 
+                <Button variant="secondary" onClick={() => setIsEditing(false)}>Cancel</Button>
+                <Button
+                  className="flex items-center gap-2"
                   onClick={handleSave}
                   disabled={updateMutation.isPending}
                 >
-                  {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />} 
+                  {updateMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                   Save Changes
-                </button>
+                </Button>
               </div>
             ) : (
-              <button className="btn-secondary flex items-center gap-2" onClick={() => setIsEditing(true)}>
+              <Button variant="secondary" className="flex items-center gap-2" onClick={() => setIsEditing(true)}>
                 <Edit2 size={16} /> Edit Details
-              </button>
+              </Button>
             )
           )}
         </div>
@@ -210,17 +215,17 @@ export default function InfluencerLeadDetails() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><User size={12}/> Student Name</label>
+                <Label htmlFor="studentName" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><User size={12}/> Student Name</Label>
                 {isEditing ? (
-                  <input name="studentName" value={formData.studentName} onChange={handleChange} className="input w-full" />
+                  <Input id="studentName" name="studentName" value={formData.studentName} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.studentName}</div>
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Mail size={12}/> Student Email</label>
+                <Label htmlFor="studentEmail" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Mail size={12}/> Student Email</Label>
                 {isEditing ? (
-                  <input type="email" name="studentEmail" value={formData.studentEmail} onChange={handleChange} className="input w-full" />
+                  <Input id="studentEmail" type="email" name="studentEmail" value={formData.studentEmail} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent flex items-center gap-2">
                     {lead.studentEmail}
@@ -229,9 +234,9 @@ export default function InfluencerLeadDetails() {
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Phone size={12}/> Student Mobile</label>
+                <Label htmlFor="studentMobile" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Phone size={12}/> Student Mobile</Label>
                 {isEditing ? (
-                  <input name="studentMobile" value={formData.studentMobile} onChange={handleChange} className="input w-full" />
+                  <Input id="studentMobile" name="studentMobile" value={formData.studentMobile} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent flex items-center gap-2">
                     {lead.studentMobile}
@@ -240,9 +245,9 @@ export default function InfluencerLeadDetails() {
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><GraduationCap size={12}/> College Name</label>
+                <Label htmlFor="collegeName" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><GraduationCap size={12}/> College Name</Label>
                 {isEditing ? (
-                  <input name="collegeName" value={formData.collegeName} onChange={handleChange} className="input w-full" />
+                  <Input id="collegeName" name="collegeName" value={formData.collegeName} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.collegeName || '—'}</div>
                 )}
@@ -258,17 +263,17 @@ export default function InfluencerLeadDetails() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><User size={12}/> Parent Name</label>
+                <Label htmlFor="parentName" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><User size={12}/> Parent Name</Label>
                 {isEditing ? (
-                  <input name="parentName" value={formData.parentName} onChange={handleChange} className="input w-full" />
+                  <Input id="parentName" name="parentName" value={formData.parentName} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.parentName || '—'}</div>
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Phone size={12}/> Parent Mobile</label>
+                <Label htmlFor="parentMobile" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Phone size={12}/> Parent Mobile</Label>
                 {isEditing ? (
-                  <input name="parentMobile" value={formData.parentMobile} onChange={handleChange} className="input w-full" />
+                  <Input id="parentMobile" name="parentMobile" value={formData.parentMobile} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent flex items-center gap-2">
                     {lead.parentMobile || '—'}
@@ -277,9 +282,9 @@ export default function InfluencerLeadDetails() {
                 )}
               </div>
               <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><FileText size={12}/> Parent Occupation</label>
+                <Label htmlFor="parentOccupation" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><FileText size={12}/> Parent Occupation</Label>
                 {isEditing ? (
-                  <input name="parentOccupation" value={formData.parentOccupation} onChange={handleChange} className="input w-full" />
+                  <Input id="parentOccupation" name="parentOccupation" value={formData.parentOccupation} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.parentOccupation || '—'}</div>
                 )}
@@ -295,38 +300,44 @@ export default function InfluencerLeadDetails() {
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Calendar size={12}/> Intake</label>
+                <Label htmlFor="intake" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><Calendar size={12}/> Intake</Label>
                 {isEditing ? (
-                  <input name="intake" value={formData.intake} onChange={handleChange} className="input w-full" />
+                  <Input id="intake" name="intake" value={formData.intake} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.intake || '—'}</div>
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><MapPin size={12}/> Interested Country</label>
+                <Label htmlFor="interestedCountry" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><MapPin size={12}/> Interested Country</Label>
                 {isEditing ? (
-                  <input name="interestedCountry" value={formData.interestedCountry} onChange={handleChange} className="input w-full" />
+                  <Input id="interestedCountry" name="interestedCountry" value={formData.interestedCountry} onChange={handleChange} className="w-full" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.interestedCountry || '—'}</div>
                 )}
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><FileText size={12}/> Mode</label>
+                <Label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><FileText size={12}/> Mode</Label>
                 {isEditing ? (
-                  <select name="mode" value={formData.mode} onChange={handleChange} className="input w-full">
-                    <option value="">Select mode...</option>
-                    <option value="Office Visit">Office Visit</option>
-                    <option value="Online">Online</option>
-                    <option value="Phone">Phone</option>
-                  </select>
+                  <Select
+                    value={formData.mode ? formData.mode : 'none'}
+                    onValueChange={(v) => setFormData((prev: any) => ({ ...prev, mode: v === 'none' ? '' : v }))}
+                  >
+                    <SelectTrigger className="w-full"><SelectValue placeholder="Select mode..." /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="none">Select mode...</SelectItem>
+                      <SelectItem value="Office Visit">Office Visit</SelectItem>
+                      <SelectItem value="Online">Online</SelectItem>
+                      <SelectItem value="Phone">Phone</SelectItem>
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">{lead.mode || '—'}</div>
                 )}
               </div>
               <div className="space-y-1.5 md:col-span-2">
-                <label className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><FileText size={12}/> Remarks</label>
+                <Label htmlFor="remarks" className="text-xs text-slate-400 font-medium ml-1 flex items-center gap-1.5"><FileText size={12}/> Remarks</Label>
                 {isEditing ? (
-                  <textarea name="remarks" value={formData.remarks} onChange={handleChange} className="input w-full h-20 resize-none" />
+                  <Textarea id="remarks" name="remarks" value={formData.remarks} onChange={handleChange} className="w-full h-20 resize-none" />
                 ) : (
                   <div className="px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent min-h-[60px]">{lead.remarks || '—'}</div>
                 )}
@@ -341,15 +352,16 @@ export default function InfluencerLeadDetails() {
               Follow-up
             </h3>
             <div className="space-y-1.5">
-              <label className="text-xs text-slate-400 font-medium ml-1">Follow-up Date</label>
+              <Label htmlFor="followUpDate" className="text-xs text-slate-400 font-medium ml-1">Follow-up Date</Label>
               {isEditing ? (
-                <input
+                <Input
+                  id="followUpDate"
                   type="date"
                   name="followUpDate"
                   title="Follow-up Date"
                   value={formData.followUpDate || ''}
                   onChange={handleChange}
-                  className="input w-full"
+                  className="w-full"
                 />
               ) : (
                 <div className="flex items-center gap-3 px-3 py-2 bg-surface-800 rounded-lg text-slate-200 border border-transparent">
@@ -421,18 +433,18 @@ export default function InfluencerLeadDetails() {
             
             {/* Add Note Input */}
             <form onSubmit={handleAddNote} className="flex gap-2 pt-4 border-t border-surface-700">
-              <input
+              <Input
                 type="text"
                 value={newNote}
                 onChange={(e) => setNewNote(e.target.value)}
                 placeholder="Type a note..."
-                className="flex-1 input"
+                className="flex-1"
                 disabled={addNoteMutation.isPending}
               />
-              <button
+              <Button
                 type="submit"
                 disabled={!newNote.trim() || addNoteMutation.isPending}
-                className="btn-primary flex items-center gap-2 px-4 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4"
               >
                 {addNoteMutation.isPending ? (
                   <Loader2 size={16} className="animate-spin" />
@@ -440,7 +452,7 @@ export default function InfluencerLeadDetails() {
                   <Send size={16} />
                 )}
                 Add Note
-              </button>
+              </Button>
             </form>
           </div>
         </div>
@@ -451,25 +463,31 @@ export default function InfluencerLeadDetails() {
             <h3 className="text-sm font-semibold mb-4 tracking-wide uppercase text-slate-300">Lead Metadata</h3>
             <div className="space-y-4">
               <div>
-                <label className="text-xs text-slate-400 font-medium">Status</label>
+                <Label className="text-xs text-slate-400 font-medium">Status</Label>
                 {isEditing ? (
-                  <select name="status" value={formData.status} onChange={handleChange} className="input w-full mt-1">
-                    {['NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP'].map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                  <Select value={formData.status} onValueChange={(v) => setFormData((prev: any) => ({ ...prev, status: v }))}>
+                    <SelectTrigger className="w-full mt-1"><SelectValue placeholder="Select status" /></SelectTrigger>
+                    <SelectContent>
+                      {['NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP'].map(s => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <div className="mt-1 font-medium text-slate-200">{lead.status}</div>
                 )}
               </div>
               <div>
-                <label className="text-xs text-slate-400 font-medium">Priority</label>
+                <Label className="text-xs text-slate-400 font-medium">Priority</Label>
                 {isEditing ? (
-                  <select name="priority" value={formData.priority} onChange={handleChange} className="input w-full mt-1">
-                    {['HIGH', 'MEDIUM', 'LOW'].map(s => (
-                      <option key={s} value={s}>{s}</option>
-                    ))}
-                  </select>
+                  <Select value={formData.priority} onValueChange={(v) => setFormData((prev: any) => ({ ...prev, priority: v }))}>
+                    <SelectTrigger className="w-full mt-1"><SelectValue placeholder="Select priority" /></SelectTrigger>
+                    <SelectContent>
+                      {['HIGH', 'MEDIUM', 'LOW'].map(s => (
+                        <SelectItem key={s} value={s}>{s}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 ) : (
                   <div className="mt-1">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium border ${
@@ -484,18 +502,18 @@ export default function InfluencerLeadDetails() {
               </div>
               
               <div className="pt-4 border-t border-surface-700">
-                <label className="text-xs text-slate-400 font-medium block mb-1">Source</label>
+                <Label className="text-xs text-slate-400 font-medium block mb-1">Source</Label>
                 <div className="text-sm font-medium text-slate-200">{lead.source}</div>
               </div>
-              
+
               <div className="pt-4 border-t border-surface-700">
-                <label className="text-xs text-slate-400 font-medium block mb-1">Pipeline Stage</label>
+                <Label className="text-xs text-slate-400 font-medium block mb-1">Pipeline Stage</Label>
                 <div className="text-sm font-medium text-slate-200">{lead.pipelineStage}</div>
               </div>
 
               {lead.assignedTo && (
                 <div className="pt-4 border-t border-surface-700">
-                  <label className="text-xs text-slate-400 font-medium block mb-1">Assigned To</label>
+                  <Label className="text-xs text-slate-400 font-medium block mb-1">Assigned To</Label>
                   <div className="flex items-center gap-2">
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
                       {lead.assignedTo.name[0]}

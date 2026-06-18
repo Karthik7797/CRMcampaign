@@ -4,6 +4,9 @@ import { Zap, Eye, EyeOff } from 'lucide-react'
 import { authApi } from '../api/client'
 import { useStore } from '../store/useStore'
 import toast from 'react-hot-toast'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Button } from '@/components/ui/button'
 
 export default function Login() {
   const [email, setEmail] = useState('')
@@ -59,10 +62,10 @@ export default function Login() {
         <div className="card">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Email</label>
-              <input
+              <Label htmlFor="email" className="mb-1.5 block text-xs text-slate-300">Email</Label>
+              <Input
+                id="email"
                 type="email"
-                className="input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="you@institution.com"
@@ -71,11 +74,12 @@ export default function Login() {
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-300 mb-1.5">Password</label>
+              <Label htmlFor="password" className="mb-1.5 block text-xs text-slate-300">Password</Label>
               <div className="relative">
-                <input
+                <Input
+                  id="password"
                   type={showPass ? 'text' : 'password'}
-                  className="input pr-10"
+                  className="pr-10"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
@@ -91,10 +95,9 @@ export default function Login() {
               </div>
             </div>
 
-            <button type="submit" disabled={loading}
-              className="btn-primary w-full h-10 mt-2 disabled:opacity-50 disabled:cursor-not-allowed">
+            <Button type="submit" disabled={loading} className="w-full h-10 mt-2">
               {loading ? 'Signing in...' : 'Sign In'}
-            </button>
+            </Button>
           </form>
 
           <div className="mt-4 pt-4 border-t border-surface-700">

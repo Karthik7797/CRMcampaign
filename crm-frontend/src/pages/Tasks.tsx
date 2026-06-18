@@ -4,6 +4,9 @@ import { CheckSquare, Plus, Clock, Circle, CheckCircle2, AlertTriangle } from 'l
 import { formatDate } from '../lib/utils'
 import { useState } from 'react'
 import toast from 'react-hot-toast'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
 
 export default function Tasks() {
   const qc = useQueryClient()
@@ -44,16 +47,15 @@ export default function Tasks() {
           <p className="text-slate-400 text-sm">Manage follow-ups and reminders</p>
         </div>
         <div className="flex items-center gap-3">
-          <label className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
-            <input
-              type="checkbox"
+          <Label htmlFor="show-completed" className="flex items-center gap-2 text-xs text-slate-400 cursor-pointer">
+            <Checkbox
+              id="show-completed"
               checked={showCompleted}
-              onChange={() => setShowCompleted(!showCompleted)}
-              className="rounded border-surface-600"
+              onCheckedChange={() => setShowCompleted(!showCompleted)}
             />
             Show completed
-          </label>
-          <button className="btn-primary flex items-center gap-1.5"><Plus size={15} /> New Task</button>
+          </Label>
+          <Button className="flex items-center gap-1.5"><Plus size={15} /> New Task</Button>
         </div>
       </div>
 

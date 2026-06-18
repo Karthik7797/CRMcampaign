@@ -1,6 +1,7 @@
 import { ShieldX, ArrowLeft } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { usePermissions } from '../hooks/usePermissions'
+import { Button } from '@/components/ui/button'
 
 export default function Unauthorized() {
   const navigate = useNavigate()
@@ -26,13 +27,13 @@ export default function Unauthorized() {
         Contact your Super Admin if you believe this is a mistake.
       </p>
 
-      <button
+      <Button
         onClick={() => navigate('/dashboard')}
-        className="btn-primary flex items-center gap-2 h-10"
+        className="flex items-center gap-2 h-10"
       >
         <ArrowLeft size={16} />
         Back to Dashboard
-      </button>
+      </Button>
     </div>
   )
 }

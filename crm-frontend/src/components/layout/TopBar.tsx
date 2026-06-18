@@ -270,12 +270,12 @@ export default function TopBar() {
         </button>
         <div className="relative hidden sm:block">
           <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
+          <Input
             type="text"
             placeholder="Search leads, tasks..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="input pl-9 w-64 h-9 text-xs"
+            className="pl-9 w-64 h-9 text-xs"
           />
         </div>
       </div>

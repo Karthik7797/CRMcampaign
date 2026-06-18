@@ -7,6 +7,10 @@ import { formatRelativeTime } from '../lib/utils'
 import { usePermissions } from '../hooks/usePermissions'
 import toast from 'react-hot-toast'
 import { Users } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const STATUS_OPTIONS = ['ALL', 'NEW', 'CONTACTED', 'QUALIFIED', 'NURTURING', 'CONVERTED', 'LOST', 'JUNK', 'DNP']
 const SOURCE_OPTIONS = [
@@ -55,6 +59,7 @@ export default function Leads() {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false)
   const [isAssignModalOpen, setIsAssignModalOpen] = useState(false)
   const [selectedLead, setSelectedLead] = useState<any>(null)
+  const [assignUserId, setAssignUserId] = useState('')
   const [newLeadForm, setNewLeadForm] = useState({ name: '', email: '', phone: '', city: '', course: '' })
   const navigate = useNavigate()
   const { canCreateLeads, canEditLeads, canDeleteLeads, canAssignLeads } = usePermissions()
@@ -120,12 +125,14 @@ export default function Leads() {
       toast.success('Lead assigned successfully')
       setIsAssignModalOpen(false)
       setSelectedLead(null)
+      setAssignUserId('')
     },
     onError: () => toast.error('Failed to assign lead')
   })
 
   const handleAssignLead = (lead: any) => {
     setSelectedLead(lead)
+    setAssignUserId('')
     setIsAssignModalOpen(true)
   }
 
@@ -138,41 +145,39 @@ export default function Leads() {
           <p className="text-slate-400 text-sm">{data?.total ?? 0} total leads from all campaigns</p>
         </div>
         {canCreateLeads && (
-          <button 
-            className="btn-primary flex items-center gap-1.5"
+          <Button
+            className="flex items-center gap-1.5"
             onClick={() => setIsAddModalOpen(true)}
           >
             <Plus size={15} /> Add Lead
-          </button>
+          </Button>
         )}
       </div>
 
       {/* Filters */}
       <div className="card py-4 flex flex-wrap items-center gap-3 shrink-0">
         <div className="relative flex-1 min-w-[200px]">
-          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-500 z-10" />
+          <Input
             type="text"
             placeholder="Search by name, email, phone..."
-            className="input pl-9 h-9"
+            className="pl-9 h-9"
             value={search}
             onChange={(e) => { setSearch(e.target.value); setPage(1) }}
           />
         </div>
-        <select
-          className="input h-9 w-auto min-w-[140px]"
-          value={status}
-          onChange={(e) => { setStatus(e.target.value); setPage(1) }}
-        >
-          {STATUS_OPTIONS.map(s => <option key={s}>{s}</option>)}
-        </select>
-        <select
-          className="input h-9 w-auto min-w-[200px]"
-          value={source}
-          onChange={(e) => { setSource(e.target.value); setPage(1) }}
-        >
-          {SOURCE_OPTIONS.map(s => <option key={s.value} value={s.value}>{s.label}</option>)}
-        </select>
+        <Select value={status} onValueChange={(v) => { setStatus(v); setPage(1) }}>
+          <SelectTrigger className="h-9 w-auto min-w-[140px]"><SelectValue placeholder="Status" /></SelectTrigger>
+          <SelectContent>
+            {STATUS_OPTIONS.map(s => <SelectItem key={s} value={s}>{s}</SelectItem>)}
+          </SelectContent>
+        </Select>
+        <Select value={source} onValueChange={(v) => { setSource(v); setPage(1) }}>
+          <SelectTrigger className="h-9 w-auto min-w-[200px]"><SelectValue placeholder="All Sources" /></SelectTrigger>
+          <SelectContent>
+            {SOURCE_OPTIONS.map(s => <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>)}
+          </SelectContent>
+        </Select>
       </div>
 
       {/* Table */}
@@ -240,6 +245,7 @@ export default function Leads() {
                   <td className="px-4 py-3">
                      {canEditLeads ? (
                       <select
+                        aria-label="Change lead status"
                         className={`text-xs px-2 py-1 rounded-full border cursor-pointer bg-transparent badge-${lead.status.toLowerCase()}`}
                         value={lead.status}
                         onClick={(e) => e.stopPropagation()}
@@ -325,20 +331,22 @@ export default function Leads() {
               Page {data.page} of {data.totalPages} · {data.total} leads
             </p>
             <div className="flex gap-2">
-              <button
+              <Button
+                variant="secondary"
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page === 1}
-                className="btn-secondary h-8 px-3 disabled:opacity-40"
+                className="h-8 px-3"
               >
                 <ChevronLeft size={14} />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="secondary"
                 onClick={() => setPage(p => Math.min(data.totalPages, p + 1))}
                 disabled={page === data.totalPages}
-                className="btn-secondary h-8 px-3 disabled:opacity-40"
+                className="h-8 px-3"
               >
                 <ChevronRight size={14} />
-              </button>
+              </Button>
             </div>
           </div>
         )}
@@ -355,32 +363,32 @@ export default function Leads() {
             </div>
             <div className="p-4 space-y-4">
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Name *</label>
-                <input required className="input w-full" value={newLeadForm.name} onChange={e => setNewLeadForm(p => ({...p, name: e.target.value}))} placeholder="John Doe" />
+                <Label htmlFor="lead-name" className="text-xs text-slate-400 font-medium ml-1">Name *</Label>
+                <Input id="lead-name" required className="w-full" value={newLeadForm.name} onChange={e => setNewLeadForm(p => ({...p, name: e.target.value}))} placeholder="John Doe" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Email *</label>
-                <input required type="email" className="input w-full" value={newLeadForm.email} onChange={e => setNewLeadForm(p => ({...p, email: e.target.value}))} placeholder="john@example.com" />
+                <Label htmlFor="lead-email" className="text-xs text-slate-400 font-medium ml-1">Email *</Label>
+                <Input id="lead-email" required type="email" className="w-full" value={newLeadForm.email} onChange={e => setNewLeadForm(p => ({...p, email: e.target.value}))} placeholder="john@example.com" />
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Phone *</label>
-                <input required className="input w-full" value={newLeadForm.phone} onChange={e => setNewLeadForm(p => ({...p, phone: e.target.value}))} placeholder="+91 9876543210" />
+                <Label htmlFor="lead-phone" className="text-xs text-slate-400 font-medium ml-1">Phone *</Label>
+                <Input id="lead-phone" required className="w-full" value={newLeadForm.phone} onChange={e => setNewLeadForm(p => ({...p, phone: e.target.value}))} placeholder="+91 9876543210" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">Course</label>
-                  <input className="input w-full" value={newLeadForm.course} onChange={e => setNewLeadForm(p => ({...p, course: e.target.value}))} placeholder="e.g. MBA" />
+                  <Label htmlFor="lead-course" className="text-xs text-slate-400 font-medium ml-1">Course</Label>
+                  <Input id="lead-course" className="w-full" value={newLeadForm.course} onChange={e => setNewLeadForm(p => ({...p, course: e.target.value}))} placeholder="e.g. MBA" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs text-slate-400 font-medium ml-1">City</label>
-                  <input className="input w-full" value={newLeadForm.city} onChange={e => setNewLeadForm(p => ({...p, city: e.target.value}))} placeholder="e.g. Mumbai" />
+                  <Label htmlFor="lead-city" className="text-xs text-slate-400 font-medium ml-1">City</Label>
+                  <Input id="lead-city" className="w-full" value={newLeadForm.city} onChange={e => setNewLeadForm(p => ({...p, city: e.target.value}))} placeholder="e.g. Mumbai" />
                 </div>
               </div>
             </div>
             <div className="p-4 border-t border-surface-700 bg-surface-800/50 flex justify-end gap-2">
-              <button className="btn-secondary" onClick={() => setIsAddModalOpen(false)}>Cancel</button>
-              <button 
-                className="btn-primary flex items-center gap-2" 
+              <Button variant="secondary" onClick={() => setIsAddModalOpen(false)}>Cancel</Button>
+              <Button
+                className="flex items-center gap-2"
                 onClick={() => {
                   if (!newLeadForm.name || (!newLeadForm.email && !newLeadForm.phone)) {
                     toast.error('Name, and Email or Phone are required')
@@ -392,7 +400,7 @@ export default function Leads() {
               >
                 {createMutation.isPending && <Loader2 size={16} className="animate-spin" />}
                 Save Lead
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -414,41 +422,37 @@ export default function Leads() {
                 <p className="text-xs text-slate-500">{selectedLead.email} • {selectedLead.phone}</p>
               </div>
               <div className="space-y-1.5">
-                <label className="text-xs text-slate-400 font-medium ml-1">Assign To</label>
-                <select 
-                  className="input w-full"
-                  defaultValue=""
-                  id="user-select"
-                  aria-label="Select user to assign lead"
-                >
-                  <option value="" disabled>Select a user...</option>
-                  {isLoadingUsers ? (
-                    <option value="" disabled>Loading users...</option>
-                  ) : usersData?.users?.filter((u: any) => u.isActive).map((user: any) => (
-                    <option key={user.id} value={user.id} className="bg-surface-800 text-slate-200">
-                      {user.name} ({user.role})
-                    </option>
-                  ))}
-                </select>
+                <Label className="text-xs text-slate-400 font-medium ml-1">Assign To</Label>
+                <Select value={assignUserId} onValueChange={setAssignUserId} disabled={isLoadingUsers}>
+                  <SelectTrigger className="w-full" aria-label="Select user to assign lead">
+                    <SelectValue placeholder={isLoadingUsers ? 'Loading users...' : 'Select a user...'} />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {usersData?.users?.filter((u: any) => u.isActive).map((user: any) => (
+                      <SelectItem key={user.id} value={user.id}>
+                        {user.name} ({user.role})
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
             <div className="p-4 border-t border-surface-700 bg-surface-800/50 flex justify-end gap-2">
-              <button className="btn-secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</button>
-              <button 
-                className="btn-primary flex items-center gap-2" 
+              <Button variant="secondary" onClick={() => setIsAssignModalOpen(false)}>Cancel</Button>
+              <Button
+                className="flex items-center gap-2"
                 onClick={() => {
-                  const select = document.getElementById('user-select') as HTMLSelectElement
-                  if (!select?.value) {
+                  if (!assignUserId) {
                     toast.error('Please select a user')
                     return
                   }
-                  assignMutation.mutate({ leadId: selectedLead.id, userId: select.value })
+                  assignMutation.mutate({ leadId: selectedLead.id, userId: assignUserId })
                 }}
                 disabled={assignMutation.isPending}
               >
                 {assignMutation.isPending && <Loader2 size={16} className="animate-spin" />}
                 Assign Lead
-              </button>
+              </Button>
             </div>
           </div>
         </div>
