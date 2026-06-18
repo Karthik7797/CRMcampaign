@@ -132,6 +132,68 @@ body {
     @apply transition-shadow duration-200 hover:shadow-card-hover;
   }
 
+  /* ---- Premium glass surface ----
+     Translucent card with a faint inner highlight. Sits on the surface-800
+     token (so it re-themes with light/dark) but adds depth and a soft border
+     glow that reads as "premium" without breaking the existing token system. */
+  .card-glass {
+    @apply relative overflow-hidden rounded-2xl border border-surface-700 p-5
+           bg-surface-800/80 shadow-card backdrop-blur-xl
+           transition-all duration-300;
+  }
+  /* Top edge highlight — a hairline of light that catches the eye like glass. */
+  .card-glass::before {
+    content: '';
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px;
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.18), transparent);
+  }
+  .card-glass-hover {
+    @apply hover:-translate-y-0.5 hover:border-surface-600 hover:shadow-card-hover;
+  }
+
+  /* Soft radial glow used behind stat icons / numbers. Color set per-card via
+     the --glow custom property. */
+  .stat-glow::after {
+    content: '';
+    @apply pointer-events-none absolute -right-6 -top-8 h-28 w-28 rounded-full opacity-60 blur-2xl;
+    background: radial-gradient(circle, rgb(var(--glow) / 0.35), transparent 70%);
+  }
+
+  /* ---- Skeleton / shimmer loading ---- */
+  .skeleton {
+    @apply relative overflow-hidden rounded-md bg-surface-700/60;
+  }
+  .skeleton::after {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(90deg, transparent, rgb(var(--slate-500) / 0.12), transparent);
+    transform: translateX(-100%);
+    animation: skeleton-shimmer 1.4s ease-in-out infinite;
+  }
+}
+
+/* ---- Dashboard motion (reduced-motion safe — see media query below) ---- */
+@keyframes skeleton-shimmer {
+  100% { transform: translateX(100%); }
+}
+@keyframes rise-in {
+  0%   { opacity: 0; transform: translateY(10px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.rise-in {
+  opacity: 0;
+  animation: rise-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rise-in { animation: none; opacity: 1; transform: none; }
+  .skeleton::after { animation: none; }
+  .card-glass, .card-glass-hover { transition: none; }
+  .card-glass-hover:hover { transform: none; }
+}
+
+@layer components {
+
   /* ---- Buttons ---- */
   .btn-primary {
     @apply inline-flex items-center justify-center bg-brand-600 hover:bg-brand-700

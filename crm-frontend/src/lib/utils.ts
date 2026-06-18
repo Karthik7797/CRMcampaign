@@ -35,6 +35,42 @@ export function formatRelativeTime(date: string | Date) {
   return `${days}d ago`
 }
 
+// ── Display helpers ─────────────────────────────────────────────────
+
+// Compact, locale-aware number formatting for stat values (1284 -> "1,284").
+export function formatNumber(value: number) {
+  return new Intl.NumberFormat('en-IN').format(value)
+}
+
+// Deterministic avatar gradient from a name, so each person reads as a
+// distinct, stable color instead of every avatar sharing one gradient.
+const AVATAR_GRADIENTS = [
+  'from-blue-500 to-indigo-600',
+  'from-violet-500 to-purple-600',
+  'from-emerald-500 to-teal-600',
+  'from-amber-500 to-orange-600',
+  'from-rose-500 to-pink-600',
+  'from-cyan-500 to-sky-600',
+  'from-fuchsia-500 to-purple-600',
+  'from-lime-500 to-green-600',
+]
+
+export function avatarGradient(name: string) {
+  let hash = 0
+  for (let i = 0; i < name.length; i++) {
+    hash = (hash << 5) - hash + name.charCodeAt(i)
+    hash |= 0
+  }
+  return AVATAR_GRADIENTS[Math.abs(hash) % AVATAR_GRADIENTS.length]
+}
+
+export function initials(name: string) {
+  const parts = name.trim().split(/\s+/).filter(Boolean)
+  if (parts.length === 0) return 'U'
+  if (parts.length === 1) return parts[0][0]!.toUpperCase()
+  return (parts[0][0]! + parts[parts.length - 1][0]!).toUpperCase()
+}
+
 // ── Follow-up date helpers ──────────────────────────────────────────
 export type FollowUpBucket = 'overdue' | 'today' | 'upcoming' | 'none'
 
