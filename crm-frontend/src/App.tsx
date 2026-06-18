@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useStore } from './store/useStore'
+import { useTheme } from './hooks/useTheme'
 import { hasPermission } from './lib/permissions'
 import Layout from './components/layout/Layout'
 import Login from './pages/Login'
@@ -48,6 +49,7 @@ function RoleRoute({
 }
 
 export default function App() {
+  useTheme()
   return (
     <BrowserRouter>
       <Routes>

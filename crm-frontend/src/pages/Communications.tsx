@@ -34,7 +34,7 @@ export default function Communications() {
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white font-display">Communications</h2>
+          <h2 className="text-xl font-bold text-slate-100 font-display">Communications</h2>
           <p className="text-slate-400 text-sm">Email, SMS and WhatsApp history</p>
         </div>
         <div className="flex items-center gap-2">
@@ -45,7 +45,7 @@ export default function Communications() {
               className={`text-xs px-3 py-1.5 rounded-lg transition-colors ${
                 typeFilter === t
                   ? 'bg-brand-600 text-white'
-                  : 'bg-surface-700 text-slate-400 hover:text-white'
+                  : 'bg-surface-700 text-slate-400 hover:text-slate-100'
               }`}
             >
               {t || 'All'}

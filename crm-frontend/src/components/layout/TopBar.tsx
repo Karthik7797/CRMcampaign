@@ -1,5 +1,6 @@
-import { Menu, Bell, Search, Plus, Calendar, X, UserPlus } from 'lucide-react'
+import { Menu, Bell, Search, Plus, Calendar, X, UserPlus, Sun, Moon, Monitor } from 'lucide-react'
 import { useStore } from '../../store/useStore'
+import { useTheme } from '../../hooks/useTheme'
 import { usePermissions } from '../../hooks/usePermissions'
 import { useState, useEffect, useRef, useMemo } from 'react'
 import { useQueries } from '@tanstack/react-query'
@@ -64,7 +65,13 @@ function writeSeen(seen: Partial<Record<LeadType, string>>) {
 
 export default function TopBar() {
   const toggleSidebar = useStore((s) => s.toggleSidebar)
+  const { theme, setTheme } = useTheme()
   const { canCreateLeads, can } = usePermissions()
+
+  // Cycle Light -> Dark -> System on click.
+  const cycleTheme = () => setTheme(theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light')
+  const ThemeIcon = theme === 'light' ? Sun : theme === 'dark' ? Moon : Monitor
+  const themeLabel = theme === 'light' ? 'Light theme' : theme === 'dark' ? 'Dark theme' : 'System theme'
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<'newleads' | 'followups'>('newleads')
@@ -77,6 +84,10 @@ export default function TopBar() {
   // Tracks whether we've completed the first fetch, so leads that already
   // existed before the user opened the app aren't announced as "new".
   const baselined = useRef<Partial<Record<LeadType, boolean>>>({})
+  // Per-table "newest createdAt already announced via toast". Separate from
+  // `seen` (which the bell badge uses) so a toast fires exactly ONCE per new
+  // lead, even though the unread lead keeps showing in the bell until read.
+  const toasted = useRef<Partial<Record<LeadType, string>>>({})
 
   // Which lead lists this role is allowed to read — avoid firing requests that 403.
   const sources = useMemo(() => ([
@@ -157,8 +168,10 @@ export default function TopBar() {
       }, null)
 
       if (!baselined.current[src.leadType]) {
-        // First load for this table: baseline silently.
+        // First load for this table: baseline silently. Seed BOTH marks to the
+        // newest existing lead so nothing already in the table gets announced.
         baselined.current[src.leadType] = true
+        toasted.current[src.leadType] = newest ?? undefined
         if (newest && !readSeen()[src.leadType]) {
           setSeen((prev) => {
             const next = { ...prev, [src.leadType]: newest }
@@ -169,12 +182,15 @@ export default function TopBar() {
         return
       }
 
-      // Subsequent polls: announce leads newer than the current mark.
-      const mark = seen[src.leadType]
+      // Subsequent polls: toast leads newer than the last ANNOUNCED mark, then
+      // advance the mark so each lead is announced exactly once (the bell badge
+      // still shows it as unread, driven by `seen`, until the user reads it).
+      const announcedMark = toasted.current[src.leadType]
       const fresh = rows.filter(
-        (r) => r.createdAt && (!mark || new Date(r.createdAt).getTime() > new Date(mark).getTime())
+        (r) => r.createdAt && (!announcedMark || new Date(r.createdAt).getTime() > new Date(announcedMark).getTime())
       )
       if (fresh.length > 0) {
+        toasted.current[src.leadType] = newest ?? announcedMark
         const label = fresh.length === 1
           ? `New lead: ${fresh[0][src.nameField] ?? 'Unknown'}`
           : `${fresh.length} new ${leadTypeLabel[src.leadType]} leads`
@@ -240,7 +256,7 @@ export default function TopBar() {
           onClick={toggleSidebar}
           title="Toggle sidebar"
           aria-label="Toggle sidebar"
-          className="p-2 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-colors"
+          className="p-2 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-surface-700 transition-colors"
         >
           <Menu size={18} />
         </button>
@@ -257,6 +273,16 @@ export default function TopBar() {
       </div>
 
       <div className="flex items-center gap-2">
+        <button
+          type="button"
+          onClick={cycleTheme}
+          title={`${themeLabel} — click to switch`}
+          aria-label={`${themeLabel}, click to switch theme`}
+          className="p-2 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-surface-700 transition-colors"
+        >
+          <ThemeIcon size={18} />
+        </button>
+
         {canCreateLeads && (
           <button type="button" className="btn-primary flex items-center gap-1.5 h-9">
             <Plus size={15} /> New Lead
@@ -269,7 +295,7 @@ export default function TopBar() {
             onClick={() => setOpen((o) => !o)}
             title="Notifications"
             aria-label="Notifications"
-            className="relative p-2 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-colors"
+            className="relative p-2 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-surface-700 transition-colors"
           >
             <Bell size={18} />
             {totalCount > 0 && (
@@ -284,11 +310,11 @@ export default function TopBar() {
             <div className="absolute right-0 mt-2 w-80 max-h-[70vh] overflow-hidden flex flex-col
                             bg-surface-800 border border-surface-700 rounded-xl shadow-card z-20">
               <div className="flex items-center justify-between px-4 py-3 border-b border-surface-700">
-                <h4 className="text-sm font-semibold text-white">Notifications</h4>
+                <h4 className="text-sm font-semibold text-slate-100">Notifications</h4>
                 <button
                   type="button"
                   onClick={() => setOpen(false)}
-                  className="p-1 rounded text-slate-400 hover:text-white hover:bg-surface-700 transition-colors"
+                  className="p-1 rounded text-slate-400 hover:text-slate-100 hover:bg-surface-700 transition-colors"
                   aria-label="Close"
                 >
                   <X size={14} />

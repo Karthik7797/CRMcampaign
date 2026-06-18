@@ -18,7 +18,7 @@ export default function Settings() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-white font-display flex items-center gap-2">
+        <h2 className="text-xl font-bold text-slate-100 font-display flex items-center gap-2">
           <SettingsIcon size={20} /> Settings
         </h2>
         <p className="text-sm text-slate-400 mt-1">System configuration and preferences</p>

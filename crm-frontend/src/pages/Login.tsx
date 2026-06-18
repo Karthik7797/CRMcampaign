@@ -52,7 +52,7 @@ export default function Login() {
                           shadow-lg shadow-brand-600/25">
             <Zap size={22} className="text-white" />
           </div>
-          <h1 className="text-2xl font-bold text-white font-display">EduCRM</h1>
+          <h1 className="text-2xl font-bold text-slate-100 font-display">EduCRM</h1>
           <p className="text-slate-400 text-sm mt-1">Sign in to your workspace</p>
         </div>
 

@@ -9,14 +9,18 @@ interface User {
   avatar?: string
 }
 
+export type Theme = 'light' | 'dark' | 'system'
+
 interface AppState {
   user: User | null
   token: string | null
   sidebarOpen: boolean
+  theme: Theme
   setUser: (user: User) => void
   setToken: (token: string) => void
   logout: () => void
   toggleSidebar: () => void
+  setTheme: (theme: Theme) => void
 }
 
 export const useStore = create<AppState>()(
@@ -25,6 +29,7 @@ export const useStore = create<AppState>()(
       user: null,
       token: null,
       sidebarOpen: true,
+      theme: 'system',
       setUser: (user) => set({ user }),
       setToken: (token) => {
         localStorage.setItem('crm_token', token)
@@ -35,7 +40,8 @@ export const useStore = create<AppState>()(
         set({ user: null, token: null })
       },
       toggleSidebar: () => set((s) => ({ sidebarOpen: !s.sidebarOpen })),
+      setTheme: (theme) => set({ theme }),
     }),
-    { name: 'crm-store', partialize: (s) => ({ user: s.user, token: s.token }) }
+    { name: 'crm-store', partialize: (s) => ({ user: s.user, token: s.token, theme: s.theme }) }
   )
 )

@@ -6,6 +6,7 @@ import {
 } from 'recharts'
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useChartTheme } from '../hooks/useChartTheme'
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#ec4899', '#14b8a6', '#6366f1']
 
@@ -26,6 +27,7 @@ const ROLE_COLORS = {
 
 export default function UserProgression() {
   const navigate = useNavigate()
+  const chart = useChartTheme()
   const [selectedUser, setSelectedUser] = useState<string | null>(null)
 
   const { data, isLoading } = useQuery({
@@ -47,7 +49,7 @@ export default function UserProgression() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-white font-display">User Progression</h2>
+        <h2 className="text-xl font-bold text-slate-100 font-display">User Progression</h2>
         <p className="text-slate-400 text-sm">Track how users' leads progress through the pipeline</p>
       </div>
 
@@ -56,14 +58,14 @@ export default function UserProgression() {
         <div className="card text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <Users size={24} className="text-blue-400" />
-            <p className="text-3xl font-bold text-white font-display">{data?.summary?.totalUsers ?? 0}</p>
+            <p className="text-3xl font-bold text-slate-100 font-display">{data?.summary?.totalUsers ?? 0}</p>
           </div>
           <p className="text-xs text-slate-400 mt-1">Total Users</p>
         </div>
         <div className="card text-center">
           <div className="flex items-center justify-center gap-2 mb-2">
             <TrendingUp size={24} className="text-green-400" />
-            <p className="text-3xl font-bold text-white font-display">{data?.summary?.totalAssignedLeads ?? 0}</p>
+            <p className="text-3xl font-bold text-slate-100 font-display">{data?.summary?.totalAssignedLeads ?? 0}</p>
           </div>
           <p className="text-xs text-slate-400 mt-1">Total Assigned Leads</p>
         </div>
@@ -85,21 +87,14 @@ export default function UserProgression() {
 
       {/* Pipeline Stage Distribution Chart */}
       <div className="card">
-        <h3 className="text-sm font-semibold text-white mb-4">Pipeline Stage Distribution by User</h3>
+        <h3 className="text-sm font-semibold text-slate-100 mb-4">Pipeline Stage Distribution by User</h3>
         {chartData.length > 0 ? (
           <ResponsiveContainer width="100%" height={350}>
             <BarChart data={chartData}>
-              <XAxis dataKey="name" stroke="#475569" fontSize={11} />
-              <YAxis stroke="#475569" fontSize={10} />
-              <Tooltip 
-                contentStyle={{ 
-                  background: '#1e293b', 
-                  border: '1px solid #334155', 
-                  borderRadius: '8px', 
-                  fontSize: '11px',
-                  maxHeight: '300px',
-                  overflowY: 'auto'
-                }} 
+              <XAxis dataKey="name" stroke={chart.axis} fontSize={11} />
+              <YAxis stroke={chart.axis} fontSize={10} />
+              <Tooltip
+                contentStyle={{ ...chart.tooltip, fontSize: '11px', maxHeight: '300px', overflowY: 'auto' }}
               />
               <Legend wrapperStyle={{ fontSize: '10px' }} />
               {PIPELINE_STAGES.slice(0, 10).map((stage, index) => (
@@ -126,12 +121,12 @@ export default function UserProgression() {
 
       {/* User Progression Table */}
       <div className="card overflow-hidden">
-        <h3 className="text-sm font-semibold text-white mb-4">User Performance Overview</h3>
+        <h3 className="text-sm font-semibold text-slate-100 mb-4">User Performance Overview</h3>
         {data?.users && data.users.length > 0 ? (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-slate-700">
+                <tr className="border-b border-surface-700">
                   <th className="text-left py-3 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">User</th>
                   <th className="text-center py-3 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Leads</th>
                   <th className="text-center py-3 px-4 text-xs font-semibold text-slate-400 uppercase tracking-wider">Converted</th>
@@ -143,7 +138,7 @@ export default function UserProgression() {
                 {data.users.map((user: any) => (
                   <tr 
                     key={user.id} 
-                    className={`border-b border-slate-700/50 hover:bg-slate-700/30 cursor-pointer transition-colors ${selectedUser === user.id ? 'bg-slate-700/50' : ''}`}
+                    className={`border-b border-surface-700/50 hover:bg-surface-700/30 cursor-pointer transition-colors ${selectedUser === user.id ? 'bg-surface-700/50' : ''}`}
                     onClick={() => handleUserClick(user.id)}
                   >
                     <td className="py-3 px-4">
@@ -156,7 +151,7 @@ export default function UserProgression() {
                           </div>
                         )}
                         <div>
-                          <p className="text-sm font-medium text-white">{user.name}</p>
+                          <p className="text-sm font-medium text-slate-100">{user.name}</p>
                           <p className="text-xs text-slate-400">{user.email}</p>
                         </div>
                       </div>
@@ -184,7 +179,7 @@ export default function UserProgression() {
                     {PIPELINE_STAGES.slice(0, 5).map((stage) => (
                       <td key={stage} className="text-center py-3 px-2">
                         {user.stageDistribution[stage] ? (
-                          <span className="inline-block px-2 py-1 bg-slate-600/50 text-slate-300 rounded text-xs">
+                          <span className="inline-block px-2 py-1 bg-surface-600/50 text-slate-300 rounded text-xs">
                             {user.stageDistribution[stage]}
                           </span>
                         ) : (
@@ -211,12 +206,12 @@ export default function UserProgression() {
       {selectedUser && data?.users?.find((u: any) => u.id === selectedUser) && (
         <div className="card">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-sm font-semibold text-white">
+            <h3 className="text-sm font-semibold text-slate-100">
               {data.users.find((u: any) => u.id === selectedUser)?.name}'s Recent Leads
             </h3>
             <button 
               onClick={() => setSelectedUser(null)}
-              className="text-slate-400 hover:text-white text-xs"
+              className="text-slate-400 hover:text-slate-100 text-xs"
             >
               ✕ Close
             </button>
@@ -227,11 +222,11 @@ export default function UserProgression() {
               .map((lead: any) => (
                 <div 
                   key={lead.id}
-                  className="flex items-center justify-between p-3 bg-slate-700/30 rounded-lg hover:bg-slate-700/50 cursor-pointer transition-colors"
+                  className="flex items-center justify-between p-3 bg-surface-700/30 rounded-lg hover:bg-surface-700/50 cursor-pointer transition-colors"
                   onClick={() => navigate(`/leads/${lead.id}`)}
                 >
                   <div>
-                    <p className="text-sm font-medium text-white">{lead.name}</p>
+                    <p className="text-sm font-medium text-slate-100">{lead.name}</p>
                     <p className="text-xs text-slate-400">{lead.status}</p>
                   </div>
                   <div className="flex items-center gap-2">

@@ -71,7 +71,7 @@ export default function UserManagement() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h2 className="text-xl font-bold text-white font-display flex items-center gap-2">
+          <h2 className="text-xl font-bold text-slate-100 font-display flex items-center gap-2">
             <Users size={22} /> User Management
           </h2>
           <p className="text-sm text-slate-400 mt-1">Manage team members and their roles</p>
@@ -105,7 +105,7 @@ export default function UserManagement() {
                   <Shield size={18} className={colors.text} />
                 </div>
                 <div>
-                  <p className="text-lg font-bold text-white">{roleCounts[role] || 0}</p>
+                  <p className="text-lg font-bold text-slate-100">{roleCounts[role] || 0}</p>
                   <p className="text-[11px] text-slate-400">{ROLE_DISPLAY[role]}</p>
                 </div>
               </div>
@@ -211,7 +211,7 @@ export default function UserManagement() {
                       <div className="relative inline-block">
                         <button
                           onClick={() => setMenuOpen(menuOpen === user.id ? null : user.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-surface-700 transition-colors"
+                          className="p-1.5 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-surface-700 transition-colors"
                         >
                           <MoreVertical size={15} />
                         </button>
@@ -223,14 +223,14 @@ export default function UserManagement() {
                               <button
                                 onClick={() => { setEditUser(user); setMenuOpen(null) }}
                                 className="flex items-center gap-2 w-full px-3 py-2 text-xs text-slate-300
-                                           hover:bg-surface-700 hover:text-white transition-colors"
+                                           hover:bg-surface-700 hover:text-slate-100 transition-colors"
                               >
                                 <Edit2 size={13} /> Edit User
                               </button>
                               <button
                                 onClick={() => { setResetPasswordUser(user); setMenuOpen(null) }}
                                 className="flex items-center gap-2 w-full px-3 py-2 text-xs text-slate-300
-                                           hover:bg-surface-700 hover:text-white transition-colors"
+                                           hover:bg-surface-700 hover:text-slate-100 transition-colors"
                               >
                                 <KeyRound size={13} /> Reset Password
                               </button>
@@ -311,10 +311,10 @@ function CreateUserModal({ onClose, onSuccess }: { onClose: () => void; onSucces
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-md bg-surface-800 border border-surface-700 rounded-2xl shadow-2xl">
         <div className="flex items-center justify-between p-5 border-b border-surface-700">
-          <h3 className="text-base font-bold text-white font-display flex items-center gap-2">
+          <h3 className="text-base font-bold text-slate-100 font-display flex items-center gap-2">
             <UserPlus size={18} className="text-brand-400" /> New Team Member
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={18} /></button>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-100"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
@@ -354,7 +354,7 @@ function CreateUserModal({ onClose, onSuccess }: { onClose: () => void; onSucces
                       'flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-all',
                       selected
                         ? cn(colors.bg, colors.text, colors.border, 'ring-1 ring-brand-500/30')
-                        : 'bg-surface-700/50 text-slate-400 border-surface-600 hover:border-surface-500'
+                        : 'bg-surface-700/50 text-slate-400 border-surface-600 hover:border-surface-600'
                     )}>
                     {selected && <Check size={12} />}
                     <Shield size={12} />
@@ -401,10 +401,10 @@ function EditUserModal({ user, onClose, onSuccess }: { user: User; onClose: () =
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-md bg-surface-800 border border-surface-700 rounded-2xl shadow-2xl">
         <div className="flex items-center justify-between p-5 border-b border-surface-700">
-          <h3 className="text-base font-bold text-white font-display flex items-center gap-2">
+          <h3 className="text-base font-bold text-slate-100 font-display flex items-center gap-2">
             <Edit2 size={18} className="text-brand-400" /> Edit User
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={18} /></button>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-100"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <div>
@@ -430,7 +430,7 @@ function EditUserModal({ user, onClose, onSuccess }: { user: User; onClose: () =
                       'flex items-center gap-2 px-3 py-2.5 rounded-lg border text-xs font-medium transition-all',
                       selected
                         ? cn(colors.bg, colors.text, colors.border, 'ring-1 ring-brand-500/30')
-                        : 'bg-surface-700/50 text-slate-400 border-surface-600 hover:border-surface-500'
+                        : 'bg-surface-700/50 text-slate-400 border-surface-600 hover:border-surface-600'
                     )}>
                     {selected && <Check size={12} />}
                     <Shield size={12} />
@@ -492,10 +492,10 @@ function ResetPasswordModal({ user, onClose }: { user: User; onClose: () => void
       <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onClose} />
       <div className="relative w-full max-w-sm bg-surface-800 border border-surface-700 rounded-2xl shadow-2xl">
         <div className="flex items-center justify-between p-5 border-b border-surface-700">
-          <h3 className="text-base font-bold text-white font-display flex items-center gap-2">
+          <h3 className="text-base font-bold text-slate-100 font-display flex items-center gap-2">
             <KeyRound size={18} className="text-brand-400" /> Reset Password
           </h3>
-          <button onClick={onClose} className="text-slate-400 hover:text-white"><X size={18} /></button>
+          <button onClick={onClose} className="text-slate-400 hover:text-slate-100"><X size={18} /></button>
         </div>
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           <p className="text-xs text-slate-400">

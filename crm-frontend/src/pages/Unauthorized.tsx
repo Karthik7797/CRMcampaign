@@ -17,7 +17,7 @@ export default function Unauthorized() {
         </div>
       </div>
 
-      <h2 className="text-2xl font-bold text-white font-display mb-2">Access Denied</h2>
+      <h2 className="text-2xl font-bold text-slate-100 font-display mb-2">Access Denied</h2>
       <p className="text-slate-400 text-sm max-w-md mb-2">
         Your role (<span className="text-slate-200 font-semibold">{roleName}</span>) doesn't have
         permission to access this page.

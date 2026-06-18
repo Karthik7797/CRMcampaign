@@ -5,10 +5,12 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from 'recharts'
+import { useChartTheme } from '../hooks/useChartTheme'
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#06b6d4', '#f97316', '#ec4899']
 
 export default function Analytics() {
+  const chart = useChartTheme()
   const { data, isLoading } = useQuery({
     queryKey: ['analytics'],
     queryFn: () => analyticsApi.overview().then(r => r.data),
@@ -32,14 +34,14 @@ export default function Analytics() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-bold text-white font-display">Analytics</h2>
+        <h2 className="text-xl font-bold text-slate-100 font-display">Analytics</h2>
         <p className="text-slate-400 text-sm">Deep dive into enrollment metrics</p>
       </div>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-3 gap-4">
         <div className="card text-center">
-          <p className="text-3xl font-bold text-white font-display">{data?.totalLeads ?? 0}</p>
+          <p className="text-3xl font-bold text-slate-100 font-display">{data?.totalLeads ?? 0}</p>
           <p className="text-xs text-slate-400 mt-1">Total Leads</p>
         </div>
         <div className="card text-center">
@@ -55,7 +57,7 @@ export default function Analytics() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Status Distribution */}
         <div className="card">
-          <h3 className="text-sm font-semibold text-white mb-4">Lead Status Distribution</h3>
+          <h3 className="text-sm font-semibold text-slate-100 mb-4">Lead Status Distribution</h3>
           {statusData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <PieChart>
@@ -74,7 +76,7 @@ export default function Analytics() {
                     <Cell key={i} fill={COLORS[i % COLORS.length]} />
                   ))}
                 </Pie>
-                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px' }} />
+                <Tooltip contentStyle={chart.tooltip} />
               </PieChart>
             </ResponsiveContainer>
           ) : (
@@ -89,13 +91,13 @@ export default function Analytics() {
 
         {/* Source Breakdown */}
         <div className="card">
-          <h3 className="text-sm font-semibold text-white mb-4">Leads by Source</h3>
+          <h3 className="text-sm font-semibold text-slate-100 mb-4">Leads by Source</h3>
           {sourceData.length > 0 ? (
             <ResponsiveContainer width="100%" height={280}>
               <BarChart data={sourceData} layout="vertical">
-                <XAxis type="number" stroke="#475569" fontSize={10} />
-                <YAxis type="category" dataKey="name" stroke="#475569" fontSize={9} width={90} />
-                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px' }} />
+                <XAxis type="number" stroke={chart.axis} fontSize={10} />
+                <YAxis type="category" dataKey="name" stroke={chart.axis} fontSize={9} width={90} />
+                <Tooltip contentStyle={chart.tooltip} />
                 <Bar dataKey="value" fill="#3b82f6" radius={[0, 4, 4, 0]} name="Leads" />
               </BarChart>
             </ResponsiveContainer>
@@ -111,13 +113,13 @@ export default function Analytics() {
 
         {/* Pipeline Funnel */}
         <div className="card lg:col-span-2">
-          <h3 className="text-sm font-semibold text-white mb-4">Pipeline Funnel</h3>
+          <h3 className="text-sm font-semibold text-slate-100 mb-4">Pipeline Funnel</h3>
           {stageData.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={stageData}>
-                <XAxis dataKey="name" stroke="#475569" fontSize={9} angle={-15} textAnchor="end" height={50} />
-                <YAxis stroke="#475569" fontSize={10} />
-                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px' }} />
+                <XAxis dataKey="name" stroke={chart.axis} fontSize={9} angle={-15} textAnchor="end" height={50} />
+                <YAxis stroke={chart.axis} fontSize={10} />
+                <Tooltip contentStyle={chart.tooltip} />
                 <Bar dataKey="count" fill="#8b5cf6" radius={[4, 4, 0, 0]} name="Leads" />
               </BarChart>
             </ResponsiveContainer>

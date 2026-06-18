@@ -9,7 +9,7 @@ export default function CampaignComingSoon() {
       <div className="w-16 h-16 rounded-2xl bg-brand-600/20 flex items-center justify-center">
         <Radio size={32} className="text-brand-400" />
       </div>
-      <h2 className="text-2xl font-bold text-white font-display">Campaign {n}</h2>
+      <h2 className="text-2xl font-bold text-slate-100 font-display">Campaign {n}</h2>
       <p className="text-slate-400 text-sm max-w-sm">
         This campaign hasn't launched yet. Once the Google Form is ready and the fields are confirmed, this page will be activated.
       </p>

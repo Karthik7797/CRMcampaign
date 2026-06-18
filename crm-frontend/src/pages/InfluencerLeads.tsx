@@ -124,7 +124,7 @@ export default function InfluencerLeads() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white font-display">Influencer Leads</h2>
+          <h2 className="text-xl font-bold text-slate-100 font-display">Influencer Leads</h2>
           <p className="text-slate-400 text-sm">{data?.total ?? 0} total leads from Google Forms</p>
         </div>
         {canCreateInfluencerLeads && (
@@ -326,8 +326,8 @@ export default function InfluencerLeads() {
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
           <div className="bg-surface-800 rounded-xl max-w-lg w-full border border-surface-700 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-surface-700 bg-surface-800/50">
-              <h3 className="font-semibold text-white">Add Influencer Lead</h3>
-              <button className="text-slate-400 hover:text-white transition-colors" onClick={() => setIsAddModalOpen(false)}>
+              <h3 className="font-semibold text-slate-100">Add Influencer Lead</h3>
+              <button className="text-slate-400 hover:text-slate-100 transition-colors" onClick={() => setIsAddModalOpen(false)}>
                 <X size={18} />
               </button>
             </div>
@@ -414,8 +414,8 @@ export default function InfluencerLeads() {
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
           <div className="bg-surface-800 rounded-xl max-w-md w-full border border-surface-700 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="flex items-center justify-between p-4 border-b border-surface-700 bg-surface-800/50">
-              <h3 className="font-semibold text-white">Assign Influencer Lead</h3>
-              <button className="text-slate-400 hover:text-white transition-colors" onClick={() => setIsAssignModalOpen(false)}>
+              <h3 className="font-semibold text-slate-100">Assign Influencer Lead</h3>
+              <button className="text-slate-400 hover:text-slate-100 transition-colors" onClick={() => setIsAssignModalOpen(false)}>
                 <X size={18} />
               </button>
             </div>

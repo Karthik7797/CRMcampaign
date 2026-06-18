@@ -92,7 +92,7 @@ export default function Campaign2Leads() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-white font-display">Campaign 2 — Leads</h2>
+          <h2 className="text-xl font-bold text-slate-100 font-display">Campaign 2 — Leads</h2>
           <p className="text-slate-400 text-sm">{data?.total ?? 0} total leads from Google Form</p>
         </div>
         {canCreate && (
@@ -231,8 +231,8 @@ export default function Campaign2Leads() {
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
           <div className="bg-surface-800 rounded-xl max-w-lg w-full border border-surface-700 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between p-4 border-b border-surface-700 bg-surface-800/50">
-              <h3 className="font-semibold text-white">Add Campaign 2 Lead</h3>
-              <button type="button" className="text-slate-400 hover:text-white" onClick={() => setIsAddModalOpen(false)}><X size={18} /></button>
+              <h3 className="font-semibold text-slate-100">Add Campaign 2 Lead</h3>
+              <button type="button" className="text-slate-400 hover:text-slate-100" onClick={() => setIsAddModalOpen(false)}><X size={18} /></button>
             </div>
             <div className="p-4 space-y-4">
               <div className="space-y-1.5">
@@ -309,8 +309,8 @@ export default function Campaign2Leads() {
         <div className="fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
           <div className="bg-surface-800 rounded-xl max-w-md w-full border border-surface-700 shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200">
             <div className="flex items-center justify-between p-4 border-b border-surface-700 bg-surface-800/50">
-              <h3 className="font-semibold text-white">Assign Lead</h3>
-              <button type="button" className="text-slate-400 hover:text-white" onClick={() => setIsAssignModalOpen(false)}><X size={18} /></button>
+              <h3 className="font-semibold text-slate-100">Assign Lead</h3>
+              <button type="button" className="text-slate-400 hover:text-slate-100" onClick={() => setIsAssignModalOpen(false)}><X size={18} /></button>
             </div>
             <div className="p-4 space-y-4">
               <div>

@@ -3,53 +3,193 @@
 @tailwind components;
 @tailwind utilities;
 
+/*
+  Theme token system.
+  Colors are stored as space-separated RGB channel triplets so Tailwind can
+  apply opacity modifiers via `rgb(var(--token) / <alpha-value>)`. The existing
+  class names (bg-surface-800, text-slate-400, border-surface-700, brand-*) are
+  preserved across the app and resolve to these variables — so flipping .dark on
+  <html> re-themes the entire CRM.
+
+  :root  = LIGHT theme (new, accessible palette)
+  .dark  = DARK theme  (≈ the original look, lightly refined)
+*/
+
 :root {
+  color-scheme: light;
   --sidebar-width: 260px;
+
+  /* surface scale — page / cards / raised / borders */
+  --surface-DEFAULT: 248 250 252; /* #f8fafc page bg */
+  --surface-50: 255 255 255;      /* #ffffff brightest card */
+  --surface-100: 248 250 252;     /* #f8fafc */
+  --surface-200: 241 245 249;     /* #f1f5f9 raised / hover */
+  --surface-600: 203 213 225;     /* #cbd5e1 strong border */
+  --surface-700: 226 232 240;     /* #e2e8f0 default border */
+  --surface-800: 255 255 255;     /* #ffffff card background */
+  --surface-900: 248 250 252;     /* #f8fafc app/sidebar background */
+
+  /* slate scale — TEXT in light mode must be DARK (inverted from dark theme) */
+  --slate-50: 15 23 42;    /* brightest text -> darkest ink */
+  --slate-100: 15 23 42;   /* #0f172a primary text */
+  --slate-200: 30 41 59;   /* #1e293b strong text */
+  --slate-300: 51 65 85;   /* #334155 */
+  --slate-400: 71 85 105;  /* #475569 secondary text */
+  --slate-500: 100 116 139;/* #64748b muted text/placeholder */
+
+  /* brand scale (blue) — consistent across both themes */
+  --brand-50: 239 246 255;   /* #eff6ff */
+  --brand-100: 219 234 254;  /* #dbeafe */
+  --brand-400: 37 99 235;    /* in light, brand "text" reads as solid blue, not pale */
+  --brand-500: 59 130 246;   /* #3b82f6 */
+  --brand-600: 37 99 235;    /* #2563eb */
+  --brand-700: 29 78 216;    /* #1d4ed8 */
+  --brand-900: 30 58 138;    /* #1e3a8a */
+
+  /* semantic helpers */
+  --scrim: 15 23 42;         /* modal overlay base (used at low alpha) */
+  --ring: 37 99 235;         /* focus ring (brand) */
+  --shadow-color: 15 23 42;  /* shadows tinted with ink so they read on light bg */
+  --shadow-strength: 0.08;
+}
+
+.dark {
+  color-scheme: dark;
+
+  --surface-DEFAULT: 15 23 42;  /* #0f172a */
+  --surface-50: 248 250 252;
+  --surface-100: 241 245 249;
+  --surface-200: 226 232 240;
+  --surface-600: 71 85 105;     /* #475569 */
+  --surface-700: 51 65 85;      /* #334155 borders/hover */
+  --surface-800: 30 41 59;      /* #1e293b card bg */
+  --surface-900: 15 23 42;      /* #0f172a app bg */
+
+  /* slate text — light on dark (original values) */
+  --slate-50: 248 250 252;   /* #f8fafc */
+  --slate-100: 241 245 249;  /* #f1f5f9 */
+  --slate-200: 226 232 240;  /* #e2e8f0 */
+  --slate-300: 203 213 225;  /* #cbd5e1 */
+  --slate-400: 148 163 184;  /* #94a3b8 */
+  --slate-500: 100 116 139;  /* #64748b */
+
+  --brand-50: 239 246 255;
+  --brand-100: 219 234 254;
+  --brand-400: 96 165 250;   /* #60a5fa pale-blue accent text on dark */
+  --brand-500: 59 130 246;
+  --brand-600: 37 99 235;
+  --brand-700: 29 78 216;
+  --brand-900: 30 58 138;
+
+  --scrim: 2 6 23;           /* near-black overlay */
+  --ring: 96 165 250;
+  --shadow-color: 0 0 0;
+  --shadow-strength: 0.4;
 }
 
 * { box-sizing: border-box; }
 
+html { background: rgb(var(--surface-900)); }
+
 body {
   font-family: 'Inter', sans-serif;
-  background: #0f172a;
-  color: #f1f5f9;
+  background: rgb(var(--surface-900));
+  color: rgb(var(--slate-100));
   margin: 0;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body { transition: none; }
 }
 
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #475569; }
+::-webkit-scrollbar-thumb { background: rgb(var(--surface-600)); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgb(var(--surface-600) / 0.8); }
 
 .custom-scrollbar::-webkit-scrollbar { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-.custom-scrollbar::-webkit-scrollbar-thumb { background: #334155; border-radius: 2px; }
-.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #475569; }
+.custom-scrollbar::-webkit-scrollbar-thumb { background: rgb(var(--surface-600)); border-radius: 2px; }
+.custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgb(var(--surface-600) / 0.8); }
+
+/* Visible keyboard focus everywhere (mouse clicks unaffected) */
+:focus-visible {
+  outline: 2px solid rgb(var(--ring));
+  outline-offset: 2px;
+}
 
 @layer components {
+  /* ---- Surfaces ---- */
   .card {
     @apply bg-surface-800 border border-surface-700 rounded-xl p-6 shadow-card;
   }
+  .card-compact {
+    @apply bg-surface-800 border border-surface-700 rounded-xl p-4 shadow-card;
+  }
+  .card-hover {
+    @apply transition-shadow duration-200 hover:shadow-card-hover;
+  }
+
+  /* ---- Buttons ---- */
   .btn-primary {
-    @apply bg-brand-600 hover:bg-brand-700 text-white font-semibold px-4 py-2 rounded-lg
-           transition-all duration-200 hover:shadow-lg active:scale-95 text-sm;
+    @apply inline-flex items-center justify-center bg-brand-600 hover:bg-brand-700
+           text-white font-semibold px-4 py-2 rounded-lg text-sm
+           transition-all duration-200 hover:shadow-lg active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500
+           focus-visible:ring-offset-2 focus-visible:ring-offset-surface-900
+           disabled:opacity-50 disabled:pointer-events-none cursor-pointer;
   }
   .btn-secondary {
-    @apply bg-surface-700 hover:bg-surface-600 text-slate-200 font-medium px-4 py-2 rounded-lg
-           transition-all duration-200 border border-surface-600 text-sm;
+    @apply inline-flex items-center justify-center bg-surface-700 hover:bg-surface-600
+           text-slate-200 font-medium px-4 py-2 rounded-lg text-sm border border-surface-600
+           transition-all duration-200 active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500
+           focus-visible:ring-offset-2 focus-visible:ring-offset-surface-900
+           disabled:opacity-50 disabled:pointer-events-none cursor-pointer;
   }
+  .btn-ghost {
+    @apply inline-flex items-center justify-center text-slate-300 hover:text-slate-100
+           hover:bg-surface-700 font-medium px-3 py-2 rounded-lg text-sm
+           transition-all duration-200
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand-500
+           disabled:opacity-50 disabled:pointer-events-none cursor-pointer;
+  }
+  .btn-danger {
+    @apply inline-flex items-center justify-center bg-red-600 hover:bg-red-700
+           text-white font-semibold px-4 py-2 rounded-lg text-sm
+           transition-all duration-200 active:scale-[0.98]
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500
+           focus-visible:ring-offset-2 focus-visible:ring-offset-surface-900
+           disabled:opacity-50 disabled:pointer-events-none cursor-pointer;
+  }
+  .btn-sm { @apply px-3 py-1.5 text-xs; }
+
+  /* ---- Inputs ---- */
   .input {
-    @apply bg-surface-800 border border-surface-600 text-slate-100 rounded-lg px-3 py-2 w-full
+    @apply bg-surface-800 border border-surface-600 text-slate-100 rounded-lg px-3 py-2 w-full h-10
            focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-transparent
            placeholder:text-slate-500 text-sm transition-all;
   }
-  .badge-new { @apply bg-blue-500/15 text-blue-400 border border-blue-500/25; }
-  .badge-contacted { @apply bg-yellow-500/15 text-yellow-400 border border-yellow-500/25; }
-  .badge-qualified { @apply bg-purple-500/15 text-purple-400 border border-purple-500/25; }
-  .badge-converted { @apply bg-green-500/15 text-green-400 border border-green-500/25; }
-  .badge-lost { @apply bg-red-500/15 text-red-400 border border-red-500/25; }
-  .badge-nurturing { @apply bg-orange-500/15 text-orange-400 border border-orange-500/25; }
-  .badge-junk { @apply bg-gray-500/15 text-gray-400 border border-gray-500/25; }
-  .badge-dnp { @apply bg-rose-500/15 text-rose-400 border border-rose-500/25; }
+  .input-sm { @apply h-9 py-1.5 text-xs; }
+
+  /* ---- Table helpers ---- */
+  .table-header {
+    @apply sticky top-0 z-10 bg-surface-800 text-xs font-semibold uppercase
+           tracking-wide text-slate-400 border-b border-surface-700;
+  }
+  .table-row {
+    @apply hover:bg-surface-700/50 transition-colors;
+  }
+
+  /* ---- Status badges (work in both themes) ---- */
+  .badge-new { @apply bg-blue-500/15 text-blue-500 dark:text-blue-400 border border-blue-500/25; }
+  .badge-contacted { @apply bg-yellow-500/15 text-yellow-600 dark:text-yellow-400 border border-yellow-500/25; }
+  .badge-qualified { @apply bg-purple-500/15 text-purple-600 dark:text-purple-400 border border-purple-500/25; }
+  .badge-converted { @apply bg-green-500/15 text-green-600 dark:text-green-400 border border-green-500/25; }
+  .badge-lost { @apply bg-red-500/15 text-red-600 dark:text-red-400 border border-red-500/25; }
+  .badge-nurturing { @apply bg-orange-500/15 text-orange-600 dark:text-orange-400 border border-orange-500/25; }
+  .badge-junk { @apply bg-gray-500/15 text-gray-600 dark:text-gray-400 border border-gray-500/25; }
+  .badge-dnp { @apply bg-rose-500/15 text-rose-600 dark:text-rose-400 border border-rose-500/25; }
 }

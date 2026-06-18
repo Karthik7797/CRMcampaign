@@ -121,11 +121,11 @@ export default function Campaign1LeadDetails() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
-          <button type="button" className="p-2 hover:bg-surface-700 text-slate-400 hover:text-white rounded-full transition-colors" onClick={() => navigate('/campaigns/1')}>
+          <button type="button" className="p-2 hover:bg-surface-700 text-slate-400 hover:text-slate-100 rounded-full transition-colors" onClick={() => navigate('/campaigns/1')}>
             <ArrowLeft size={20} />
           </button>
           <div>
-            <h2 className="text-2xl font-bold text-white font-display flex items-center gap-3">
+            <h2 className="text-2xl font-bold text-slate-100 font-display flex items-center gap-3">
               {lead.studentName}
               <span className={`text-xs px-2.5 py-1 rounded-full badge-${lead.status.toLowerCase()}`}>{lead.status}</span>
             </h2>
@@ -139,7 +139,7 @@ export default function Campaign1LeadDetails() {
                 onClick={goPrev}
                 title="Previous lead (←)"
                 aria-label="Previous lead"
-                className="p-2 rounded-full hover:bg-surface-700 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-full hover:bg-surface-700 text-slate-400 hover:text-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronLeft size={18} />
               </button>
@@ -150,7 +150,7 @@ export default function Campaign1LeadDetails() {
                 onClick={goNext}
                 title="Next lead (→)"
                 aria-label="Next lead"
-                className="p-2 rounded-full hover:bg-surface-700 text-slate-400 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded-full hover:bg-surface-700 text-slate-400 hover:text-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
               >
                 <ChevronRight size={18} />
               </button>
@@ -180,7 +180,7 @@ export default function Campaign1LeadDetails() {
         <div className="lg:col-span-2 space-y-6">
           {/* Student Information */}
           <div className="card">
-            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-slate-100 mb-4 flex items-center gap-2">
               <GraduationCap size={20} className="text-brand-500" /> Student Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -215,7 +215,7 @@ export default function Campaign1LeadDetails() {
 
           {/* Parent Information */}
           <div className="card">
-            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-slate-100 mb-4 flex items-center gap-2">
               <Users size={20} className="text-brand-500" /> Parent Information
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -242,7 +242,7 @@ export default function Campaign1LeadDetails() {
 
           {/* Additional Details */}
           <div className="card">
-            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-slate-100 mb-4 flex items-center gap-2">
               <Calendar size={20} className="text-brand-500" /> Additional Details
             </h3>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -277,7 +277,7 @@ export default function Campaign1LeadDetails() {
 
           {/* Follow-up */}
           <div className="card">
-            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-slate-100 mb-4 flex items-center gap-2">
               <Calendar size={20} className="text-brand-500" /> Follow-up
             </h3>
             <div className="space-y-1.5">
@@ -316,7 +316,7 @@ export default function Campaign1LeadDetails() {
 
           {/* Notes */}
           <div className="card">
-            <h3 className="text-lg font-medium text-white mb-4 flex items-center gap-2">
+            <h3 className="text-lg font-medium text-slate-100 mb-4 flex items-center gap-2">
               <MessageSquare size={20} className="text-brand-500" /> Notes & Activity
             </h3>
             <div className="space-y-4 max-h-[400px] overflow-y-auto mb-4 pr-2 custom-scrollbar">
@@ -366,7 +366,7 @@ export default function Campaign1LeadDetails() {
         {/* Right Column: Metadata */}
         <div className="space-y-6">
           <div className="card">
-            <h3 className="text-sm font-semibold text-white mb-4 tracking-wide uppercase text-slate-300">Lead Metadata</h3>
+            <h3 className="text-sm font-semibold mb-4 tracking-wide uppercase text-slate-300">Lead Metadata</h3>
             <div className="space-y-4">
               <div>
                 <label className="text-xs text-slate-400 font-medium">Status</label>

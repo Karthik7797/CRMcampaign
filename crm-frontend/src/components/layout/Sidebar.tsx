@@ -106,11 +106,11 @@ export default function Sidebar() {
               <Zap size={16} className="text-white" />
             </div>
             <div>
-              <h1 className="text-sm font-bold text-white font-display">EduCRM</h1>
+              <h1 className="text-sm font-bold text-slate-100 font-display">EduCRM</h1>
               <p className="text-[10px] text-slate-500 -mt-0.5">Enrollment Suite</p>
             </div>
           </div>
-          <button type="button" aria-label="Close sidebar" onClick={toggleSidebar} className="lg:hidden text-slate-400 hover:text-white">
+          <button type="button" aria-label="Close sidebar" onClick={toggleSidebar} className="lg:hidden text-slate-400 hover:text-slate-100">
             <X size={18} />
           </button>
         </div>

@@ -4,6 +4,7 @@ import { analyticsApi } from '../api/client'
 import { Users, TrendingUp, UserCheck, AlertCircle, ArrowUp, Clock, CalendarClock } from 'lucide-react'
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from 'recharts'
 import { formatRelativeTime, formatDate, leadDetailsPath, type LeadType } from '../lib/utils'
+import { useChartTheme } from '../hooks/useChartTheme'
 
 type FollowUpRow = {
   id: string
@@ -26,7 +27,7 @@ function FollowUpCard({
   return (
     <div className="card">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-white flex items-center gap-2">
+        <h3 className="text-sm font-semibold text-slate-100 flex items-center gap-2">
           <span className={accent}>{icon}</span> {title}
         </h3>
         <span className="text-xs text-slate-500 tabular-nums">{items.length}</span>
@@ -80,6 +81,7 @@ const mockChartData = [
 ]
 
 export default function Dashboard() {
+  const chart = useChartTheme()
   const { data, isLoading } = useQuery({
     queryKey: ['analytics'],
     queryFn: () => analyticsApi.overview().then(r => r.data),
@@ -90,7 +92,7 @@ export default function Dashboard() {
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-bold text-white font-display">Dashboard</h2>
+        <h2 className="text-xl font-bold text-slate-100 font-display">Dashboard</h2>
         <p className="text-slate-400 text-sm mt-0.5">Track your enrollment performance</p>
       </div>
 
@@ -106,7 +108,7 @@ export default function Dashboard() {
                 <ArrowUp size={12} /> {stat.trend}
               </div>
             </div>
-            <p className="text-2xl font-bold text-white font-display">
+            <p className="text-2xl font-bold text-slate-100 font-display">
               {isLoading ? '—' : stat.value}
             </p>
             <p className="text-xs text-slate-400 mt-0.5">{stat.label}</p>
@@ -136,7 +138,7 @@ export default function Dashboard() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
         {/* Lead Trend */}
         <div className="card lg:col-span-2">
-          <h3 className="text-sm font-semibold text-white mb-4">Lead Trend (6 months)</h3>
+          <h3 className="text-sm font-semibold text-slate-100 mb-4">Lead Trend (6 months)</h3>
           <ResponsiveContainer width="100%" height={220}>
             <AreaChart data={mockChartData}>
               <defs>
@@ -149,12 +151,10 @@ export default function Dashboard() {
                   <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                 </linearGradient>
               </defs>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1e293b" />
-              <XAxis dataKey="month" stroke="#475569" fontSize={11} />
-              <YAxis stroke="#475569" fontSize={11} />
-              <Tooltip
-                contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px' }}
-              />
+              <CartesianGrid strokeDasharray="3 3" stroke={chart.grid} />
+              <XAxis dataKey="month" stroke={chart.axis} fontSize={11} />
+              <YAxis stroke={chart.axis} fontSize={11} />
+              <Tooltip contentStyle={chart.tooltip} />
               <Area type="monotone" dataKey="leads" stroke="#3b82f6" fill="url(#colorLeads)" strokeWidth={2} name="Leads" />
               <Area type="monotone" dataKey="converted" stroke="#10b981" fill="url(#colorConverted)" strokeWidth={2} name="Converted" />
             </AreaChart>
@@ -163,13 +163,13 @@ export default function Dashboard() {
 
         {/* Source Breakdown */}
         <div className="card">
-          <h3 className="text-sm font-semibold text-white mb-4">By Source</h3>
+          <h3 className="text-sm font-semibold text-slate-100 mb-4">By Source</h3>
           {data?.bySource?.length > 0 ? (
             <ResponsiveContainer width="100%" height={220}>
               <BarChart data={data.bySource.slice(0, 6)} layout="vertical">
-                <XAxis type="number" stroke="#475569" fontSize={10} />
-                <YAxis type="category" dataKey="source" stroke="#475569" fontSize={9} width={80} />
-                <Tooltip contentStyle={{ background: '#1e293b', border: '1px solid #334155', borderRadius: '8px', fontSize: '12px' }} />
+                <XAxis type="number" stroke={chart.axis} fontSize={10} />
+                <YAxis type="category" dataKey="source" stroke={chart.axis} fontSize={9} width={80} />
+                <Tooltip contentStyle={chart.tooltip} />
                 <Bar dataKey="_count" fill="#3b82f6" radius={[0, 4, 4, 0]} name="Leads" />
               </BarChart>
             </ResponsiveContainer>
@@ -182,7 +182,7 @@ export default function Dashboard() {
       {/* Recent Leads */}
       <div className="card">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-white">Recent Leads</h3>
+          <h3 className="text-sm font-semibold text-slate-100">Recent Leads</h3>
           <a href="/leads" className="text-xs text-brand-400 hover:text-brand-300">View all →</a>
         </div>
         <div className="space-y-2">

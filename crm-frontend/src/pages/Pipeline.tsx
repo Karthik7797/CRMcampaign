@@ -76,10 +76,10 @@ export default function Pipeline() {
   return (
     <div className="h-full flex flex-col overflow-hidden">
       {/* Header with User Filter - FIXED */}
-      <div className="bg-surface-900 border-b border-slate-700 py-4 px-6 flex-shrink-0">
+      <div className="bg-surface-900 border-b border-surface-700 py-4 px-6 flex-shrink-0">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-bold text-white font-display">Pipeline</h2>
+            <h2 className="text-xl font-bold text-slate-100 font-display">Pipeline</h2>
             <p className="text-slate-400 text-sm">
               {selectedUserId === 'all' 
                 ? 'Drag leads through enrollment stages' 
@@ -106,7 +106,7 @@ export default function Pipeline() {
               {selectedUserId !== 'all' && (
                 <button
                   onClick={() => setSelectedUserId('all')}
-                  className="p-2 hover:bg-slate-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-surface-700 rounded-lg transition-colors"
                   title="Clear filter"
                 >
                   <X size={16} className="text-slate-400" />
@@ -128,8 +128,8 @@ export default function Pipeline() {
                 <div key={key} className="flex-shrink-0 w-64">
                   <div className={`${bg} border ${color} border-t-2 rounded-lg p-2 h-full flex flex-col`}>
                     <div className="flex items-center justify-between mb-2 px-1 flex-shrink-0">
-                      <h3 className="text-xs font-semibold text-white">{label}</h3>
-                      <span className="text-[10px] bg-white/10 text-white/70 px-1.5 py-0.5 rounded-full">
+                      <h3 className="text-xs font-semibold text-slate-100">{label}</h3>
+                      <span className="text-[10px] bg-surface-800/80 text-slate-300 border border-surface-700 px-1.5 py-0.5 rounded-full">
                         {leads.length}
                       </span>
                     </div>
@@ -147,20 +147,20 @@ export default function Pipeline() {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
-                                  className="bg-surface-900 border border-surface-600 rounded p-3 cursor-grab active:cursor-grabbing hover:border-surface-500 transition-colors"
+                                  className="bg-surface-800 border border-surface-700 rounded-lg p-3 shadow-sm cursor-grab active:cursor-grabbing hover:border-brand-500 hover:shadow-card transition-all"
                                 >
                                   <div className="flex items-center gap-2 mb-2">
                                     <div className="w-7 h-7 rounded-full bg-gradient-to-br from-brand-500 to-purple-600 flex items-center justify-center text-xs font-bold text-white">
                                       {lead.name[0]}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                      <p className="text-xs font-medium text-white truncate">{lead.name}</p>
+                                      <p className="text-xs font-medium text-slate-100 truncate">{lead.name}</p>
                                       <p className="text-[10px] text-slate-400 truncate">{lead.course || 'No course'}</p>
                                     </div>
                                   </div>
                                   {lead.assignedTo && (
                                     <div className="flex items-center gap-1.5 text-[10px] text-slate-400">
-                                      <div className="w-4 h-4 rounded-full bg-surface-700 flex items-center justify-center text-[8px] font-bold text-white">
+                                      <div className="w-4 h-4 rounded-full bg-surface-700 flex items-center justify-center text-[8px] font-bold text-slate-100">
                                         {lead.assignedTo.name[0]}
                                       </div>
                                       <span className="truncate">{lead.assignedTo.name}</span>

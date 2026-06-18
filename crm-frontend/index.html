@@ -6,6 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="EduCRM - Education Enrollment Management System" />
     <title>EduCRM | Enrollment Suite</title>
+    <script>
+      // Pre-paint theme: apply .dark before React mounts to avoid a flash.
+      // Reads the persisted Zustand store (key "crm-store"); defaults to system.
+      (function () {
+        try {
+          var theme = 'system';
+          var raw = localStorage.getItem('crm-store');
+          if (raw) {
+            var t = JSON.parse(raw);
+            if (t && t.state && t.state.theme) theme = t.state.theme;
+          }
+          var dark = theme === 'dark' ||
+            (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.classList.toggle('dark', dark);
+        } catch (e) { /* fall back to light */ }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>
