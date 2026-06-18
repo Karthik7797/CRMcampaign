@@ -147,6 +147,9 @@ export default function Pipeline() {
                                   ref={provided.innerRef}
                                   {...provided.draggableProps}
                                   {...provided.dragHandleProps}
+                                  // dnd's DraggableStyle isn't assignable to React.CSSProperties
+                                  // after @radix-ui augments it with --radix-* CSS vars.
+                                  style={provided.draggableProps.style as React.CSSProperties}
                                   className="bg-surface-800 border border-surface-700 rounded-lg p-3 shadow-sm cursor-grab active:cursor-grabbing hover:border-brand-500 hover:shadow-card transition-all"
                                 >
                                   <div className="flex items-center gap-2 mb-2">

@@ -4,6 +4,8 @@ import type { Config } from 'tailwindcss'
 // + the rgb(var() / <alpha-value>) form keep every existing opacity modifier
 // (e.g. bg-surface-700/50, bg-blue-500/15) working while enabling light/dark.
 const withVar = (name: string) => `rgb(var(${name}) / <alpha-value>)`
+// shadcn/ui semantic tokens are stored as HSL triplets (see src/index.css).
+const hsl = (name: string) => `hsl(var(${name}))`
 
 export default {
   darkMode: 'class',
@@ -45,6 +47,61 @@ export default {
           800: withVar('--slate-200'),
           900: withVar('--slate-100'),
         },
+        // shadcn/ui semantic colors (additive — resolve to the HSL tokens in
+        // src/index.css). These power components in src/components/ui without
+        // affecting the existing brand/surface/slate utilities or component classes.
+        border: hsl('--border'),
+        input: hsl('--input'),
+        ring: hsl('--ring'),
+        background: hsl('--background'),
+        foreground: hsl('--foreground'),
+        primary: {
+          DEFAULT: hsl('--primary'),
+          foreground: hsl('--primary-foreground'),
+        },
+        secondary: {
+          DEFAULT: hsl('--secondary'),
+          foreground: hsl('--secondary-foreground'),
+        },
+        destructive: {
+          DEFAULT: hsl('--destructive'),
+          foreground: hsl('--destructive-foreground'),
+        },
+        muted: {
+          DEFAULT: hsl('--muted'),
+          foreground: hsl('--muted-foreground'),
+        },
+        accent: {
+          DEFAULT: hsl('--accent'),
+          foreground: hsl('--accent-foreground'),
+        },
+        popover: {
+          DEFAULT: hsl('--popover'),
+          foreground: hsl('--popover-foreground'),
+        },
+        card: {
+          DEFAULT: hsl('--card'),
+          foreground: hsl('--card-foreground'),
+        },
+      },
+      borderRadius: {
+        lg: 'var(--radius)',
+        md: 'calc(var(--radius) - 2px)',
+        sm: 'calc(var(--radius) - 4px)',
+      },
+      keyframes: {
+        'accordion-down': {
+          from: { height: '0' },
+          to: { height: 'var(--radix-accordion-content-height)' },
+        },
+        'accordion-up': {
+          from: { height: 'var(--radix-accordion-content-height)' },
+          to: { height: '0' },
+        },
+      },
+      animation: {
+        'accordion-down': 'accordion-down 0.2s ease-out',
+        'accordion-up': 'accordion-up 0.2s ease-out',
       },
       fontFamily: {
         display: ['Plus Jakarta Sans', 'sans-serif'],
@@ -64,5 +121,5 @@ export default {
       },
     },
   },
-  plugins: [],
+  plugins: [require('tailwindcss-animate')],
 } satisfies Config

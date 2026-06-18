@@ -11,6 +11,13 @@ import {
   followUpBucket, followUpPillClass, followUpPillLabel, formatDate, formatRelativeTime,
   leadDetailsPath, type LeadType,
 } from '../../lib/utils'
+import { Button } from '@/components/ui/button'
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger,
+} from '@/components/ui/dialog'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 
 // A large page so the dropdown sees most follow-ups in one request.
 // NOTE: lists are paginated server-side — if a user has more than this many
@@ -75,6 +82,7 @@ export default function TopBar() {
   const [search, setSearch] = useState('')
   const [open, setOpen] = useState(false)
   const [tab, setTab] = useState<'newleads' | 'followups'>('newleads')
+  const [newLeadOpen, setNewLeadOpen] = useState(false)
   const panelRef = useRef<HTMLDivElement>(null)
   const navigate = useNavigate()
 
@@ -284,9 +292,56 @@ export default function TopBar() {
         </button>
 
         {canCreateLeads && (
-          <button type="button" className="btn-primary flex items-center gap-1.5 h-9">
-            <Plus size={15} /> New Lead
-          </button>
+          <Dialog open={newLeadOpen} onOpenChange={setNewLeadOpen}>
+            <DialogTrigger asChild>
+              <Button size="sm" className="h-9 gap-1.5">
+                <Plus size={15} /> New Lead
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-md">
+              <DialogHeader>
+                <DialogTitle>New Lead</DialogTitle>
+                <DialogDescription>
+                  Capture a lead's details to add them to the pipeline.
+                </DialogDescription>
+              </DialogHeader>
+
+              <form
+                className="space-y-4"
+                onSubmit={(e) => {
+                  e.preventDefault()
+                  toast.success('Lead form submitted (demo)')
+                  setNewLeadOpen(false)
+                }}
+              >
+                <div className="space-y-2">
+                  <Label htmlFor="new-lead-name">Name</Label>
+                  <Input id="new-lead-name" placeholder="Jane Doe" autoFocus />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="new-lead-email">Email</Label>
+                  <Input id="new-lead-email" type="email" placeholder="jane@example.com" />
+                </div>
+
+                <Card>
+                  <CardHeader className="p-4 pb-2">
+                    <CardTitle className="text-sm">Preview</CardTitle>
+                    <CardDescription>This card uses shadcn/ui tokens.</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-4 pt-0 text-sm text-muted-foreground">
+                    New leads start in the <span className="text-foreground font-medium">New</span> stage.
+                  </CardContent>
+                </Card>
+
+                <DialogFooter>
+                  <Button type="button" variant="outline" onClick={() => setNewLeadOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">Create lead</Button>
+                </DialogFooter>
+              </form>
+            </DialogContent>
+          </Dialog>
         )}
 
         <div className="relative" ref={panelRef}>

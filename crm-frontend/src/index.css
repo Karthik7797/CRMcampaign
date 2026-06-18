@@ -51,6 +51,30 @@
   --ring: 37 99 235;         /* focus ring (brand) */
   --shadow-color: 15 23 42;  /* shadows tinted with ink so they read on light bg */
   --shadow-strength: 0.08;
+
+  /* shadcn/ui semantic tokens (HSL triplets) — LIGHT.
+     Added alongside the RGB token set above; values mirror the brand/surface
+     palette so shadcn components match the existing look. Do not remove. */
+  --background: 210 40% 98%;       /* surface-900 light  #f8fafc */
+  --foreground: 222 47% 11%;       /* slate-100 light    #0f172a */
+  --card: 0 0% 100%;               /* surface-800 light  #ffffff */
+  --card-foreground: 222 47% 11%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 47% 11%;
+  --primary: 221 83% 53%;          /* brand-600          #2563eb */
+  --primary-foreground: 210 40% 98%;
+  --secondary: 210 40% 96%;        /* surface-200        #f1f5f9 */
+  --secondary-foreground: 222 47% 11%;
+  --muted: 210 40% 96%;
+  --muted-foreground: 215 16% 47%; /* slate-400 light    #475569 */
+  --accent: 210 40% 96%;
+  --accent-foreground: 222 47% 11%;
+  --destructive: 0 72% 51%;        /* red-600 */
+  --destructive-foreground: 210 40% 98%;
+  --border: 214 32% 91%;           /* surface-700 light  #e2e8f0 */
+  --input: 214 32% 91%;
+  --ring: 221 83% 53%;             /* brand */
+  --radius: 0.5rem;
 }
 
 .dark {
@@ -85,6 +109,28 @@
   --ring: 96 165 250;
   --shadow-color: 0 0 0;
   --shadow-strength: 0.4;
+
+  /* shadcn/ui semantic tokens (HSL triplets) — DARK. */
+  --background: 222 47% 11%;       /* surface-900 dark   #0f172a */
+  --foreground: 210 40% 98%;       /* slate-100 dark     #f8fafc */
+  --card: 217 33% 17%;             /* surface-800 dark   #1e293b */
+  --card-foreground: 210 40% 98%;
+  --popover: 217 33% 17%;
+  --popover-foreground: 210 40% 98%;
+  --primary: 217 91% 60%;          /* brand-500          #3b82f6 */
+  --primary-foreground: 222 47% 11%;
+  --secondary: 215 25% 27%;        /* surface-700 dark   #334155 */
+  --secondary-foreground: 210 40% 98%;
+  --muted: 215 25% 27%;
+  --muted-foreground: 215 20% 65%; /* slate-400 dark     #94a3b8 */
+  --accent: 215 25% 27%;
+  --accent-foreground: 210 40% 98%;
+  --destructive: 0 63% 31%;
+  --destructive-foreground: 210 40% 98%;
+  --border: 215 25% 27%;           /* surface-700 dark   #334155 */
+  --input: 215 25% 27%;
+  --ring: 213 94% 68%;             /* #60a5fa */
+  --radius: 0.5rem;
 }
 
 * { box-sizing: border-box; }
