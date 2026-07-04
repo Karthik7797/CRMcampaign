@@ -101,6 +101,14 @@ export const PERMISSIONS: Record<string, Role[]> = {
   'campaign_2:assign':     ['ADMIN', 'MANAGER'],
   'campaign_2:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
+  // Campaign 3 actions (mirror influencer_leads)
+  'campaign_3:view':       ['ADMIN', 'MANAGER', 'MARKETING', 'INFLUENCER', 'COUNSELLOR'],
+  'campaign_3:create':     ['ADMIN', 'MANAGER'],
+  'campaign_3:edit':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+  'campaign_3:delete':     ['ADMIN'],
+  'campaign_3:assign':     ['ADMIN', 'MANAGER'],
+  'campaign_3:move_stage': ['ADMIN', 'MANAGER', 'COUNSELLOR'],
+
   // Pipeline actions
   'pipeline:move':       ['ADMIN', 'MANAGER', 'COUNSELLOR'],
 
@@ -149,14 +157,14 @@ export interface NavItem {
 }
 
 // Influencer Marketing → Campaign 1–12 submenu.
-// Campaigns 1 & 2 are live; 3–12 route to a shared "Coming soon" page.
+// Campaigns 1–3 are live; 4–12 route to a shared "Coming soon" page.
 const CAMPAIGN_CHILDREN: NavItem[] = Array.from({ length: 12 }, (_, i) => {
   const n = i + 1
   return {
     to: `/campaigns/${n}`,
     label: `Campaign ${n}`,
     permission: `nav:campaign_${n}`,
-    comingSoon: n > 2,
+    comingSoon: n > 3,
   }
 })
 

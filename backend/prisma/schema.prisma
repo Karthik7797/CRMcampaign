@@ -35,6 +35,11 @@ model User {
   campaign2Tasks       Campaign2LeadTask[]
   campaign2Activities  Campaign2LeadActivity[]
   campaign2LeadNotes   Campaign2LeadNote[]
+  // ── Campaign 3 ──
+  campaign3Leads       Campaign3Lead[]   @relation("Campaign3AssignedLeads")
+  campaign3Tasks       Campaign3LeadTask[]
+  campaign3Activities  Campaign3LeadActivity[]
+  campaign3LeadNotes   Campaign3LeadNote[]
 }
 
 enum Role {
@@ -417,6 +422,92 @@ model Campaign2LeadNote {
   id        String   @id @default(cuid())
   content   String
   lead      Campaign2Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+// ─────────────────────────────────────────────────────────────────────
+// Campaign 3 — "Sai Story x Student ID Registration (UK & IRE)" Google Form.
+// Fields map to that form; lifecycle fields (source/status/priority/
+// pipelineStage/assignedTo/relations) match the other campaigns.
+// ─────────────────────────────────────────────────────────────────────
+model Campaign3Lead {
+  id                String       @id @default(cuid())
+  // ── Campaign 3 Google Form intake fields ──
+  studentName       String
+  studentEmail      String
+  studentMobile     String
+  parentName        String?
+  parentMobile      String?
+  parentOccupation  String?
+  preferredCountry  String?      // UK / Ireland / New Zealand / Australia / Europe / Others
+  preferredIntake   String?      // August 2026 … September 2027 / Others
+  currentQualification String?    // Highest Qualification: PG / UG / Diploma / 12th
+  course            String?      // Degree Name: Engineering / Arts & Science / AHS
+  degreeField       String?      // Degree Field (free text)
+  completionYear    String?      // Education completion year
+  percentage        String?      // 90-100% … Below 60%
+  mode              String?      // Consultation Mode: Office Visit / Google Meet
+  remarks           String?      // Detailed Remarks
+  // ── lifecycle (shared) ──
+  source            LeadSource   @default(GOOGLE_FORM)
+  status            LeadStatus   @default(NEW)
+  priority          Priority     @default(MEDIUM)
+  followUpDate      DateTime?
+  pipelineStage     PipelineStage @default(ENQUIRY)
+  assignedTo        User?        @relation("Campaign3AssignedLeads", fields: [assignedToId], references: [id])
+  assignedToId      String?
+  activities        Campaign3LeadActivity[]
+  tasks             Campaign3LeadTask[]
+  communications    Campaign3LeadCommunication[]
+  leadNotes         Campaign3LeadNote[]
+  createdAt         DateTime     @default(now())
+  updatedAt         DateTime     @updatedAt
+}
+
+model Campaign3LeadActivity {
+  id        String   @id @default(cuid())
+  type      String
+  content   String
+  lead      Campaign3Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+  createdAt DateTime @default(now())
+}
+
+model Campaign3LeadTask {
+  id          String     @id @default(cuid())
+  title       String
+  description String?
+  dueDate     DateTime
+  completed   Boolean    @default(false)
+  priority    Priority   @default(MEDIUM)
+  lead        Campaign3Lead? @relation(fields: [leadId], references: [id], onDelete: SetNull)
+  leadId      String?
+  assignedTo  User       @relation(fields: [userId], references: [id])
+  userId      String
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+}
+
+model Campaign3LeadCommunication {
+  id        String   @id @default(cuid())
+  type      CommType
+  subject   String?
+  content   String
+  status    String   @default("SENT")
+  lead      Campaign3Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  leadId    String
+  createdAt DateTime @default(now())
+}
+
+model Campaign3LeadNote {
+  id        String   @id @default(cuid())
+  content   String
+  lead      Campaign3Lead @relation(fields: [leadId], references: [id], onDelete: Cascade)
   leadId    String
   user      User     @relation(fields: [userId], references: [id])
   userId    String

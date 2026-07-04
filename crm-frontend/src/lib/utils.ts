@@ -101,8 +101,8 @@ export const followUpPillLabel: Record<Exclude<FollowUpBucket, 'none'>, string> 
   upcoming: 'Upcoming',
 }
 
-// A lead can live in one of four tables; build its details route from the type.
-export type LeadType = 'lead' | 'influencer' | 'campaign1' | 'campaign2'
+// A lead can live in one of several tables; build its details route from the type.
+export type LeadType = 'lead' | 'influencer' | 'campaign1' | 'campaign2' | 'campaign3'
 
 export function leadDetailsPath(leadType: LeadType, id: string) {
   const base: Record<LeadType, string> = {
@@ -110,6 +110,7 @@ export function leadDetailsPath(leadType: LeadType, id: string) {
     influencer: '/influencer-leads',
     campaign1: '/campaigns/1',
     campaign2: '/campaigns/2',
+    campaign3: '/campaigns/3',
   }
   return `${base[leadType]}/${id}`
 }

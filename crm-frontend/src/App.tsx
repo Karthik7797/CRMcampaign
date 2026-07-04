@@ -22,6 +22,8 @@ import Campaign1Leads from './pages/Campaign1Leads'
 import Campaign1LeadDetails from './pages/Campaign1LeadDetails'
 import Campaign2Leads from './pages/Campaign2Leads'
 import Campaign2LeadDetails from './pages/Campaign2LeadDetails'
+import Campaign3Leads from './pages/Campaign3Leads'
+import Campaign3LeadDetails from './pages/Campaign3LeadDetails'
 import CampaignComingSoon from './pages/CampaignComingSoon'
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -78,7 +80,13 @@ export default function App() {
           <Route path="campaigns/2/:id" element={
             <RoleRoute permission="nav:campaign_2"><Campaign2LeadDetails /></RoleRoute>
           } />
-          {/* Campaigns 3–12: Coming Soon — :n must come after specific numbers above */}
+          <Route path="campaigns/3" element={
+            <RoleRoute permission="nav:campaign_3"><Campaign3Leads /></RoleRoute>
+          } />
+          <Route path="campaigns/3/:id" element={
+            <RoleRoute permission="nav:campaign_3"><Campaign3LeadDetails /></RoleRoute>
+          } />
+          {/* Campaigns 4–12: Coming Soon — :n must come after specific numbers above */}
           <Route path="campaigns/:n" element={<CampaignComingSoon />} />
 
           <Route path="pipeline" element={<Pipeline />} />

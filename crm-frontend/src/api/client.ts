@@ -85,6 +85,22 @@ export const campaign2Api = {
   createComm: (id: string, data: any) => api.post(`/campaign-2/${id}/comms`, data),
 }
 
+export const campaign3Api = {
+  getAll: (params?: Record<string, any>) => api.get('/campaign-3', { params }),
+  getOne: (id: string) => api.get(`/campaign-3/${id}`),
+  create: (data: any) => api.post('/campaign-3', data),
+  update: (id: string, data: any) => api.put(`/campaign-3/${id}`, data),
+  delete: (id: string) => api.delete(`/campaign-3/${id}`),
+  assign: (id: string, userId: string) => api.post(`/campaign-3/${id}/assign`, { userId }),
+  moveStage: (id: string, stage: string) => api.put(`/campaign-3/${id}/stage`, { stage }),
+  getNotes: (id: string) => api.get(`/campaign-3/${id}/notes`),
+  addNote: (id: string, content: string) => api.post(`/campaign-3/${id}/notes`, { content }),
+  getTasks: (id: string) => api.get(`/campaign-3/${id}/tasks`),
+  createTask: (id: string, data: any) => api.post(`/campaign-3/${id}/tasks`, data),
+  getComms: (id: string) => api.get(`/campaign-3/${id}/comms`),
+  createComm: (id: string, data: any) => api.post(`/campaign-3/${id}/comms`, data),
+}
+
 export const analyticsApi = {
   overview: () => api.get('/analytics/overview'),
   getUserProgression: () => api.get('/analytics/user-progression'),

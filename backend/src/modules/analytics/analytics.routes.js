@@ -38,6 +38,7 @@ export async function analyticsRoutes(app) {
         { model: db.influencerLead, leadType: 'influencer', nameField: 'studentName' },
         { model: db.campaign1Lead, leadType: 'campaign1', nameField: 'studentName' },
         { model: db.campaign2Lead, leadType: 'campaign2', nameField: 'studentName' },
+        { model: db.campaign3Lead, leadType: 'campaign3', nameField: 'studentName' },
       ]
 
       // Select only the name field that actually exists on this table.

@@ -6,7 +6,7 @@ import { useState, useEffect, useRef, useMemo } from 'react'
 import { useQueries } from '@tanstack/react-query'
 import { useNavigate } from 'react-router-dom'
 import toast from 'react-hot-toast'
-import { leadsApi, influencerLeadsApi, campaign1Api, campaign2Api } from '../../api/client'
+import { leadsApi, influencerLeadsApi, campaign1Api, campaign2Api, campaign3Api } from '../../api/client'
 import {
   followUpBucket, followUpPillClass, followUpPillLabel, formatDate, formatRelativeTime,
   leadDetailsPath, type LeadType,
@@ -52,6 +52,7 @@ const leadTypeLabel: Record<LeadType, string> = {
   influencer: 'Influencer',
   campaign1: 'Campaign 1',
   campaign2: 'Campaign 2',
+  campaign3: 'Campaign 3',
 }
 
 // localStorage helpers: map of leadType -> ISO timestamp of newest seen lead.
@@ -103,6 +104,7 @@ export default function TopBar() {
     { leadType: 'influencer' as LeadType, api: influencerLeadsApi, key: 'influencer-leads', nameField: 'studentName', enabled: can('nav:influencer_leads') },
     { leadType: 'campaign1' as LeadType, api: campaign1Api, key: 'campaign-1-leads', nameField: 'studentName', enabled: can('nav:campaign_1') },
     { leadType: 'campaign2' as LeadType, api: campaign2Api, key: 'campaign-2-leads', nameField: 'studentName', enabled: can('nav:campaign_2') },
+    { leadType: 'campaign3' as LeadType, api: campaign3Api, key: 'campaign-3-leads', nameField: 'studentName', enabled: can('nav:campaign_3') },
   ]), [can])
 
   const results = useQueries({
